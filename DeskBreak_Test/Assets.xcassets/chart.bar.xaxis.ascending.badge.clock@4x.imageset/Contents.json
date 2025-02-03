@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "chart.bar.xaxis.ascending.badge.clock@4x.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
