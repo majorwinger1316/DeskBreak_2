@@ -7,6 +7,7 @@
 
 import UIKit
 import Firebase
+import AVKit
 
 class DescriptionViewController: UIViewController {
     
@@ -14,7 +15,7 @@ class DescriptionViewController: UIViewController {
     
     @IBOutlet weak var exerciseDescription: UITextView!
     
-    var game = Game(name: "High V", description: "High-V is a gamified AR desk-break workout—perfect for when you're feeling lazy or tired. Stretch, dodge, and hit targets to rejuvenate and boost your energy right at your desk!", points: "10", photo: "game1", time: "10")
+    var game = Game(name: "High 5", description: "High 5 is a gamified DeskBreak Stretching Exercise—perfect for when you're feeling lazy or tired. Stretch to rejuvenate and boost your energy right at your desk!", points: "10", photo: "game1", time: "10")
 
     let db = Firestore.firestore()
     var gameDocPath: String {
@@ -31,6 +32,33 @@ class DescriptionViewController: UIViewController {
     
     @IBAction func playButtonTapped(_ sender: Any) {
         incrementPlayerCount()
+    }
+    
+    @IBAction func TutorialButton(_ sender: UIButton) {
+        playTutorialVideo()
+    }
+    
+    private func playTutorialVideo() {
+        guard let videoPath = Bundle.main.path(forResource: "HighV_Tutorial", ofType: "mp4") else {
+            print("Video file not found")
+            return
+        }
+        
+        let videoURL = URL(fileURLWithPath: videoPath)
+        let player = AVPlayer(url: videoURL)
+        let playerViewController = AVPlayerViewController()
+        playerViewController.player = player
+
+        // Listen for video completion
+        NotificationCenter.default.addObserver(self, selector: #selector(videoDidFinish), name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
+
+        present(playerViewController, animated: true) {
+            player.play()
+        }
+    }
+    
+    @objc private func videoDidFinish() {
+        dismiss(animated: true, completion: nil)
     }
 
     private func incrementPlayerCount() {
