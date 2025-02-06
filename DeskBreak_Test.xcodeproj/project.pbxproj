@@ -469,6 +469,10 @@
 				INFOPLIST_FILE = DeskBreak_Test/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DeskBreak;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app want to access your location for communities.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "This app want to access your location for communities.";
+				INFOPLIST_KEY_NSLocationUsageDescription = "This app want to access your location for communities.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app want to access your location for communities.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This application wants to access your photo library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -481,7 +485,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.example.DeskBreak-Test1";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.DeskBreak-Test2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -502,6 +506,10 @@
 				INFOPLIST_FILE = DeskBreak_Test/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DeskBreak;
 				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "This app want to access your location for communities.";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "This app want to access your location for communities.";
+				INFOPLIST_KEY_NSLocationUsageDescription = "This app want to access your location for communities.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "This app want to access your location for communities.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "This application wants to access your photo library";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
@@ -514,7 +522,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.example.DeskBreak-Test1";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.DeskBreak-Test2";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

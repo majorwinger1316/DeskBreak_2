@@ -46,11 +46,13 @@ class signUp1ViewController: UIViewController, UIImagePickerControllerDelegate, 
     
     @objc private func doneDatePicker() {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd MM yyyy"
-        let formattedDate = datePicker.date // Directly getting Date object from the picker
+        dateFormatter.dateFormat = "dd MMMM yyyy" // Desired format
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX") // Ensures month names are in English
+
+        let selectedDate = datePicker.date
+        userDateOfBirth.text = dateFormatter.string(from: selectedDate) // Display formatted string
+        registrationData.dateOfBirth = selectedDate // Store as Date object (without time zone issues)
         
-        userDateOfBirth.text = dateFormatter.string(from: formattedDate) // String representation
-        registrationData.dateOfBirth = formattedDate // Storing as Date
         userDateOfBirth.resignFirstResponder()
     }
     
@@ -67,10 +69,6 @@ class signUp1ViewController: UIViewController, UIImagePickerControllerDelegate, 
         if let dateOfBirth = dateFormatter.date(from: dateOfBirthString) {
             registrationData.username = username
             registrationData.dateOfBirth = dateOfBirth
-            if registrationData.profilePicture == nil {
-                showAlert(message: "Please select a profile picture.")
-                return
-            }
             if let nextVC = storyboard?.instantiateViewController(withIdentifier: "SignUpViewController2") as? signUp2ViewController {
                 nextVC.registrationData = self.registrationData
                 self.navigationController?.pushViewController(nextVC, animated: true)
@@ -88,23 +86,23 @@ class signUp1ViewController: UIViewController, UIImagePickerControllerDelegate, 
         present(imagePickerController, animated: true, completion: nil)
     }
 
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        if let selectedImage = info[.editedImage] as? UIImage {
-            userProfileImageView.image = selectedImage
-            registrationData.profilePicture = selectedImage
-        } else if let originalImage = info[.originalImage] as? UIImage {
-            userProfileImageView.image = originalImage
-            registrationData.profilePicture = originalImage
-        }
-
-        if userProfileImageView.frame.width == userProfileImageView.frame.height {
-            userProfileImageView.layer.cornerRadius = userProfileImageView.frame.height / 2
-        } else {
-            userProfileImageView.layer.cornerRadius = 0
-        }
-        userProfileImageView.clipsToBounds = true
-        picker.dismiss(animated: true, completion: nil)
-    }
+//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+//        if let selectedImage = info[.editedImage] as? UIImage {
+//            userProfileImageView.image = selectedImage
+//            registrationData.profilePicture = selectedImage
+//        } else if let originalImage = info[.originalImage] as? UIImage {
+//            userProfileImageView.image = originalImage
+//            registrationData.profilePicture = originalImage
+//        }
+//
+//        if userProfileImageView.frame.width == userProfileImageView.frame.height {
+//            userProfileImageView.layer.cornerRadius = userProfileImageView.frame.height / 2
+//        } else {
+//            userProfileImageView.layer.cornerRadius = 0
+//        }
+//        userProfileImageView.clipsToBounds = true
+//        picker.dismiss(animated: true, completion: nil)
+//    }
 
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)

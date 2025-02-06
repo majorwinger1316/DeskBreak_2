@@ -37,8 +37,7 @@ class signUp3ViewController: UIViewController {
 
         registrationData.dailyTarget = dailyTarget
         showLoadingIndicator()
-        
-        // Create a user with Firebase Authentication
+
         Auth.auth().createUser(withEmail: registrationData.email, password: registrationData.password) { authResult, error in
             self.hideLoadingIndicator()
 
@@ -47,55 +46,9 @@ class signUp3ViewController: UIViewController {
                 return
             }
 
-            if let userId = authResult?.user.uid {
-                // Upload profile picture and save user data to Firestore
-                self.uploadProfileImage(userId: userId)
-            }
-        }
-    }
-    
-    private func uploadProfileImage(userId: String) {
-        guard let profileImage = registrationData.profilePicture else {
-            self.showAlert(message: "No profile picture found.")
-            return
-        }
-
-        // Compress the image
-        let maxDimension: CGFloat = 300 // Resize to a maximum of 300x300 pixels
-        let resizedImage = profileImage.resized(toMaxDimension: maxDimension)
-        guard let imageData = resizedImage.jpegData(compressionQuality: 0.7) else {
-            self.showAlert(message: "Failed to compress image.")
-            return
-        }
-
-        // Generate a unique file name using UUID
-        let uniqueFileName = UUID().uuidString + ".jpg"
-        let storagePath = "profile_images/\(uniqueFileName)"
-        print("Uploading to path: \(storagePath)")
-        
-        // Create a reference to Firebase Storage
-        let storageRef = Storage.storage().reference().child(storagePath)
-
-        // Upload the compressed image data to Firebase Storage
-        storageRef.putData(imageData, metadata: nil) { metadata, error in
-            if let error = error {
-                print("Error uploading image: \(error.localizedDescription)")
-                self.showAlert(message: "Failed to upload profile image: \(error.localizedDescription)")
-                return
-            }
-
-            // Image upload succeeded, get the download URL
-            storageRef.downloadURL { url, error in
-                if let error = error {
-                    print("Error getting download URL: \(error.localizedDescription)")
-                    self.showAlert(message: "Failed to get image URL: \(error.localizedDescription)")
-                    return
-                }
-
-                if let imageURL = url?.absoluteString {
-                    print("Profile image uploaded successfully. URL: \(imageURL)")
-                    self.saveUserData(userId: userId, profileImageUrl: imageURL)
-                }
+            // Get the Firebase Auth user ID
+            if let user = authResult?.user {
+                self.saveUserData(userId: user.uid, profileImageUrl: "")  // Pass UID to saveUserData
             }
         }
     }
@@ -117,7 +70,7 @@ class signUp3ViewController: UIViewController {
             "contactNumber": registrationData.contactNumber,
             "createdAt": Timestamp(date: Date()),
             "lastActivityDate": Timestamp(date: Date()),
-            "profilePictureURL": profileImageUrl
+            "profilePictureURL": ""
         ]
         
         // Save user data to Firestore

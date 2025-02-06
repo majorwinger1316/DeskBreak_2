@@ -12,7 +12,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
     
     // MARK: - Properties
     let sections = ["Profile"]
-    let profileItems = ["Details", "Dashboard", "Weekly Goal"]
+    let profileItems = ["Details", "Dashboard", "Daily Goal"]
     let pickerData = (1...30).map { "\($0) min" }
     var selectedTime: String? = ""
     
@@ -148,7 +148,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         cell.backgroundColor = .modalComponents
         cell.contentView.backgroundColor = .clear
 
-        if item == "Weekly Goal" {
+        if item == "Daily Goal" {
             let timeLabel = UILabel()
             timeLabel.text = selectedTime
             timeLabel.textColor = .lightGray
@@ -178,7 +178,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         switch item {
         case "Details":
             navigateToDetailsViewController()
-        case "Weekly Goal":
+        case "Daily Goal":
             let pickerVC = HalfModalPickerViewController()
             pickerVC.selectedTime = selectedTime
             pickerVC.onTimeSelected = { [weak self] time in

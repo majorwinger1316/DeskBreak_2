@@ -54,6 +54,22 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
         setupNavigationBarWithProfileImage(image: UIImage(named: "defaultProfileImage"))
         fetchNameFromFirebase()
         animateFlameBounce()
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(homeCardTapped))
+        homeCardView.addGestureRecognizer(tapGesture)
+        homeCardView.isUserInteractionEnabled = true
+    }
+    
+    @objc private func homeCardTapped() {
+        if let userDetailsVC = storyboard?.instantiateViewController(withIdentifier: "userDetailsViewController") as? userDetailsViewController {
+            let navController = UINavigationController(rootViewController: userDetailsVC)
+            navController.modalPresentationStyle = .pageSheet
+            userDetailsVC.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(dismissUserDetails))
+            present(navController, animated: true)
+        }
+    }
+
+    @objc private func dismissUserDetails() {
+        dismiss(animated: true)
     }
     
     deinit {

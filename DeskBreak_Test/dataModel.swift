@@ -9,8 +9,6 @@ import Foundation
 import FirebaseFirestore
 
 struct UserRegistrationData {
-    var profilePicture: UIImage? = nil
-    var profilePictureURL: String? = nil
     var username: String = ""
     var dateOfBirth: Date? = nil
     var email: String = ""
