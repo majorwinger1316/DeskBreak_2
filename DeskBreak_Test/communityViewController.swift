@@ -111,6 +111,9 @@ class communityViewController: UIViewController, UITableViewDelegate, UITableVie
         fetchUserCommunities()
         
         locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
     }
     
     func fetchUserCommunities() {
@@ -285,6 +288,16 @@ class communityViewController: UIViewController, UITableViewDelegate, UITableVie
         present(alertController, animated: true, completion: nil)
 
         segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for: .valueChanged)
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if let location = locations.last {
+            userLocation = location
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print("Failed to get location: \(error.localizedDescription)")
     }
     
     @objc func segmentedControlValueChanged(_ sender: UISegmentedControl) {

@@ -113,6 +113,21 @@ class signInViewController: UIViewController {
         }
     }
     
+    @IBAction func forgotPasswordButtonPressed(_ sender: UIButton) {
+        guard let email = emailTextField.text, !email.isEmpty else {
+            showAlert(message: "Please enter your email to reset the password.")
+            return
+        }
+        
+        Auth.auth().sendPasswordReset(withEmail: email) { error in
+            if let error = error {
+                self.showAlert(message: "Error: \(error.localizedDescription)")
+            } else {
+                self.showAlert(message: "A password reset link has been sent to your email.")
+            }
+        }
+    }
+    
     private func animateToTabBarController() {
         DispatchQueue.main.async {
             if let window = UIApplication.shared.windows.first {

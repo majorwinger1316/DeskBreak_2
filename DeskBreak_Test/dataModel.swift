@@ -308,3 +308,37 @@ class CommunityMembership {
             }
     }
 }
+
+enum Sequence: CaseIterable {
+    case leftArmUp, rightArmUp, bothArms45, bothArmsUp, bothArmsDown
+    
+    var displayName: String {
+        switch self {
+        case .leftArmUp: return "Raise left Arm Up"
+        case .rightArmUp: return "Raise right Arm Up"
+        case .bothArms45: return "Raise both arms at 45°"
+        case .bothArmsUp: return "Both Arms Up"
+        case .bothArmsDown: return "Bring both arms down"
+        }
+    }
+    
+    var iconName: String {
+        switch self {
+        case .leftArmUp: return "hand.point.left.fill"
+        case .rightArmUp: return "hand.point.right.fill"
+        case .bothArms45: return "arrow.up.forward"
+        case .bothArmsUp: return "arrow.up"
+        case .bothArmsDown: return "arrow.down"
+        }
+    }
+    
+    var instructions: String {
+        switch self {
+        case .leftArmUp: return "Raise your LEFT arm straight up!"
+        case .rightArmUp: return "Raise your RIGHT arm straight up!"
+        case .bothArms45: return "Hold both arms at 45 degree angle"
+        case .bothArmsUp: return "Raise BOTH arms straight up!"
+        case .bothArmsDown: return "Lower both arms down slowly"
+        }
+    }
+}
