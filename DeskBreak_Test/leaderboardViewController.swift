@@ -111,9 +111,9 @@ class leaderboardViewController: UIViewController {
 
         // Find the position of the current user using userId to ensure unique identification
         if let index = sortedUsers.firstIndex(where: { $0.userId == currentUser.userId }) {
-            positionLabel.text = "Position: \(index + 1)"
+            positionLabel.text = "Position \(index + 1)"
         } else {
-            positionLabel.text = "Position: N/A" // If the user is not found in the list
+            positionLabel.text = "Position N/A" // If the user is not found in the list
         }
     }
     

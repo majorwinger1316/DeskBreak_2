@@ -36,7 +36,7 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
     @IBOutlet weak var playersThisWeekLabel: UILabel!
     @IBOutlet weak var dailyMinsLabel: UILabel!
     @IBOutlet weak var dailyTargetLabel: UILabel!
-    @IBOutlet weak var secondGameImage: UIImageView!
+    
     
     private let gradientLayer = CAGradientLayer()
     private let initialBackgroundColor = UIColor.bg

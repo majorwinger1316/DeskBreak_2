@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2102CA6F2D6236E30095384F /* NewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2102CA6E2D6236E30095384F /* NewViewController.swift */; };
+		2102CA932D64D8800095384F /* neckFlexDescriptionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2102CA922D64D8800095384F /* neckFlexDescriptionViewController.swift */; };
+		2102CA952D650D250095384F /* NeckFlexGameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2102CA942D650D250095384F /* NeckFlexGameViewController.swift */; };
 		21373BA92D5140D300E0811A /* HighV_Tutorial.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 21373BA82D5140D300E0811A /* HighV_Tutorial.mp4 */; };
 		214168342CD90070000FD404 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 214168322CD90070000FD404 /* Main.storyboard */; };
 		2155C2132CDAE77F00B3848E /* onBoardingV2ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2155C2122CDAE77F00B3848E /* onBoardingV2ViewController.swift */; };
@@ -66,6 +69,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2102CA6E2D6236E30095384F /* NewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewViewController.swift; sourceTree = "<group>"; };
+		2102CA922D64D8800095384F /* neckFlexDescriptionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = neckFlexDescriptionViewController.swift; sourceTree = "<group>"; };
+		2102CA942D650D250095384F /* NeckFlexGameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeckFlexGameViewController.swift; sourceTree = "<group>"; };
 		21373BA82D5140D300E0811A /* HighV_Tutorial.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = HighV_Tutorial.mp4; sourceTree = "<group>"; };
 		214168332CD90070000FD404 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		2155C2122CDAE77F00B3848E /* onBoardingV2ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = onBoardingV2ViewController.swift; sourceTree = "<group>"; };
@@ -197,6 +203,9 @@
 				21BE76D32D29D3E000A9B13C /* userDetailsViewController.swift */,
 				21DA7C182D30FCFE005D7DBA /* secondGameViewController.swift */,
 				21DA7C352D3A9C60005D7DBA /* DeskBreakActionClassifier 1.mlmodel */,
+				2102CA6E2D6236E30095384F /* NewViewController.swift */,
+				2102CA922D64D8800095384F /* neckFlexDescriptionViewController.swift */,
+				2102CA942D650D250095384F /* NeckFlexGameViewController.swift */,
 			);
 			path = DeskBreak_Test;
 			sourceTree = "<group>";
@@ -286,12 +295,14 @@
 				3FCD31892CE94C2B002B6237 /* GameSuccessViewController.swift in Sources */,
 				3FCD31852CE93B13002B6237 /* CommunityDetailsViewController.swift in Sources */,
 				21DA7C432D3D4D30005D7DBA /* Predictor.swift in Sources */,
+				2102CA932D64D8800095384F /* neckFlexDescriptionViewController.swift in Sources */,
 				3FCD31D02CEBCABA002B6237 /* GameViewController.swift in Sources */,
 				216007BD2CEBB9A200545888 /* DetailsViewController.swift in Sources */,
 				F90BD7A72CAE6EA8008ED61B /* dailyLeaderboardTableViewCell.swift in Sources */,
 				2155C2132CDAE77F00B3848E /* onBoardingV2ViewController.swift in Sources */,
 				21B7164D2CFD0C7200F433DE /* dataModel.swift in Sources */,
 				F90BD7A12CAE6A18008ED61B /* leaderboardViewController.swift in Sources */,
+				2102CA6F2D6236E30095384F /* NewViewController.swift in Sources */,
 				2155C2192CDDE69200B3848E /* ProfileViewController.swift in Sources */,
 				21B7166A2D01C83A00F433DE /* HalfModalPresentationController.swift in Sources */,
 				21DA7C452D3D4D6D005D7DBA /* DeskBreakHighFiveActionClassifier1.mlmodel in Sources */,
@@ -299,6 +310,7 @@
 				F92D61122C9E23C800314A6B /* ViewController.swift in Sources */,
 				3FCD31D42CEBCE76002B6237 /* DescriptionViewController.swift in Sources */,
 				F92D610E2C9E23C800314A6B /* AppDelegate.swift in Sources */,
+				2102CA952D650D250095384F /* NeckFlexGameViewController.swift in Sources */,
 				21DA7C362D3A9C60005D7DBA /* DeskBreakActionClassifier 1.mlmodel in Sources */,
 				3FCD31832CE939A6002B6237 /* MemberDetailsViewController.swift in Sources */,
 				F9CA2AA62CD533FB00952036 /* HomeCardSecond.swift in Sources */,

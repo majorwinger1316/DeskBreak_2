@@ -211,23 +211,6 @@ class Community {
                   createdAt: createdAtTimestamp.dateValue())
     }
 
-//    // MARK: - Add or Remove Member Methods
-//    func addMember(user: User) {
-//        if !members.contains(where: { $0.userId == user.userId }) {
-//            members.append(user)
-//            // Optionally, you can save this change to Firestore here
-//            print("Member \(user.username) added to community \(communityName).")
-//        }
-//    }
-//
-//    func removeMember(user: User) {
-//        if let index = members.firstIndex(where: { $0.userId == user.userId }) {
-//            members.remove(at: index)
-//            // Optionally, you can save this change to Firestore here
-//            print("Member \(user.username) removed from community \(communityName).")
-//        }
-//    }
-
     // MARK: - Fetch Community Members from Firestore
     func fetchMembersFromFirestore(completion: @escaping ([User]) -> Void) {
         let db = Firestore.firestore()

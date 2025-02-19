@@ -19,7 +19,7 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
     
     var selectedUserId : Array<String> = []
     
-    var members: [(userId: String, username: String)] = []
+    var members: [(userId: String, username: String, totalPoints: Int32)] = []
     
     var community: Community?
     
@@ -28,10 +28,13 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
         
         tableView.delegate = self
         tableView.dataSource = self
+        
+        // Register the cell with the .value1 style
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "memberCell")
+        
         tableView.backgroundColor = .clear
         tableView.separatorColor = .lightGray
-        
+
         // Update UI with community details
         if let community = community {
             titleLabel.text = community.communityName
@@ -203,47 +206,95 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
     }
     
     func fetchMembers() {
-        guard let community = community else { return }
+        guard let community = community else {
+            print("Community is nil")
+            return
+        }
 
         let db = Firestore.firestore()
 
         db.collection("communities")
-            .document(community.communityId)  // fetching the community document
-            .collection("members")  // accessing the "members" subcollection
+            .document(community.communityId)
+            .collection("members")
             .getDocuments { querySnapshot, error in
                 if let error = error {
                     print("Error fetching members: \(error.localizedDescription)")
                     return
                 }
 
+                print("Fetched members: \(querySnapshot?.documents.count ?? 0)")
+
                 // Extract userIds and maintain the order
-                var membersData = querySnapshot?.documents.compactMap { document -> (String, String)? in
+                var membersData = querySnapshot?.documents.compactMap { document -> (String, String, Int32)? in
                     if let userId = document.data()["userId"] as? String {
-                        return (userId, "")
+                        return (userId, "", 0) // Initialize with empty username and 0 points
                     }
                     return nil
                 } ?? []
 
+                print("Members data: \(membersData)")
+
                 let userIds = membersData.map { $0.0 }
                 self.selectedUserId = userIds // Preserve the exact order
 
-                self.fetchUsernames(userIds: userIds) { usernames in
+                self.fetchUsernamesAndPoints(userIds: userIds) { usernames, totalPoints in
                     DispatchQueue.main.async {
-                        // Ensure usernames align with the same order
+                        print("Fetched usernames: \(usernames)")
+                        print("Fetched totalPoints: \(totalPoints)")
+
+                        // Ensure usernames and points align with the same order
                         for (index, username) in usernames.enumerated() {
                             if index < membersData.count {
                                 membersData[index].1 = username
+                                membersData[index].2 = totalPoints[index]
                             }
                         }
 
-                        self.community?.members = membersData.map { $0.1 } // Populate community.members with usernames
+                        // Update the members array with userId, username, and totalPoints
+                        self.members = membersData.map { (userId: $0.0, username: $0.1, totalPoints: $0.2) }
+
+                        // Sort members by totalPoints in descending order
+                        self.members.sort { $0.totalPoints > $1.totalPoints }
+
+                        print("Updated and sorted members array: \(self.members)")
+
                         self.memberLabel.text = "Members: \(userIds.count)"
                         self.tableView.reloadData()
                     }
                 }
             }
     }
+    
+    func fetchUsernamesAndPoints(userIds: [String], completion: @escaping ([String], [Int32]) -> Void) {
+        let db = Firestore.firestore()
+        var usernames: [String] = []
+        var totalPoints: [Int32] = []
 
+        let group = DispatchGroup()
+
+        for userId in userIds {
+            group.enter()
+            db.collection("users").document(userId).getDocument { documentSnapshot, error in
+                if let error = error {
+                    print("Error fetching username and points for userId \(userId): \(error.localizedDescription)")
+                } else if let document = documentSnapshot, document.exists,
+                          let username = document.data()?["username"] as? String,
+                          let points = document.data()?["totalPoints"] as? Int32 {
+                    print("Fetched username: \(username), points: \(points) for userId: \(userId)")
+                    usernames.append(username)
+                    totalPoints.append(points)
+                } else {
+                    print("Document does not exist or username/points not found for userId \(userId)")
+                }
+                group.leave()
+            }
+        }
+
+        group.notify(queue: .main) {
+            print("All usernames and points fetched: \(usernames), \(totalPoints)")
+            completion(usernames, totalPoints)
+        }
+    }
     
     func fetchUsernames(userIds: [String], completion: @escaping ([String]) -> Void) {
       let db = Firestore.firestore()
@@ -307,21 +358,26 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
       }
     }
 
-    // MARK: - TableView DataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return community?.members.count ?? 0
+        return members.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "memberCell", for: indexPath)
+        // Dequeue the cell with the correct style
+        let cell = UITableViewCell(style: .value1, reuseIdentifier: "memberCell")
         
-        if let member = community?.members[indexPath.row] {
-            cell.textLabel?.text = "\(indexPath.row + 1). \(member)"
+        if indexPath.row < members.count {
+            let member = members[indexPath.row]
+            cell.textLabel?.text = "\(indexPath.row + 1). \(member.username)" // Display rank and username
+            cell.detailTextLabel?.text = "\(member.totalPoints)" // Display points on the right side
+            cell.detailTextLabel?.textColor = .main
+        } else {
+            cell.textLabel?.text = "Unknown Member"
+            cell.detailTextLabel?.text = ""
         }
         
         cell.backgroundColor = .clear
         cell.layer.masksToBounds = true
-        cell.accessoryType = .detailButton
 
         return cell
     }
