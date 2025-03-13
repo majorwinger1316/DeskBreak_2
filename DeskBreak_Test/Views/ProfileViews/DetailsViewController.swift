@@ -43,7 +43,7 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
         if detailTableView == nil {
             print("detailTableView outlet is nil.")
         }
-        profilePicImage.image = UIImage(named: "defaultProfileImage")
+        profilePicImage.image = UIImage(named: "profile")
         detailTableView.reloadData()
         setupUI()
         fetchUserData()
@@ -123,15 +123,15 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
         
         switch detail.type {
         case .name:
-            cell.configure(title: "Name", detail: detail.value as! String)
+            cell.configure(title: "Name", detail: detail.value as! String, textColor: .text)
         case .dateOfBirth:
-            cell.configure(title: "Date of Birth", detail: detail.value as! String)
+            cell.configure(title: "Date of Birth", detail: detail.value as! String, textColor: .text)
         case .email:
-            cell.configure(title: "Email", detail: detail.value as! String)
+            cell.configure(title: "Email", detail: detail.value as! String, textColor: .text)
         case .contactNumber:
-            cell.configure(title: "Contact Number", detail: detail.value as! String)
+            cell.configure(title: "Contact Number", detail: detail.value as! String, textColor: .text)
         case .workShift:
-            cell.configure(title: "Work Shift", detail: selectedShift)
+            cell.configure(title: "Work Shift", detail: selectedShift, textColor: .gray)
         }
         return cell
     }
@@ -227,9 +227,10 @@ class DetailCell: UITableViewCell {
         ])
     }
 
-    func configure(title: String, detail: String) {
+    func configure(title: String, detail: String, textColor: UIColor = .black) {
         titleLabel.text = title
         detailLabel.text = detail
+        detailLabel.textColor = textColor
     }
 }
 

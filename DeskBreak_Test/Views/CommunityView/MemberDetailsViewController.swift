@@ -81,6 +81,8 @@ class MemberDetailsViewController: UIViewController {
     
     @IBOutlet weak var thirtyoneDayLabel: UIImageView!
     
+    @IBOutlet weak var calendarPopDown: UIButton!
+    
     var userPosition: Int?
     var dayLabels: [UIImageView] = []
     

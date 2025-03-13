@@ -30,7 +30,7 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
     private var restTime = 5
     private var sessionTime = 0
     private var currentStep = 0
-    private let stretches = ["Up", "Down", "Right", "Left", "Tilt R", "Tilt L"]
+    private let stretches = ["Look Up", "Look Down", "Look Right", "Look Left", "Tilt Right", "Tilt Left"]
     private var isPaused = false
     private var isResting = false
     private var synthesizer = AVSpeechSynthesizer()
@@ -75,14 +75,22 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
         instructionLabel.layer.cornerRadius = 15
         instructionLabel.clipsToBounds = true
         instructionLabel.numberOfLines = 2
+        instructionLabel.isHidden = true
         view.addSubview(instructionLabel)
         
+        // Duration Selection (Stepper and Label)
+        let durationContainer = UIView(frame: CGRect(x: 20, y: 220, width: view.frame.width - 40, height: 50))
+        durationContainer.backgroundColor = UIColor.black.withAlphaComponent(0.7)
+        durationContainer.layer.cornerRadius = 15
+        durationContainer.clipsToBounds = true
+        view.addSubview(durationContainer)
+        
         // Session Timer Label
-        sessionTimerLabel = UILabel(frame: CGRect(x: 20, y: 170, width: view.frame.width - 40, height: 40))
+        sessionTimerLabel = UILabel(frame: CGRect(x: 10, y: 12, width: view.frame.width - 40, height: 40))
         sessionTimerLabel.textAlignment = .center
         sessionTimerLabel.font = UIFont.systemFont(ofSize: 20, weight: .medium)
         sessionTimerLabel.textColor = .white
-        view.addSubview(sessionTimerLabel)
+        durationContainer.addSubview(sessionTimerLabel)
         
         // Bottom Container for Timer and Points
         let bottomContainer = UIView(frame: CGRect(x: 0, y: view.frame.height - 200, width: view.frame.width, height: 100))
@@ -95,23 +103,18 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
         timerLabel = UILabel(frame: CGRect(x: 20, y: 10, width: bottomContainer.frame.width - 40, height: 30))
         timerLabel.textAlignment = .center
         timerLabel.font = UIFont.systemFont(ofSize: 24, weight: .medium)
-        timerLabel.textColor = .yellow
+        timerLabel.textColor = .white
+        timerLabel.isHidden = true
         bottomContainer.addSubview(timerLabel)
         
         // Points Label
         pointsLabel = UILabel(frame: CGRect(x: 20, y: 50, width: bottomContainer.frame.width - 40, height: 30))
         pointsLabel.textAlignment = .center
         pointsLabel.font = UIFont.systemFont(ofSize: 24, weight: .medium)
-        pointsLabel.textColor = .green
+        pointsLabel.textColor = .main
         pointsLabel.text = "Points 0"
+        pointsLabel.isHidden = true
         bottomContainer.addSubview(pointsLabel)
-        
-        // Duration Selection (Stepper and Label)
-        let durationContainer = UIView(frame: CGRect(x: 20, y: 220, width: view.frame.width - 40, height: 50))
-        durationContainer.backgroundColor = UIColor.black.withAlphaComponent(0.7)
-        durationContainer.layer.cornerRadius = 15
-        durationContainer.clipsToBounds = true
-        view.addSubview(durationContainer)
         
         durationLabel = UILabel(frame: CGRect(x: 10, y: 10, width: 100, height: 30))
         durationLabel.text = "5 min"
@@ -129,11 +132,11 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
         durationContainer.addSubview(stepper)
         
         // Start Session Button
-        startButton = UIButton(frame: CGRect(x: (view.frame.width - 200) / 2, y: view.frame.height - 200, width: 200, height: 50))
+        startButton = UIButton(frame: CGRect(x: (view.frame.width - 200) / 2, y: view.frame.height - 175, width: 200, height: 50))
         startButton.setTitle("Start Session", for: .normal)
         startButton.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .bold)
         startButton.backgroundColor = UIColor.systemBlue
-        startButton.layer.cornerRadius = 25
+        startButton.layer.cornerRadius = 12
         startButton.clipsToBounds = true
         startButton.addTarget(self, action: #selector(startSession), for: .touchUpInside)
         view.addSubview(startButton)
@@ -147,7 +150,12 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
         originalSessionTime = Int(stepper.value) * 60
         sessionTime = originalSessionTime
         sessionTimerLabel.text = "Session Time \(Int(stepper.value)) min"
+        durationLabel.isHidden = true
+        stepper.isHidden = true
         startButton.isHidden = true
+        timerLabel.isHidden = false
+        pointsLabel.isHidden = false
+        instructionLabel.isHidden = false
         currentStep = 0
         totalPoints = 0
         pointsLabel.text = "Points 0"
@@ -347,17 +355,17 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
         var detectedPose = ""
 
         if pitch < -threshold {
-            detectedPose = "Up"
+            detectedPose = "Look Up"
         } else if pitch > threshold {
-            detectedPose = "Down"
+            detectedPose = "Look Down"
         } else if yaw > threshold {
-            detectedPose = "Right"
+            detectedPose = "Look Right"
         } else if yaw < -threshold {
-            detectedPose = "Left"
+            detectedPose = "Look Left"
         } else if roll > threshold {
-            detectedPose = "Tilt L"
+            detectedPose = "Tilt Left"
         } else if roll < -threshold {
-            detectedPose = "Tilt R"
+            detectedPose = "Tilt Right"
         } else {
             detectedPose = "Face Forward"
         }
@@ -372,7 +380,7 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
                 isPaused = true
                 timer?.invalidate()
                 updateInstruction("Fix \(stretches[currentStep])")
-                speak("Fix your posture. Move to \(stretches[currentStep])")
+                speak("Fix your posture. \(stretches[currentStep])")
             }
         }
     }
@@ -397,7 +405,7 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
     private func startRestPeriod() {
         isResting = true
         updateInstruction("Rest")
-        speak("Rest")
+        speak("Break")
         restTime = 5
         updateRestTimerLabel()
         restTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateRestTimer), userInfo: nil, repeats: true)
@@ -435,6 +443,7 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
     
     private func speak(_ text: String) {
         let utterance = AVSpeechUtterance(string: text)
+        utterance.postUtteranceDelay = 1.0
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         synthesizer.speak(utterance)
     }

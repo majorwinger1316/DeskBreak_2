@@ -82,6 +82,8 @@ class userDetailsViewController: UIViewController {
     
     @IBOutlet weak var thirtyoneDayLabel: UIImageView!
     
+    @IBOutlet weak var calendarPopUpButton: UIButton!
+    
     var userPosition: Int?
     var dayLabels: [UIImageView] = []
     
@@ -117,9 +119,110 @@ class userDetailsViewController: UIViewController {
         daysView.layer.cornerRadius = 12
         daysView.layer.masksToBounds = true
         
+        fetchAvailableMonths()
         fetchDailyTargetandMinutesFromFirebase()
         initializeDayLabels()
-        fetchDailyData()
+        
+        // Default fetch for the current month
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM"
+        let currentMonth = formatter.string(from: Date())
+        fetchDailyData(for: currentMonth)
+        
+        // Other initializations
+        fetchAvailableMonths()
+        
+        // Setup the calendar button
+        setupCalendarMenu()
+    }
+    
+    private func setupCalendarMenu() {
+        guard !availableMonths.isEmpty else {
+            print("Error: No available months to populate menu")
+            return
+        }
+
+        let menuActions = availableMonths.map { month in
+            let monthDisplayName = monthDictionary[month] ?? month
+
+            return UIAction(title: monthDisplayName, handler: { _ in
+                self.fetchDailyData(for: month)
+            })
+        }
+
+        calendarPopUpButton.menu = UIMenu(title: "Select Month", children: menuActions)
+        calendarPopUpButton.showsMenuAsPrimaryAction = true
+    }
+
+    private var monthDictionary: [String: String] = [:] // Stores yyyy-MM → "Month Year"
+    private var availableMonths: [String] = [] // Stores yyyy-MM for fetching data
+    private let monthNameMapping: [String: String] = [
+        "01": "January", "02": "February", "03": "March", "04": "April",
+        "05": "May", "06": "June", "07": "July", "08": "August",
+        "09": "September", "10": "October", "11": "November", "12": "December"
+    ]
+
+    private func fetchAvailableMonths() {
+        guard let userId = UserDefaults.standard.string(forKey: "userId") else {
+            print("Error: userId not found in UserDefaults.")
+            return
+        }
+
+        let db = Firestore.firestore()
+        let monthlyStatsCollection = db.collection("users").document(userId).collection("monthlyStats")
+
+        monthlyStatsCollection.getDocuments { [weak self] (snapshot, error) in
+            guard let self = self else { return }
+
+            if let error = error {
+                print("Error fetching available months: \(error.localizedDescription)")
+                return
+            }
+
+            guard let documents = snapshot?.documents else {
+                print("Error: No monthlyStats documents found.")
+                return
+            }
+
+            self.availableMonths = documents.compactMap { document in
+                let documentID = document.documentID // "yyyy-MM" format
+                
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM"
+                guard let date = formatter.date(from: documentID) else { return nil }
+                
+                formatter.dateFormat = "MMMM yyyy" // Convert to "Month Year"
+                let formattedMonth = formatter.string(from: date)
+
+                self.monthDictionary[documentID] = formattedMonth
+                return documentID
+            }.sorted(by: { $0 > $1 }) // Sort latest months first
+
+            // Limit to last 6 months
+            self.availableMonths = Array(self.availableMonths.prefix(6))
+
+            DispatchQueue.main.async {
+                self.setupCalendarMenu()
+            }
+        }
+    }
+
+    @objc private func showMonthSelectionPopup() {
+        let alertController = UIAlertController(title: "Select Month", message: nil, preferredStyle: .actionSheet)
+
+        for month in availableMonths {
+            let monthDisplayName = monthDictionary[month] ?? month
+
+            let action = UIAlertAction(title: monthDisplayName, style: .default) { [weak self] _ in
+                self?.fetchDailyData(for: month)
+            }
+            alertController.addAction(action)
+        }
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alertController.addAction(cancelAction)
+
+        present(alertController, animated: true, completion: nil)
     }
     
     private func initializeDayLabels() {
@@ -137,23 +240,15 @@ class userDetailsViewController: UIViewController {
         ]
     }
 
-    private func fetchDailyData() {
+    private func fetchDailyData(for month: String) {
         guard let userId = UserDefaults.standard.string(forKey: "userId") else {
             print("Error: userId not found in UserDefaults.")
             return
         }
 
         let db = Firestore.firestore()
+        let monthDocument = db.collection("users").document(userId).collection("monthlyStats").document(month)
 
-        // Get the current month in the format "yyyy-MM"
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM"
-        let currentMonth = formatter.string(from: Date())
-
-        // Reference to the specific month's document in the monthlyStats collection
-        let monthDocument = db.collection("users").document(userId).collection("monthlyStats").document(currentMonth)
-
-        // Fetch dailyMinutes from monthlyStats for the current month
         monthDocument.getDocument { [weak self] (snapshot, error) in
             guard let self = self else { return }
 
@@ -170,7 +265,6 @@ class userDetailsViewController: UIViewController {
 
             print("Fetched dailyMinutes: \(dailyMinutes)")
 
-            // Fetch user's dailyTarget from the users document
             db.collection("users").document(userId).getDocument { (userSnapshot, error) in
                 if let error = error {
                     print("Error fetching user document: \(error.localizedDescription)")
@@ -185,65 +279,46 @@ class userDetailsViewController: UIViewController {
 
                 print("Fetched dailyTarget: \(dailyTarget)")
 
-                // Update the UI on the main thread
                 DispatchQueue.main.async {
                     self.updateLabels(dailyMinutes: dailyMinutes, dailyTarget: dailyTarget)
                 }
             }
         }
     }
-    
+
     private func updateLabels(dailyMinutes: [String: Int], dailyTarget: Int) {
         let calendar = Calendar.current
-        let date = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM"
 
-        // Determine the number of days in the current month
-        let numberOfDaysInMonth = calendar.range(of: .day, in: .month, for: date)?.count ?? 30
+        guard let selectedMonth = availableMonths.first, // Get the selected month from the list
+              let selectedDate = dateFormatter.date(from: selectedMonth) else { return }
 
-        // Clear all day labels initially and set default tint color
-        for label in dayLabels {
-            label.isHidden = true
-            label.alpha = 0  // Make labels invisible at the start
-        }
+        let numberOfDaysInMonth = calendar.range(of: .day, in: .month, for: selectedDate)?.count ?? 30
 
-        // Ensure the number of labels matches 31 (handle out-of-bounds issues)
-        guard dayLabels.count == 31 else {
-            print("Error: dayLabels array should contain 31 elements.")
-            return
-        }
+        UIView.animate(withDuration: 0.3) {
+            for (index, label) in self.dayLabels.enumerated() {
+                if index < numberOfDaysInMonth {
+                    label.isHidden = false
+                    label.alpha = 1.0 // Fully visible
 
-        // Update visible day labels based on the current month's dailyMinutes data
-        for day in 1...numberOfDaysInMonth {
-            let label = dayLabels[day - 1]
-            label.isHidden = false
-
-            // Pad the day to match the format "01", "02", ..., "31"
-            let dayString = String(format: "%02d", day)
-
-            // Set the tint color based on the dailyMinutes data
-            if let minutes = dailyMinutes[dayString] {
-                if minutes <= 2 {
-                    label.tintColor = .text // No minutes
-                } else if minutes >= dailyTarget {
-                    label.tintColor = .systemBlue // Target achieved
-                } else if minutes > 2 {
-                    label.tintColor = .main // Partial progress
+                    let dayString = String(format: "%02d", index + 1)
+                    if let minutes = dailyMinutes[dayString] {
+                        if minutes <= 2 {
+                            label.tintColor = .text
+                        } else if minutes >= dailyTarget {
+                            label.tintColor = .systemBlue
+                        } else {
+                            label.tintColor = .main
+                        }
+                    } else {
+                        label.tintColor = UIColor.text.withAlphaComponent(0.5) // No data
+                    }
+                } else {
+                    label.isHidden = false // Keep it in layout
+                    label.tintColor = .clear // Make it transparent
+                    label.alpha = 0 // Fully invisible
                 }
-            } else {
-                label.tintColor = UIColor.text.withAlphaComponent(0.5) // No data
-            }
-
-            // Animate the label to fade in with a slight delay
-            UIView.animate(withDuration: 0.5, delay: Double(day) * 0.05, options: .curveEaseInOut, animations: {
-                label.alpha = 1  // Fade in the label
-            })
-        }
-
-        // Hide unused day labels for months with fewer days
-        if numberOfDaysInMonth < 31 {
-            for extraDay in (numberOfDaysInMonth + 1)...31 {
-                let label = dayLabels[extraDay - 1]
-                label.isHidden = true
             }
         }
     }

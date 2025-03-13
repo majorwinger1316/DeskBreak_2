@@ -13,8 +13,6 @@ class DescriptionViewController: UIViewController {
     
     @IBOutlet weak var exerciseImage: UIImageView!
     
-    @IBOutlet weak var exerciseDescription: UITextView!
-    
     var game = Game(name: "LiftUp", description: "LiftUp is a gamified DeskBreak Stretching Exercise—perfect for when you're feeling lazy or tired. Stretch to rejuvenate and boost your energy right at your desk!", points: "10", photo: "LiftUpDes", time: "10")
 
     let db = Firestore.firestore()
@@ -25,17 +23,12 @@ class DescriptionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = game.name
-        exerciseDescription.text = game.description
         exerciseImage.image = UIImage(named: game.photo)
         checkAndResetPlayerCount()
     }
     
     @IBAction func playButtonTapped(_ sender: Any) {
         incrementPlayerCount()
-    }
-    
-    @IBAction func TutorialButton(_ sender: UIButton) {
-        playTutorialVideo()
     }
     
     private func playTutorialVideo() {

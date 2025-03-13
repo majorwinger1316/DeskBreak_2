@@ -12,9 +12,7 @@ class neckFlexDescriptionViewController: UIViewController {
     
     @IBOutlet weak var gamePic: UIImageView!
     
-    @IBOutlet weak var gameDescription: UITextView!
-    
-    var game = Game(name: "High 5", description: "NeckFlex is a DeskBreak stretching exercise designed to relieve neck stiffness and discomfort. Perfect for quick breaks, it helps improve flexibility and reduce tension.", points: "10", photo: "NeckFlex_info", time: "1-10")
+    var game = Game(name: "NeckFlex", description: "NeckFlex is a DeskBreak stretching exercise designed to relieve neck stiffness and discomfort. Perfect for quick breaks, it helps improve flexibility and reduce tension.", points: "10", photo: "NeckFlex_info", time: "1-10")
 
     let db = Firestore.firestore()
     var gameDocPath: String {
@@ -24,7 +22,6 @@ class neckFlexDescriptionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.title = game.name
-        gameDescription.text = game.description
         gamePic.image = UIImage(named: game.photo)
         checkAndResetPlayerCount()
     }

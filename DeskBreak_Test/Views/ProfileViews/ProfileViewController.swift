@@ -125,9 +125,9 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         }
         URLSession.shared.dataTask(with: url) { data, _, error in
             if let data = data, error == nil, let image = UIImage(data: data) {
-                DispatchQueue.main.async { self.profileImageView.image = image }
+                DispatchQueue.main.async { self.profileImageView.image = UIImage(named: "profile") }
             } else {
-                DispatchQueue.main.async { self.profileImageView.image = UIImage(named: "defaultProfileImage") }
+                DispatchQueue.main.async { self.profileImageView.image = UIImage(named: "profile") }
             }
         }.resume()
     }

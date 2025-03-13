@@ -52,7 +52,7 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
         setupGradientLayer()
         fetchDailyTargetandMinutesFromFirebase()
         fetchStreakFromFirebase()
-        setupNavigationBarWithProfileImage(image: UIImage(named: "defaultProfileImage"))
+        setupNavigationBarWithProfileImage(image: UIImage(named: "profile"))
         fetchNameFromFirebase()
         animateFlameBounce()
         scheduleStretchNotifications()
@@ -203,7 +203,7 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
         profileImageView.contentMode = .scaleAspectFill
         profileImageView.layer.cornerRadius = 16
         profileImageView.clipsToBounds = true
-        profileImageView.layer.borderColor = UIColor.gray.cgColor
+        profileImageView.layer.borderColor = UIColor.clear.cgColor
         profileImageView.layer.borderWidth = 1
         profileImageView.isUserInteractionEnabled = true
         

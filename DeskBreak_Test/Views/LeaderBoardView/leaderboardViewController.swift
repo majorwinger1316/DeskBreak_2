@@ -21,7 +21,7 @@ class leaderboardViewController: UIViewController {
         LeaderTableView.delegate = self
         LeaderTableView.register(dailyLeaderboardTableViewCell.self, forCellReuseIdentifier: "leaderboardCell")
         
-        profileImage.image = UIImage(named: "defaultProfileImage")
+        profileImage.image = UIImage(named: "profile")
         profileImage.layer.cornerRadius = profileImage.frame.size.width / 2
         profileImage.clipsToBounds = true
         profileImage.contentMode = .scaleAspectFill
