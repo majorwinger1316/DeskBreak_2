@@ -16,12 +16,45 @@ class signInViewController: UIViewController {
     @IBOutlet weak var passwordTextField: UITextField!
     
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
+    var eyeIconClick = false
+    let imageIcon = UIImageView()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         activityIndicator.hidesWhenStopped = true
         setupDoneButton(for: emailTextField)
         setupDoneButton(for: passwordTextField)
+        
+        imageIcon.image = UIImage(systemName: "eye.slash.circle.fill")
+        
+        let contentView = UIView()
+        contentView.addSubview(imageIcon)
+        
+        contentView.frame = CGRect(x: 0, y: 0, width: Int(UIImage(systemName: "eye.slash.circle.fill")!.size.width), height: Int(UIImage(systemName: "eye.slash.circle.fill")!.size.height))
+        imageIcon.frame = CGRect(x: -10, y: 0, width: Int(UIImage(systemName: "eye.slash.circle.fill")!.size.width), height: Int(UIImage(systemName: "eye.slash.circle.fill")!.size.height))
+        
+        passwordTextField.rightView = contentView
+        passwordTextField.rightViewMode = .always
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showPassword(tapGestureRecognizer:)))
+        imageIcon.isUserInteractionEnabled = true
+        imageIcon.addGestureRecognizer(tapGestureRecognizer)
+    }
+    
+    @objc func showPassword(tapGestureRecognizer: UITapGestureRecognizer) {
+        let tappedImage = tapGestureRecognizer.view as! UIImageView
+        
+        if eyeIconClick {
+            eyeIconClick = false
+            tappedImage.image = UIImage(systemName: "eye.circle.fill")
+            passwordTextField.isSecureTextEntry = false
+        }
+        else {
+            eyeIconClick = true
+            tappedImage.image = UIImage(systemName: "eye.slash.circle.fill")
+            passwordTextField.isSecureTextEntry = true
+        }
     }
     
     private func saveUserSession(user: User) {
@@ -152,7 +185,6 @@ class signInViewController: UIViewController {
             }
         }
     }
-
     
     public func showAlert(message: String) {
         let alert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)

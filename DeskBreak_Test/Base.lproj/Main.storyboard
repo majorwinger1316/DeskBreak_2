@@ -632,7 +632,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bQO-kB-Fgr" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="14661.832061068702" y="1292.9577464788733"/>
+            <point key="canvasLocation" x="15588.549618320611" y="1292.9577464788733"/>
         </scene>
         <!--onBoardingV2ViewController-->
         <scene sceneID="s5L-KO-Zqt">
@@ -943,7 +943,7 @@
                                     <color key="baseForegroundColor" name="mainColor"/>
                                 </buttonConfiguration>
                                 <connections>
-                                    <action selector="forgotPasswordButtonPressed:" destination="5pb-Bq-3dP" eventType="touchUpInside" id="q5O-EJ-QJ2"/>
+                                    <segue destination="Ihq-43-Ust" kind="presentation" id="78Y-N9-YWj"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" pointerInteraction="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vjr-1B-xv2">
@@ -971,7 +971,7 @@
                                 </constraints>
                                 <color key="textColor" name="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <textInputTraits key="textInputTraits" textContentType="username"/>
+                                <textInputTraits key="textInputTraits" keyboardType="emailAddress" textContentType="username"/>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Password" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="6pk-XU-kNL">
                                 <rect key="frame" x="16" y="325" width="361" height="40"/>
@@ -983,7 +983,7 @@
                                 </constraints>
                                 <color key="textColor" name="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="done" secureTextEntry="YES" textContentType="password"/>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JuN-SS-CJh">
                                 <rect key="frame" x="16" y="421.66666666666669" width="361" height="40"/>
@@ -1047,7 +1047,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RIA-hI-Fqt" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="5Om-ei-Ost" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="1367.175572519084" y="1645.7746478873241"/>
+            <point key="canvasLocation" x="-1363" y="1746"/>
         </scene>
         <!--Leaderboard-->
         <scene sceneID="Vy5-fk-zgD">
@@ -1069,7 +1069,92 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="47K-qY-tp3" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="13634.351145038167" y="1292.9577464788733"/>
+            <point key="canvasLocation" x="14561.068702290077" y="1292.9577464788733"/>
+        </scene>
+        <!--Forgot Password-->
+        <scene sceneID="OsS-bS-6sj">
+            <objects>
+                <viewController id="w8D-Ow-fBO" customClass="forgotPasswordViewController" customModule="DeskBreak_Test" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="fjb-cW-MX2">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="248" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="amF-0L-JrC">
+                                <rect key="frame" x="16" y="173" width="361" height="34"/>
+                                <color key="backgroundColor" name="modalComponents"/>
+                                <color key="tintColor" name="mainColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="361" id="LDE-pL-fUD"/>
+                                    <constraint firstAttribute="height" constant="34" id="NRV-qz-qje"/>
+                                </constraints>
+                                <color key="textColor" name="textColor"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <textInputTraits key="textInputTraits" keyboardType="emailAddress" textContentType="email"/>
+                            </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="b7t-GA-ic3">
+                                <rect key="frame" x="16" y="401" width="361" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="361" id="g5i-Yf-cFR"/>
+                                    <constraint firstAttribute="height" constant="40" id="yu0-hG-r77"/>
+                                </constraints>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="Send">
+                                    <color key="baseForegroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                    <color key="baseBackgroundColor" name="mainColor"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="sendEmailButtonPressed:" destination="w8D-Ow-fBO" eventType="touchUpInside" id="sGk-LM-6AV"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="justified" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HHF-2D-59M">
+                                <rect key="frame" x="16" y="248" width="361" height="112"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="361" id="61W-hm-yFS"/>
+                                    <constraint firstAttribute="height" constant="112" id="dTf-2C-fi2"/>
+                                </constraints>
+                                <string key="text">An email will be sent to the entered address with a link to reset your password.
+
+
+
+
+
+
+
+</string>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="U3K-FY-5ki"/>
+                        <color key="backgroundColor" name="modal"/>
+                        <constraints>
+                            <constraint firstItem="amF-0L-JrC" firstAttribute="leading" secondItem="U3K-FY-5ki" secondAttribute="leading" constant="16" id="2y2-e9-SnD"/>
+                            <constraint firstItem="HHF-2D-59M" firstAttribute="top" secondItem="amF-0L-JrC" secondAttribute="bottom" constant="41" id="AKV-Eh-jyd"/>
+                            <constraint firstItem="b7t-GA-ic3" firstAttribute="top" secondItem="HHF-2D-59M" secondAttribute="bottom" constant="41" id="Few-bc-NSM"/>
+                            <constraint firstItem="HHF-2D-59M" firstAttribute="leading" secondItem="U3K-FY-5ki" secondAttribute="leading" constant="16" id="HZt-vc-Zw7"/>
+                            <constraint firstItem="U3K-FY-5ki" firstAttribute="trailing" secondItem="b7t-GA-ic3" secondAttribute="trailing" constant="16" id="Ue0-q2-feg"/>
+                            <constraint firstItem="b7t-GA-ic3" firstAttribute="leading" secondItem="U3K-FY-5ki" secondAttribute="leading" constant="16" id="YkX-xx-WRG"/>
+                            <constraint firstItem="U3K-FY-5ki" firstAttribute="trailing" secondItem="amF-0L-JrC" secondAttribute="trailing" constant="16" id="mMY-QR-5Bu"/>
+                            <constraint firstItem="amF-0L-JrC" firstAttribute="top" secondItem="U3K-FY-5ki" secondAttribute="top" constant="65" id="v3b-qK-cAQ"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Forgot Password" id="3KP-W2-UYc">
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="done" id="DWf-wr-iPB">
+                            <color key="tintColor" name="mainColor"/>
+                            <connections>
+                                <segue destination="aKc-om-7yB" kind="unwind" unwindAction="unwindToLoginWithSegue:" id="QhG-5M-EZP"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="emailForgotTextField" destination="amF-0L-JrC" id="RTR-8O-Unk"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="FPS-XW-4DK" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="aKc-om-7yB" userLabel="Exit" sceneMemberID="exit"/>
+            </objects>
+            <point key="canvasLocation" x="1791.6030534351144" y="1745.7746478873241"/>
         </scene>
         <!--DeskBreak-->
         <scene sceneID="ksW-zL-gRF">
@@ -2091,7 +2176,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iJl-c4-L8a" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="M5n-NR-xvt" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="4608.3969465648852" y="1745.7746478873241"/>
+            <point key="canvasLocation" x="5535.1145038167933" y="1745.7746478873241"/>
         </scene>
         <!--Description View Controller-->
         <scene sceneID="X9g-Y4-DYB">
@@ -2303,7 +2388,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AYY-jJ-n7y" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <exit id="4fB-2V-cSd" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="6973.2824427480909" y="1645.7746478873241"/>
+            <point key="canvasLocation" x="7900" y="1645.7746478873241"/>
         </scene>
         <!--SignUpViewController-->
         <scene sceneID="Mzl-yv-uyD">
@@ -2419,7 +2504,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eTt-sQ-JKb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="9669.4656488549608" y="1645.7746478873241"/>
+            <point key="canvasLocation" x="10596.183206106869" y="1645.7746478873241"/>
         </scene>
         <!--SignUpViewController-->
         <scene sceneID="rfL-1X-xBe">
@@ -2510,7 +2595,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dHK-NY-dv9" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="12295.419847328243" y="1645.7746478873241"/>
+            <point key="canvasLocation" x="13222.137404580151" y="1645.7746478873241"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="5sf-eE-JzL">
@@ -2546,7 +2631,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="xa6-R3-1oh" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3681.679389312977" y="1745.7746478873241"/>
+            <point key="canvasLocation" x="4608.3969465648852" y="1745.7746478873241"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="dQR-LU-Ovv">
@@ -2564,7 +2649,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nik-y8-Dbb" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="6046.5648854961828" y="1645.7746478873241"/>
+            <point key="canvasLocation" x="6973.2824427480909" y="1645.7746478873241"/>
         </scene>
         <!--Member Details View Controller-->
         <scene sceneID="diR-zM-6w0">
@@ -3295,6 +3380,24 @@
             </objects>
             <point key="canvasLocation" x="-515" y="3394"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="hil-yT-ygQ">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Ihq-43-Ust" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="BK7-tm-qc9">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="108"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="w8D-Ow-fBO" kind="relationship" relationship="rootViewController" id="quo-26-4Hs"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xf6-Xu-ksg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="864.8854961832061" y="1745.7746478873241"/>
+        </scene>
     </scenes>
     <resources>
         <image name="DeskBreak 1" width="28" height="28"/>
@@ -3330,7 +3433,7 @@
             <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="git">
-            <color red="0.0" green="0.0" blue="0.0" alpha="0.50372516556291391" colorSpace="custom" customColorSpace="displayP3"/>
+            <color red="0.0" green="0.0" blue="0.0" alpha="0.50400000810623169" colorSpace="custom" customColorSpace="displayP3"/>
         </namedColor>
         <namedColor name="mainColor">
             <color red="0.3529999852180481" green="0.67799997329711914" blue="0.68999999761581421" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

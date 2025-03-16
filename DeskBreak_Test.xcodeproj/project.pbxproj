@@ -360,10 +360,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				COREML_CODEGEN_LANGUAGE = Swift;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 79CXZ54DW8;
+				DEVELOPMENT_TEAM = K75YG36RDS;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DeskBreak_Test/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DeskBreak;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSCameraUsageDescription = "DeskBreak wants to access your camera";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "DeskBreak wants to know your location for communities";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "DeskBreak wants to know your location for communities";
@@ -381,7 +382,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.example.DeskBreak-Test2";
+				PRODUCT_BUNDLE_IDENTIFIER = com.srmist.DeskBreak;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -397,10 +398,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				COREML_CODEGEN_LANGUAGE = Swift;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 79CXZ54DW8;
+				DEVELOPMENT_TEAM = K75YG36RDS;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DeskBreak_Test/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DeskBreak;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSCameraUsageDescription = "DeskBreak wants to access your camera";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "DeskBreak wants to know your location for communities";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "DeskBreak wants to know your location for communities";
@@ -418,7 +420,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.example.DeskBreak-Test2";
+				PRODUCT_BUNDLE_IDENTIFIER = com.srmist.DeskBreak;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
