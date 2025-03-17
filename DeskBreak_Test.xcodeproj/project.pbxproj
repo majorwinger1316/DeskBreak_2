@@ -54,6 +54,7 @@
 		2102CA982D659ACD0095384F /* Predictor */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Predictor; sourceTree = "<group>"; };
 		2102CA992D659AF90095384F /* MlModels */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = MlModels; sourceTree = "<group>"; };
 		21CE5CFC2D739B8500457252 /* Notifications */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Notifications; sourceTree = "<group>"; };
+		21FFB0DB2D870189005D65A6 /* coreData */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = coreData; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +103,7 @@
 		F92D610C2C9E23C800314A6B /* DeskBreak_Test */ = {
 			isa = PBXGroup;
 			children = (
+				21FFB0DB2D870189005D65A6 /* coreData */,
 				21CE5CFC2D739B8500457252 /* Notifications */,
 				2102CA992D659AF90095384F /* MlModels */,
 				2102CA982D659ACD0095384F /* Predictor */,
@@ -142,6 +144,7 @@
 				2102CA982D659ACD0095384F /* Predictor */,
 				2102CA992D659AF90095384F /* MlModels */,
 				21CE5CFC2D739B8500457252 /* Notifications */,
+				21FFB0DB2D870189005D65A6 /* coreData */,
 			);
 			name = DeskBreak_Test;
 			productName = DeskBreak_Test;

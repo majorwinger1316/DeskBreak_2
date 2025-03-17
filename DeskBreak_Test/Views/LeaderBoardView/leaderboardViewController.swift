@@ -10,9 +10,9 @@ class leaderboardViewController: UIViewController {
     @IBOutlet weak var positionLabel: UILabel!
     
     var peoples: [(username: String, userId: String, totalPoints: Int32)] = []
+    var displayedPeoples: [(username: String, userId: String, totalPoints: Int32)] = []
     var currentUser: User?
-
-    // Firestore reference
+    var itemsToShow = 10
     let db = Firestore.firestore()
 
     override func viewDidLoad() {
@@ -26,7 +26,6 @@ class leaderboardViewController: UIViewController {
         profileImage.clipsToBounds = true
         profileImage.contentMode = .scaleAspectFill
         
-        // Fetch current user and leaderboard data
         fetchCurrentUser()
         fetchLeaderboardData()
     }
@@ -67,40 +66,32 @@ class leaderboardViewController: UIViewController {
                 print("Error fetching leaderboard data: \(error.localizedDescription)")
                 return
             }
-
-            guard let documents = snapshot?.documents else {
-                print("No documents found in the snapshot.")
-                return
-            }
-
-            // Map the documents to an array of tuples with username, userId, and totalPoints
+            
+            guard let documents = snapshot?.documents else { return }
+            
             self?.peoples = documents.compactMap { document in
                 let data = document.data()
-
                 guard let username = data["username"] as? String,
-                      let userId = data["userId"] as? String, // Ensure userId is included
-                      let totalPoints = data["totalPoints"] as? Int32 else {
-                    return nil
-                }
-
-                // Create a tuple with the necessary data
+                      let userId = data["userId"] as? String,
+                      let totalPoints = data["totalPoints"] as? Int32 else { return nil }
                 return (username, userId, totalPoints)
-            }
-
-            // Debug: Log the fetched leaderboard data
-            print("Fetched leaderboard data: \(self?.peoples ?? [])")
-
-            // Sort leaderboard in descending order (highest points first)
-            self?.peoples.sort { $0.totalPoints > $1.totalPoints }
-
-            // Reload the table view on the main thread
+            }.sorted { $0.totalPoints > $1.totalPoints }
+            
             DispatchQueue.main.async {
-                self?.LeaderTableView.reloadData()
+                self?.updateDisplayedData()
+                self?.updatePositionLabel()
             }
-
-            // Update position label after leaderboard data is fetched
-            self?.updatePositionLabel()
         }
+    }
+    
+    func updateDisplayedData() {
+        displayedPeoples = Array(peoples.prefix(itemsToShow))
+        LeaderTableView.reloadData()
+    }
+    
+    @objc func loadMoreTapped() {
+        itemsToShow += 10
+        updateDisplayedData()
     }
 
     func updatePositionLabel() {
@@ -126,43 +117,42 @@ class leaderboardViewController: UIViewController {
 
 extension leaderboardViewController: UITableViewDataSource, UITableViewDelegate {
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 70
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return displayedPeoples.count + (displayedPeoples.count < peoples.count ? 1 : 0)
     }
     
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return peoples.count
-    }
-
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "leaderboardCell", for: indexPath) as? dailyLeaderboardTableViewCell else {
-            return UITableViewCell()
-        }
-
-        // Fetch username and totalPoints from the tuple
-        let person = peoples[indexPath.row]
-        
-        cell.descriptionLabel.text = "\(indexPath.row + 1)"
-        cell.nameLabel.text = person.username
-        cell.pointsLabel.text = "\(person.totalPoints)"
-
-        // Highlight the current user
-        if person.userId == currentUser?.userId {
-            cell.backgroundColor = UIColor.card
-            cell.nameLabel.textColor = UIColor.main
-            cell.descriptionLabel.textColor = UIColor.main
-            cell.pointsLabel.textColor = UIColor.main
-            cell.layer.cornerRadius = 10
-            cell.layer.masksToBounds = true
+        if indexPath.row < displayedPeoples.count {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "leaderboardCell", for: indexPath) as? dailyLeaderboardTableViewCell else {
+                return UITableViewCell()
+            }
+            let person = displayedPeoples[indexPath.row]
+            cell.descriptionLabel.text = "\(indexPath.row + 1)"
+            cell.nameLabel.text = person.username
+            cell.pointsLabel.text = "\(person.totalPoints)"
+            
+            if person.userId == currentUser?.userId {
+                cell.backgroundColor = UIColor.card
+                cell.nameLabel.textColor = UIColor.main
+                cell.descriptionLabel.textColor = UIColor.main
+                cell.pointsLabel.textColor = UIColor.main
+                cell.layer.cornerRadius = 10
+                cell.layer.masksToBounds = true
+            } else {
+                cell.backgroundColor = .bg
+            }
+            return cell
         } else {
-            cell.backgroundColor = .bg
+            let cell = UITableViewCell()
+            cell.textLabel?.text = "Load More"
+            cell.textLabel?.textAlignment = .center
+            return cell
         }
-
-        cell.isUserInteractionEnabled = false
-        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath.row == displayedPeoples.count {
+            loadMoreTapped()
+        }
     }
 }
