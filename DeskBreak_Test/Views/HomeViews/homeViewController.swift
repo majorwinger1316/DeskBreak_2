@@ -52,13 +52,75 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
         setupGradientLayer()
         fetchDailyTargetandMinutesFromFirebase()
         fetchStreakFromFirebase()
-        setupNavigationBarWithProfileImage(image: UIImage(named: "profile"))
+//        setupNavigationBarWithProfileImage(image: UIImage(named: "profile"))
         fetchNameFromFirebase()
         animateFlameBounce()
         scheduleStretchNotifications()
+        
+        fetchProfileImage()
+        
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(homeCardTapped))
         homeCardView.addGestureRecognizer(tapGesture)
         homeCardView.isUserInteractionEnabled = true
+    }
+    
+    private func fetchProfileImage() {
+        if let cachedImage = ProfileImageCache.shared.profileImage {
+            // Use the cached image
+            DispatchQueue.main.async {
+                self.setupNavigationBarWithProfileImage(image: cachedImage)
+            }
+            return
+        }
+        else {
+            self.setupNavigationBarWithProfileImage(image: UIImage(named: "defaultProfileImage"))
+        }
+
+        guard let userId = UserDefaults.standard.string(forKey: "userId") else {
+            print("Error: userId not found in UserDefaults.")
+            return
+        }
+
+        let db = Firestore.firestore()
+        db.collection("users").document(userId).getDocument { (document, error) in
+            if let error = error {
+                print("Error fetching profile picture URL: \(error.localizedDescription)")
+                return
+            }
+
+            if let document = document, document.exists,
+               let profilePictureURL = document.data()?["profilePictureURL"] as? String,
+               let url = URL(string: profilePictureURL) {
+                self.downloadImage(from: url)
+            } else {
+                print("Profile picture URL not found, using default image.")
+                DispatchQueue.main.async {
+                    let defaultImage = UIImage(named: "defaultProfileImage")
+                    ProfileImageCache.shared.profileImage = defaultImage
+                    self.setupNavigationBarWithProfileImage(image: defaultImage)
+                }
+            }
+        }
+    }
+
+    private func downloadImage(from url: URL) {
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Error downloading profile image: \(error.localizedDescription)")
+                return
+            }
+
+            if let data = data, let image = UIImage(data: data) {
+                DispatchQueue.main.async {
+                    // Store in memory cache
+                    ProfileImageCache.shared.profileImage = image
+                    
+                    // Update UI
+                    self.setupNavigationBarWithProfileImage(image: image)
+                }
+            }
+        }
+        task.resume()
     }
     
     @objc private func homeCardTapped() {

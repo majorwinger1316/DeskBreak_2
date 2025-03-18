@@ -15,6 +15,15 @@ struct UserRegistrationData {
     var contactNumber: String = ""
     var password: String = ""
     var dailyTarget: Int16 = 0
+    var profilePictureURL: String?
+    var profilePicture: UIImage? 
+}
+
+class ProfileImageCache {
+    static let shared = ProfileImageCache()
+    private init() {} // Prevents external initialization
+
+    var profileImage: UIImage?
 }
 
 class Shift {

@@ -28,22 +28,43 @@ class signUp2ViewController: UIViewController {
     }
     
     @IBAction func continueButton(_ sender: UIButton) {
+        if registrationData == nil {
+            registrationData = UserRegistrationData()
+        }
+
         guard let email = userEmailText.text, !email.isEmpty,
               let contactNumber = userContactText.text, !contactNumber.isEmpty,
               let password = userPasswordText.text, !password.isEmpty,
-              let confirmPassword = userConfirmPasswordText.text, !confirmPassword.isEmpty,
-              password == confirmPassword else {
-            showAlert(message: "Please fill in all fields and make sure passwords match.")
+              let confirmPassword = userConfirmPasswordText.text, !confirmPassword.isEmpty else {
+            showAlert(message: "Please fill in all fields.")
             return
         }
+
+        if !isValidEmail(email) {
+            showAlert(message: "Please enter a valid email address.")
+            return
+        }
+
+        if password != confirmPassword {
+            showAlert(message: "Passwords do not match.")
+            return
+        }
+
         registrationData.email = email
         registrationData.contactNumber = contactNumber
         registrationData.password = password
 
-        if let nextVC = storyboard?.instantiateViewController(withIdentifier: "SignUpViewController3") as? signUp3ViewController {
+        if let nextVC = storyboard?.instantiateViewController(withIdentifier: "SignUpViewController1") as? signUp1ViewController {
             nextVC.registrationData = registrationData
             navigationController?.pushViewController(nextVC, animated: true)
         }
+    }
+
+    // Function to validate email format
+    private func isValidEmail(_ email: String) -> Bool {
+        let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}"
+        let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+        return emailPredicate.evaluate(with: email)
     }
 
     private func showAlert(message: String) {

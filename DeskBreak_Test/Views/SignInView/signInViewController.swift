@@ -8,6 +8,8 @@
 import UIKit
 import FirebaseAuth
 import FirebaseFirestore
+import Security
+import FirebaseStorage
 
 class signInViewController: UIViewController {
     
@@ -31,6 +33,9 @@ class signInViewController: UIViewController {
         let contentView = UIView()
         contentView.addSubview(imageIcon)
         
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
+        
         contentView.frame = CGRect(x: 0, y: 0, width: Int(UIImage(systemName: "eye.slash.circle.fill")!.size.width), height: Int(UIImage(systemName: "eye.slash.circle.fill")!.size.height))
         imageIcon.frame = CGRect(x: -10, y: 0, width: Int(UIImage(systemName: "eye.slash.circle.fill")!.size.width), height: Int(UIImage(systemName: "eye.slash.circle.fill")!.size.height))
         
@@ -40,6 +45,10 @@ class signInViewController: UIViewController {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(showPassword(tapGestureRecognizer:)))
         imageIcon.isUserInteractionEnabled = true
         imageIcon.addGestureRecognizer(tapGestureRecognizer)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true) // Hide keyboard when tapping outside
     }
     
     @objc func showPassword(tapGestureRecognizer: UITapGestureRecognizer) {
@@ -97,27 +106,24 @@ class signInViewController: UIViewController {
                 self.showAlert(message: "Error retrieving user information.")
                 return
             }
-
-            fetchUserData(userId: userId, viewController: self)
+            
+            if let userId = authResult?.user.uid {
+                self.saveToKeychain(email: email, password: password)
+                fetchUserData(userId: userId, viewController: self)
+            }
         }
     }
     
     @IBAction func unwindToLogin(segue: UIStoryboardSegue){
     }
     
-    @IBAction func forgotPasswordButtonPressed(_ sender: UIButton) {
-        guard let email = emailTextField.text, !email.isEmpty else {
-            showAlert(message: "Please enter your email to reset the password.")
-            return
-        }
-        
-        Auth.auth().sendPasswordReset(withEmail: email) { error in
-            if let error = error {
-                self.showAlert(message: "Error: \(error.localizedDescription)")
-            } else {
-                self.showAlert(message: "A password reset link has been sent to your email.")
-            }
-        }
+    func saveToKeychain(email: String, password: String) {
+        let credentials: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrAccount as String: email,
+            kSecValueData as String: password.data(using: .utf8)!
+        ]
+        SecItemAdd(credentials as CFDictionary, nil)
     }
     
     public func animateToTabBarController() {
@@ -136,10 +142,34 @@ class signInViewController: UIViewController {
     
     @IBAction func signUpViewButtonPressed(_ sender: UIButton) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        if let signUpVC = storyboard.instantiateViewController(withIdentifier: "SignUpViewController1") as? signUp1ViewController {
+        if let signUpVC = storyboard.instantiateViewController(withIdentifier: "SignUpViewController2") as? signUp2ViewController {
             let navigationController = UINavigationController(rootViewController: signUpVC)
             navigationController.modalPresentationStyle = .fullScreen
             present(navigationController, animated: true, completion: nil)
+        }
+    }
+    
+    func fetchAndCacheProfileImage(userId: String, completion: @escaping (Bool) -> Void) {
+        let storageRef = Storage.storage().reference().child("profile_images/\(userId).jpg")
+        
+        storageRef.getData(maxSize: 5 * 1024 * 1024) { data, error in
+            if let error = error {
+                print("Error downloading image: \(error.localizedDescription)")
+                completion(false)
+                return
+            }
+            
+            if let imageData = data {
+                let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent("profile_image.jpg")
+                do {
+                    try imageData.write(to: fileURL)
+                    UserDefaults.standard.set(fileURL.path, forKey: "cachedProfileImagePath")
+                    completion(true)
+                } catch {
+                    print("Error saving image to cache: \(error.localizedDescription)")
+                    completion(false)
+                }
+            }
         }
     }
     

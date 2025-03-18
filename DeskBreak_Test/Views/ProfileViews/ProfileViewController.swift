@@ -33,6 +33,13 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
 
         setupProfileImageView()
         setupUsernameLabel()
+        
+        if let profileImage = ProfileImageCache.shared.profileImage {
+            self.profileImageView.image = profileImage
+        } else {
+            // Fetch again if not in cache (only needed in rare cases)
+            self.profileImageView.image = UIImage(named: "defaultProfileImage")
+        }
 
         // Load Profile Image
         fetchUserProfileFromFirebase()
@@ -91,11 +98,6 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
                     // Fetch Daily Target
                     let dailyTarget = document.data()?["dailyTarget"] as? Int16 ?? 1
                     self.selectedTime = "\(dailyTarget) min"
-                    
-                    // Fetch Profile Picture URL
-                    if let profilePictureURLString = document.data()?["profilePicture"] as? String {
-                        self.loadProfileImage(from: profilePictureURLString)
-                    }
 
                     DispatchQueue.main.async {
                         self.profileTableView.reloadData()
@@ -124,10 +126,11 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
             return
         }
         URLSession.shared.dataTask(with: url) { data, _, error in
-            if let data = data, error == nil, let image = UIImage(data: data) {
-                DispatchQueue.main.async { self.profileImageView.image = UIImage(named: "profile") }
+            if let profileImage = ProfileImageCache.shared.profileImage {
+                self.profileImageView.image = profileImage
             } else {
-                DispatchQueue.main.async { self.profileImageView.image = UIImage(named: "profile") }
+                // Fetch again if not in cache (only needed in rare cases)
+                self.profileImageView.image = UIImage(named: "defaultProfileImage")
             }
         }.resume()
     }

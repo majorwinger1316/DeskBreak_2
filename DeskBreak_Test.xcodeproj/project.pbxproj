@@ -9,7 +9,12 @@
 /* Begin PBXBuildFile section */
 		21373BA92D5140D300E0811A /* HighV_Tutorial.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 21373BA82D5140D300E0811A /* HighV_Tutorial.mp4 */; };
 		214168342CD90070000FD404 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 214168322CD90070000FD404 /* Main.storyboard */; };
+		2144B4062D88DA2F00F7C807 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 2144B4052D88DA2F00F7C807 /* SDWebImage */; };
+		2144B4082D88DA2F00F7C807 /* SDWebImageMapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 2144B4072D88DA2F00F7C807 /* SDWebImageMapKit */; };
 		216007C12CEBC1DE00545888 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 216007C02CEBC1DE00545888 /* Assets.xcassets */; };
+		218E23352D887D2C005A3875 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 218E23342D887D2C005A3875 /* GoogleSignIn */; };
+		218E23372D887D2C005A3875 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 218E23362D887D2C005A3875 /* GoogleSignInSwift */; };
+		218E233B2D887DA0005A3875 /* GoogleService-Info 2.plist in Resources */ = {isa = PBXBuildFile; fileRef = 218E233A2D887DA0005A3875 /* GoogleService-Info 2.plist */; };
 		21B716512CFD10FF00F433DE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 21B716502CFD10FF00F433DE /* GoogleService-Info.plist */; };
 		21B716542CFD123200F433DE /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 21B716532CFD123200F433DE /* FirebaseAnalytics */; };
 		21B716562CFD123200F433DE /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 21B716552CFD123200F433DE /* FirebaseAnalyticsWithoutAdIdSupport */; };
@@ -38,6 +43,7 @@
 		21373BA82D5140D300E0811A /* HighV_Tutorial.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = HighV_Tutorial.mp4; sourceTree = "<group>"; };
 		214168332CD90070000FD404 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		216007C02CEBC1DE00545888 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		218E233A2D887DA0005A3875 /* GoogleService-Info 2.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info 2.plist"; sourceTree = "<group>"; };
 		21B716502CFD10FF00F433DE /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		21B716722D08D20A00F433DE /* progressManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = progressManager.swift; sourceTree = "<group>"; };
 		21B716742D08D71800F433DE /* FireBaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireBaseManager.swift; sourceTree = "<group>"; };
@@ -67,10 +73,14 @@
 				21BE769C2D188A6F00A9B13C /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				21B716542CFD123200F433DE /* FirebaseAnalytics in Frameworks */,
 				21BE76982D188A6F00A9B13C /* FirebaseAnalytics in Frameworks */,
+				2144B4062D88DA2F00F7C807 /* SDWebImage in Frameworks */,
+				2144B4082D88DA2F00F7C807 /* SDWebImageMapKit in Frameworks */,
 				21B7165E2CFE35EB00F433DE /* FirebaseAuth in Frameworks */,
 				21BE769A2D188A6F00A9B13C /* FirebaseAnalyticsOnDeviceConversion in Frameworks */,
 				21B716602CFE35EB00F433DE /* FirebaseCore in Frameworks */,
 				21BE76A62D188A6F00A9B13C /* FirebaseStorage in Frameworks */,
+				218E23372D887D2C005A3875 /* GoogleSignInSwift in Frameworks */,
+				218E23352D887D2C005A3875 /* GoogleSignIn in Frameworks */,
 				21BE769E2D188A6F00A9B13C /* FirebaseAuth in Frameworks */,
 				21B716662CFF5B3500F433DE /* FirebaseStorage in Frameworks */,
 				21DA7C172D30F790005D7DBA /* FirebaseFunctions in Frameworks */,
@@ -113,6 +123,7 @@
 				216007C02CEBC1DE00545888 /* Assets.xcassets */,
 				F92D610D2C9E23C800314A6B /* AppDelegate.swift */,
 				F92D610F2C9E23C800314A6B /* SceneDelegate.swift */,
+				218E233A2D887DA0005A3875 /* GoogleService-Info 2.plist */,
 				21B716502CFD10FF00F433DE /* GoogleService-Info.plist */,
 				F92D61182C9E23C900314A6B /* LaunchScreen.storyboard */,
 				F92D611B2C9E23C900314A6B /* Info.plist */,
@@ -177,6 +188,8 @@
 			mainGroup = F92D61012C9E23C800314A6B;
 			packageReferences = (
 				21B716522CFD123200F433DE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				218E23332D887D2C005A3875 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
+				2144B4042D88DA2F00F7C807 /* XCRemoteSwiftPackageReference "SDWebImage" */,
 			);
 			productRefGroup = F92D610B2C9E23C800314A6B /* Products */;
 			projectDirPath = "";
@@ -193,6 +206,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				214168342CD90070000FD404 /* Main.storyboard in Resources */,
+				218E233B2D887DA0005A3875 /* GoogleService-Info 2.plist in Resources */,
 				21373BA92D5140D300E0811A /* HighV_Tutorial.mp4 in Resources */,
 				21B716512CFD10FF00F433DE /* GoogleService-Info.plist in Resources */,
 				216007C12CEBC1DE00545888 /* Assets.xcassets in Resources */,
@@ -455,6 +469,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		2144B4042D88DA2F00F7C807 /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImage.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.21.0;
+			};
+		};
+		218E23332D887D2C005A3875 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
 		21B716522CFD123200F433DE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -466,6 +496,26 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2144B4052D88DA2F00F7C807 /* SDWebImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2144B4042D88DA2F00F7C807 /* XCRemoteSwiftPackageReference "SDWebImage" */;
+			productName = SDWebImage;
+		};
+		2144B4072D88DA2F00F7C807 /* SDWebImageMapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 2144B4042D88DA2F00F7C807 /* XCRemoteSwiftPackageReference "SDWebImage" */;
+			productName = SDWebImageMapKit;
+		};
+		218E23342D887D2C005A3875 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 218E23332D887D2C005A3875 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		218E23362D887D2C005A3875 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 218E23332D887D2C005A3875 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
 		21B716532CFD123200F433DE /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 21B716522CFD123200F433DE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

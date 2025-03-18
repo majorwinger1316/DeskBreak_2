@@ -5,16 +5,19 @@
 //  Created by admin@33 on 02/12/24.
 //
 
-import UIKit
 import FirebaseAuth
+import UIKit
+import FirebaseStorage
 import FirebaseFirestore
 import FirebaseStorage
 
 class signUp3ViewController: UIViewController {
     
     public var registrationData: UserRegistrationData!
-    @IBOutlet weak var dailyTargetButton: UIButton!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var fiveMinButton: UIButton!
+    @IBOutlet weak var twelveMinButton: UIButton!
+    @IBOutlet weak var twentyFiveMinButton: UIButton!
     
     var pickerView: UIPickerView!
     var pickerData: [Int] = Array(1...30)
@@ -24,40 +27,106 @@ class signUp3ViewController: UIViewController {
         activityIndicator.isHidden = true
     }
     
-    @IBAction func dailyTargetButtonTapped(_ sender: UIButton) {
-        presentPickerView()
+    private func setupButtons() {
+        let buttons = [fiveMinButton, twelveMinButton, twentyFiveMinButton]
+        for button in buttons {
+            button?.layer.cornerRadius = 10
+            button?.layer.borderWidth = 2
+            button?.setTitleColor(.black, for: .normal)
+        }
+    }
+    
+    @IBAction func dailyGoalSelected(_ sender: UIButton) {
+        let buttons = [fiveMinButton, twelveMinButton, twentyFiveMinButton]
+        for button in buttons {
+            button?.backgroundColor = .black.withAlphaComponent(0.8)
+            button?.layer.borderColor = UIColor.main.cgColor
+        }
+        
+        sender.backgroundColor = UIColor.systemBlue
+        sender.layer.borderColor = UIColor.systemBlue.cgColor
+        sender.setTitleColor(.white, for: .normal)
+        
+        if sender == fiveMinButton {
+            registrationData.dailyTarget = 5
+        } else if sender == twelveMinButton {
+            registrationData.dailyTarget = 12
+        } else if sender == twentyFiveMinButton {
+            registrationData.dailyTarget = 25
+        }
     }
     
     @IBAction func RegisterButton(_ sender: UIButton) {
-        guard let dailyTargetText = dailyTargetButton.title(for: .normal),
-              let dailyTarget = Int16(dailyTargetText) else {
-            showAlert(message: "Please select a daily target.")
+        guard registrationData.dailyTarget > 0 else {
+            showAlert(message: "Please select a daily goal.")
             return
         }
 
-        registrationData.dailyTarget = dailyTarget
         showLoadingIndicator()
-
         Auth.auth().createUser(withEmail: registrationData.email, password: registrationData.password) { authResult, error in
-            self.hideLoadingIndicator()
-
             if let error = error {
+                self.hideLoadingIndicator()
                 self.showAlert(message: "Registration failed: \(error.localizedDescription)")
                 return
             }
 
-            // Get the Firebase Auth user ID
             if let user = authResult?.user {
-                self.saveUserData(userId: user.uid, profileImageUrl: "")  // Pass UID to saveUserData
+                if let profileImage = self.registrationData.profilePicture {
+                    self.uploadProfilePicture(profileImage, userId: user.uid) { [weak self] imageURL in
+                        guard let self = self else { return }
+                        if let imageURL = imageURL {
+                            self.registrationData.profilePictureURL = imageURL
+                            self.saveUserData(userId: user.uid, profileImageUrl: imageURL)
+                        } else {
+                            self.hideLoadingIndicator()
+                            self.showAlert(message: "Failed to upload profile picture.")
+                        }
+                    }
+                } else {
+                    self.saveUserData(userId: user.uid, profileImageUrl: "")
+                }
             }
         }
     }
-    
+
+    private func uploadProfilePicture(_ image: UIImage, userId: String, completion: @escaping (String?) -> Void) {
+        // Convert image to JPEG data
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+            print("Failed to convert image to data")
+            completion(nil)
+            return
+        }
+
+        // Reference to Firebase Storage with user_id
+        let storageRef = Storage.storage().reference().child("profile_pictures/\(userId).jpg")
+
+        // Upload the image
+        storageRef.putData(imageData, metadata: nil) { metadata, error in
+            if let error = error {
+                print("Failed to upload image: \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+
+            // Get download URL
+            storageRef.downloadURL { url, error in
+                if let error = error {
+                    print("Failed to get image URL: \(error.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+
+                // Return the image URL
+                completion(url?.absoluteString)
+            }
+        }
+    }
+
     private func saveUserData(userId: String, profileImageUrl: String) {
         let db = Firestore.firestore()
         let userRef = db.collection("users").document(userId)
 
-        var userData: [String: Any] = [
+        let userData: [String: Any] = [
             "userId": userId,
             "username": registrationData.username,
             "email": registrationData.email,
@@ -66,15 +135,15 @@ class signUp3ViewController: UIViewController {
             "totalPoints": 0,
             "dailyMinutes": 0,
             "dailyPoints": 0,
-            "dateOfBirth": registrationData.dateOfBirth,
+            "dateOfBirth": registrationData.dateOfBirth ?? Date(),
             "contactNumber": registrationData.contactNumber,
             "createdAt": Timestamp(date: Date()),
             "lastActivityDate": Timestamp(date: Date()),
-            "profilePictureURL": ""
+            "profilePictureURL": profileImageUrl
         ]
-        
-        // Save user data to Firestore
+
         userRef.setData(userData) { error in
+            self.hideLoadingIndicator()
             if let error = error {
                 self.showAlert(message: "Failed to save user data: \(error.localizedDescription)")
             } else {
@@ -126,62 +195,6 @@ class signUp3ViewController: UIViewController {
             return true
         }
         return false
-    }
-}
-
-extension signUp3ViewController: UIPickerViewDataSource, UIPickerViewDelegate {
-    
-    func presentPickerView() {
-        let pickerViewController = UIViewController()
-        pickerViewController.modalPresentationStyle = .pageSheet
-        pickerViewController.sheetPresentationController?.detents = [.medium()]
-        pickerView = UIPickerView()
-        pickerView.delegate = self
-        pickerView.dataSource = self
-        pickerView.translatesAutoresizingMaskIntoConstraints = false
-
-        pickerView.backgroundColor = UIColor.card
-
-        let toolbar = UIToolbar()
-        toolbar.sizeToFit()
-        let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(donePickerView))
-        toolbar.setItems([doneButton], animated: true)
-
-        pickerViewController.view.addSubview(toolbar)
-        toolbar.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            toolbar.topAnchor.constraint(equalTo: pickerViewController.view.topAnchor),
-            toolbar.leadingAnchor.constraint(equalTo: pickerViewController.view.leadingAnchor),
-            toolbar.trailingAnchor.constraint(equalTo: pickerViewController.view.trailingAnchor)
-        ])
-        
-        pickerViewController.view.addSubview(pickerView)
-        NSLayoutConstraint.activate([
-            pickerView.centerXAnchor.constraint(equalTo: pickerViewController.view.centerXAnchor),
-            pickerView.topAnchor.constraint(equalTo: toolbar.bottomAnchor),
-            pickerView.widthAnchor.constraint(equalTo: pickerViewController.view.widthAnchor),
-            pickerView.heightAnchor.constraint(equalToConstant: 300)
-        ])
-        
-        present(pickerViewController, animated: true, completion: nil)
-    }
-    
-    @objc func donePickerView() {
-        let selectedValue = pickerData[pickerView.selectedRow(inComponent: 0)]
-        dailyTargetButton.setTitle("\(selectedValue)", for: .normal)
-        dismiss(animated: true, completion: nil)
-    }
-
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return pickerData.count
-    }
-
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return "\(pickerData[row]) minutes"
     }
 }
 

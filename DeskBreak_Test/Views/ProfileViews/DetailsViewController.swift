@@ -43,10 +43,16 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
         if detailTableView == nil {
             print("detailTableView outlet is nil.")
         }
-        profilePicImage.image = UIImage(named: "profile")
+        if let profileImage = ProfileImageCache.shared.profileImage {
+            self.profilePicImage.image = profileImage
+        } else {
+            // Fetch again if not in cache (only needed in rare cases)
+            self.profilePicImage.image = UIImage(named: "defaultProfileImage")
+        }
         detailTableView.reloadData()
         setupUI()
         fetchUserData()
+        setupProfileImageView()
     }
     
     private func setupShiftPicker() {
@@ -69,6 +75,11 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
         detailTableView.delegate = self
         detailTableView.register(DetailCell.self, forCellReuseIdentifier: "DetailCell")
         detailTableView.register(UITableViewCell.self, forCellReuseIdentifier: "ChangePasswordCell")
+    }
+    
+    private func setupProfileImageView() {
+        profilePicImage.layer.cornerRadius = profilePicImage.frame.width / 2
+        profilePicImage.clipsToBounds = true
     }
     
     private func fetchUserData() {
@@ -148,25 +159,6 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
             pickerVC.transitioningDelegate = self
             present(pickerVC, animated: true)
         }
-    }
-
-    private func downloadProfileImage(from url: URL) {
-        URLSession.shared.dataTask(with: url) { data, _, error in
-            if let error = error {
-                print("Error downloading profile picture: \(error.localizedDescription)")
-                return
-            }
-
-            if let data = data, let image = UIImage(data: data) {
-                DispatchQueue.main.async {
-                    self.profilePicImage.image = image
-                }
-            } else {
-                DispatchQueue.main.async {
-                    self.profilePicImage.image = UIImage(named: "defaultProfileImage")
-                }
-            }
-        }.resume()
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {

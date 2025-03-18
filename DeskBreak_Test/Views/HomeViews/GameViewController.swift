@@ -1056,6 +1056,7 @@ class GameViewController: UIViewController, AVCaptureVideoDataOutputSampleBuffer
         setupUI()
         showDurationStepper()
         setupCircularCountdownLayer()
+        UIApplication.shared.isIdleTimerDisabled = true
     }
     
     // MARK: - CHANGED: Smooth countdown with CADisplayLink

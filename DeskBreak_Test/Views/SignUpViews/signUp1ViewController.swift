@@ -30,9 +30,16 @@ class signUp1ViewController: UIViewController, UIImagePickerControllerDelegate, 
     }()
     
     override func viewDidLoad() {
-        super.viewDidLoad()
-        setupDatePicker()
-        setupDoneButton(for: userNameText)
+         super.viewDidLoad()
+         setupDatePicker()
+         setupDoneButton(for: userNameText)
+         setupProfileImageView()
+    }
+    
+    private func setupProfileImageView() {
+        userProfileImageView.layer.cornerRadius = userProfileImageView.frame.width / 2
+        userProfileImageView.clipsToBounds = true
+        userProfileImageView.contentMode = .scaleAspectFill
     }
     
     private func setupDatePicker() {
@@ -63,19 +70,72 @@ class signUp1ViewController: UIViewController, UIImagePickerControllerDelegate, 
             return
         }
 
+        // Convert dateOfBirth to Date format
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dd MM yyyy"
-        if let dateOfBirth = dateFormatter.date(from: dateOfBirthString) {
-            registrationData.username = username
-            registrationData.dateOfBirth = dateOfBirth
-            if let nextVC = storyboard?.instantiateViewController(withIdentifier: "SignUpViewController2") as? signUp2ViewController {
-                nextVC.registrationData = self.registrationData
-                self.navigationController?.pushViewController(nextVC, animated: true)
-            }
-        } else {
+        dateFormatter.dateFormat = "dd MMMM yyyy"
+        guard let dateOfBirth = dateFormatter.date(from: dateOfBirthString) else {
             showAlert(message: "Invalid date format.")
+            return
+        }
+
+        // Assign user details
+        registrationData.username = username
+        registrationData.dateOfBirth = dateOfBirth
+
+        // Check if a profile picture is selected
+        if let profileImage = userProfileImageView.image {
+            registrationData.profilePicture = profileImage // Pass the UIImage object
+        } else {
+            showAlert(message: "Please select a profile picture.")
+            return
+        }
+
+        // Proceed to the next screen
+        if let nextVC = self.storyboard?.instantiateViewController(withIdentifier: "SignUpViewController3") as? signUp3ViewController {
+            nextVC.registrationData = self.registrationData
+            self.navigationController?.pushViewController(nextVC, animated: true)
         }
     }
+    
+    func uploadProfilePicture(_ image: UIImage, completion: @escaping (String?) -> Void) {
+        guard let user = Auth.auth().currentUser else {
+            print("User not authenticated")
+            completion(nil)
+            return
+        }
+
+        // Convert image to JPEG data
+        guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+            print("Failed to convert image to data")
+            completion(nil)
+            return
+        }
+
+        // Reference to Firebase Storage
+        let storageRef = Storage.storage().reference().child("profile_pictures/\(user.uid).jpg")
+
+        // Upload the image
+        storageRef.putData(imageData, metadata: nil) { metadata, error in
+            if let error = error {
+                print("Failed to upload image: \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+
+            // Get download URL
+            storageRef.downloadURL { url, error in
+                if let error = error {
+                    print("Failed to get image URL: \(error.localizedDescription)")
+                    completion(nil)
+                    return
+                }
+
+                // Return the image URL
+                completion(url?.absoluteString)
+            }
+        }
+    }
+
     
     @IBAction func selectProfilePicButtonPressed(_ sender: Any){
         let imagePickerController = UIImagePickerController()
@@ -85,33 +145,24 @@ class signUp1ViewController: UIViewController, UIImagePickerControllerDelegate, 
         present(imagePickerController, animated: true, completion: nil)
     }
 
-//    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-//        if let selectedImage = info[.editedImage] as? UIImage {
-//            userProfileImageView.image = selectedImage
-//            registrationData.profilePicture = selectedImage
-//        } else if let originalImage = info[.originalImage] as? UIImage {
-//            userProfileImageView.image = originalImage
-//            registrationData.profilePicture = originalImage
-//        }
-//
-//        if userProfileImageView.frame.width == userProfileImageView.frame.height {
-//            userProfileImageView.layer.cornerRadius = userProfileImageView.frame.height / 2
-//        } else {
-//            userProfileImageView.layer.cornerRadius = 0
-//        }
-//        userProfileImageView.clipsToBounds = true
-//        picker.dismiss(animated: true, completion: nil)
-//    }
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        if let selectedImage = info[.editedImage] as? UIImage {
+            let circularImage = selectedImage.circularCropped()
+            userProfileImageView.image = circularImage
+            registrationData.profilePicture = circularImage
+        }
+        picker.dismiss(animated: true, completion: nil)
+    }
 
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
 
-     private func showAlert(message: String) {
-         let alert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
-         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-         present(alert, animated: true, completion: nil)
-     }
+    private func showAlert(message: String) {
+        let alert = UIAlertController(title: "Alert", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
     
      private func setupDoneButton(for textField: UITextField) {
         let toolbar = UIToolbar()
@@ -128,3 +179,20 @@ class signUp1ViewController: UIViewController, UIImagePickerControllerDelegate, 
      }
 
  }
+
+extension UIImage {
+    func circularCropped() -> UIImage {
+        let minDimension = min(size.width, size.height)
+        let squareSize = CGSize(width: minDimension, height: minDimension)
+        let squareRect = CGRect(origin: CGPoint(x: (size.width - minDimension) / 2, y: (size.height - minDimension) / 2), size: squareSize)
+
+        UIGraphicsBeginImageContextWithOptions(squareSize, false, scale)
+        let path = UIBezierPath(ovalIn: CGRect(origin: .zero, size: squareSize))
+        path.addClip()
+        draw(in: CGRect(origin: CGPoint(x: -squareRect.origin.x, y: -squareRect.origin.y), size: size))
+        let circularImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return circularImage ?? self
+    }
+}

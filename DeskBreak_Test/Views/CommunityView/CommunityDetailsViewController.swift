@@ -9,6 +9,7 @@ import UIKit
 import FirebaseFirestore
 import FirebaseFunctions
 import FirebaseAuth
+import FirebaseStorage
 
 class CommunityDetailsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
     
@@ -20,8 +21,9 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
     @IBOutlet weak var popUpButton: UIButton!
     
     var selectedUserId : Array<String> = []
-    var filteredMembers: [(userId: String, username: String, totalPoints: Int32)] = []
     var members: [(userId: String, username: String, totalPoints: Int32)] = []
+    var filteredMembers: [(userId: String, username: String, totalPoints: Int32)] = []
+    var profilePictures: [String: UIImage] = [:] // Dictionary to store profile pictures
     
     enum SortType {
         case pointsDescending, pointsAscending, nameAscending, nameDescending
@@ -36,8 +38,7 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
         tableView.dataSource = self
         searchBar.delegate = self
         
-        // Register the cell with the .value1 style
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "memberCell")
+        tableView.register(MemberTableViewCell.self, forCellReuseIdentifier: MemberTableViewCell.identifier)
         
         tableView.backgroundColor = .clear
         tableView.separatorColor = .lightGray
@@ -154,19 +155,14 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
                         print("Error updating member count: \(error.localizedDescription)")
                         return
                     }
-
-                    // 3. Send a notification to other community members (optional)
-                    self.sendNotificationToUsers(userIds: community.members, message: "A member has left the community.")
                     
                     // 4. Provide feedback to the user that they left the community
                     self.showAlert(message: "You have successfully left the community.")
 
-                    // 5. Call fetchUserCommunities() in CommunityViewController
                     if let navController = self.navigationController {
-                        // Navigate back to the previous view controller
-                        navController.popViewController(animated: true)
 
-                        // Ensure fetchUserCommunities is called in the previous view controller (CommunityViewController)
+                        navController.popViewController(animated: true)
+                        
                         if let communityVC = navController.viewControllers.first(where: { $0 is communityViewController }) as? communityViewController {
                             communityVC.fetchUserCommunities()
                         }
@@ -175,38 +171,8 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
             }
     }
     
-    func sendNotificationToUsers(userIds: [String], message: String) {
-        let functions = Functions.functions()
-
-        // Prepare the payload
-        let data = [
-            "userIds": userIds,
-            "message": message
-        ] as [String : Any]
-        
-        functions.httpsCallable("sendNotificationFunction").call(data) { result, error in
-            if let error = error {
-                print("Error sending notification: \(error.localizedDescription)")
-            } else if let result = result {
-                print("Notification sent: \(result)")
-            }
-        }
-    }
-    
     @IBAction func sendNotificationButton(_ sender: UIBarButtonItem) {
-        guard let community = community else { return }
 
-        // Fetch members' userIds and usernames
-        fetchMembers1 { (usernames: [String]) in  // Explicitly define the type here
-            // Construct the notification message
-            let message = "Important Update from \(community.communityName). Stay competitive and check out the latest updates!"
-
-            // Call your notification sending function with the fetched usernames
-            self.sendNotificationToUsers(userIds: community.members, message: message)
-
-            // Show alert after sending notifications
-            self.showAlert(message: "Notifications sent successfully to all members.")
-        }
     }
     
     @IBAction func shareButtonPressed(_ sender: UIBarButtonItem) {
@@ -240,35 +206,6 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
         
         present(alertController, animated: true, completion: nil)
     }
-
-    func fetchMembers1(completion: @escaping ([String]) -> Void) {
-        guard let community = community else { return }
-
-        let db = Firestore.firestore()
-
-        db.collection("communities")
-            .document(community.communityId)  // fetching the community document
-            .collection("members")  // accessing the "members" subcollection
-            .getDocuments { querySnapshot, error in
-                if let error = error {
-                    print("Error fetching members: \(error.localizedDescription)")
-                    return
-                }
-
-                // Extract the userIds from the "members" subcollection
-                let userIds = querySnapshot?.documents.compactMap { document in
-                    return document.data()["userId"] as? String
-                } ?? []
-
-                print("Fetched userIds: \(userIds)")
-
-                // Now fetch the usernames for each userId
-                self.fetchUsernames(userIds: userIds) { usernames in
-                    // Once we have usernames, pass them back via the completion block
-                    completion(usernames)
-                }
-            }
-    }
     
     func fetchMembers() {
         guard let community = community else {
@@ -287,177 +224,140 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
                     return
                 }
 
-                print("Fetched members: \(querySnapshot?.documents.count ?? 0)")
-
-                // Extract userIds and maintain the order
-                var membersData = querySnapshot?.documents.compactMap { document -> (String, String, Int32)? in
-                    if let userId = document.data()["userId"] as? String {
-                        return (userId, "", 0) // Initialize with empty username and 0 points
-                    }
-                    return nil
+                let userIds = querySnapshot?.documents.compactMap { document -> String? in
+                    return document.data()["userId"] as? String
                 } ?? []
 
-                print("Members data: \(membersData)")
+                self.selectedUserId = userIds
 
-                let userIds = membersData.map { $0.0 }
-                self.selectedUserId = userIds // Preserve the exact order
-
-                self.fetchUsernamesAndPoints(userIds: userIds) { usernames, totalPoints in
-                    DispatchQueue.main.async {
-                        print("Fetched usernames: \(usernames)")
-                        print("Fetched totalPoints: \(totalPoints)")
-
-                        // Ensure usernames and points align with the same order
-                        for (index, username) in usernames.enumerated() {
-                            if index < membersData.count {
-                                membersData[index].1 = username
-                                membersData[index].2 = totalPoints[index]
-                            }
-                        }
-
-                        // Update the members array with userId, username, and totalPoints
-                        self.members = membersData.map { (userId: $0.0, username: $0.1, totalPoints: $0.2) }
-
-                        // Sort members by totalPoints in descending order
-                        self.members.sort { $0.totalPoints > $1.totalPoints }
-
-                        print("Updated and sorted members array: \(self.members)")
-
-                        self.memberLabel.text = "Members: \(userIds.count)"
-                        self.filteredMembers = self.members
-                        self.tableView.reloadData()
+                // Fetch user details including profile pictures
+                self.fetchUserDetails(userIds: userIds) { userDetails in
+                    self.members = userDetails.map { (userId: $0.userId, username: $0.username, totalPoints: $0.totalPoints) }
+                    self.filteredMembers = self.members
+                    self.memberLabel.text = "Members: \(userIds.count)"
+                    
+                    // Store profile pictures in the dictionary
+                    for detail in userDetails {
+                        self.profilePictures[detail.userId] = detail.profilePicture
                     }
+                    
+                    self.tableView.reloadData()
                 }
             }
     }
-    
-    func fetchUsernamesAndPoints(userIds: [String], completion: @escaping ([String], [Int32]) -> Void) {
+
+    func fetchUserDetails(userIds: [String], completion: @escaping ([(userId: String, username: String, totalPoints: Int32, profilePicture: UIImage)]) -> Void) {
         let db = Firestore.firestore()
-        var usernames: [String] = []
-        var totalPoints: [Int32] = []
-
+        var userDetails: [(userId: String, username: String, totalPoints: Int32, profilePicture: UIImage)] = []
+        
         let group = DispatchGroup()
-
+        
         for userId in userIds {
             group.enter()
+            
+            // Fetch user details from Firestore
             db.collection("users").document(userId).getDocument { documentSnapshot, error in
                 if let error = error {
-                    print("Error fetching username and points for userId \(userId): \(error.localizedDescription)")
-                } else if let document = documentSnapshot, document.exists,
-                          let username = document.data()?["username"] as? String,
-                          let points = document.data()?["totalPoints"] as? Int32 {
-                    print("Fetched username: \(username), points: \(points) for userId: \(userId)")
-                    usernames.append(username)
-                    totalPoints.append(points)
-                } else {
-                    print("Document does not exist or username/points not found for userId \(userId)")
+                    print("Error fetching user details for userId \(userId): \(error.localizedDescription)")
+                    group.leave()
+                    return
                 }
-                group.leave()
+                
+                guard let document = documentSnapshot, document.exists,
+                      let username = document.data()?["username"] as? String,
+                      let totalPoints = document.data()?["totalPoints"] as? Int32,
+                      let profilePictureURL = document.data()?["profilePictureURL"] as? String else {
+                    print("Document does not exist or username/totalPoints/profilePictureURL not found for userId \(userId)")
+                    group.leave()
+                    return
+                }
+                
+                // Fetch profile picture using the URL
+                if !profilePictureURL.isEmpty {
+                    if let url = URL(string: profilePictureURL) {
+                        URLSession.shared.dataTask(with: url) { data, response, error in
+                            if let error = error {
+                                print("Error downloading profile picture for \(userId): \(error.localizedDescription)")
+                                // Use default profile picture if download fails
+                                let defaultProfilePicture = UIImage(named: "defaultProfileImage")!
+                                userDetails.append((userId: userId, username: username, totalPoints: totalPoints, profilePicture: defaultProfilePicture))
+                                group.leave()
+                                return
+                            }
+                            
+                            if let data = data, let profilePicture = UIImage(data: data) {
+                                userDetails.append((userId: userId, username: username, totalPoints: totalPoints, profilePicture: profilePicture))
+                            } else {
+                                // Use default profile picture if data is invalid
+                                let defaultProfilePicture = UIImage(named: "defaultProfileImage")!
+                                userDetails.append((userId: userId, username: username, totalPoints: totalPoints, profilePicture: defaultProfilePicture))
+                            }
+                            group.leave()
+                        }.resume()
+                    } else {
+                        // Use default profile picture if URL is invalid
+                        let defaultProfilePicture = UIImage(named: "defaultProfileImage")!
+                        userDetails.append((userId: userId, username: username, totalPoints: totalPoints, profilePicture: defaultProfilePicture))
+                        group.leave()
+                    }
+                } else {
+                    // Use default profile picture if profilePictureURL is empty
+                    let defaultProfilePicture = UIImage(named: "defaultProfileImage")!
+                    userDetails.append((userId: userId, username: username, totalPoints: totalPoints, profilePicture: defaultProfilePicture))
+                    group.leave()
+                }
             }
         }
-
+        
         group.notify(queue: .main) {
-            print("All usernames and points fetched: \(usernames), \(totalPoints)")
-            completion(usernames, totalPoints)
-        }
-    }
-    
-    func fetchUsernames(userIds: [String], completion: @escaping ([String]) -> Void) {
-      let db = Firestore.firestore()
-      var usernames: [String] = []
-
-      let group = DispatchGroup()
-
-      for userId in userIds {
-        group.enter()
-        db.collection("users").document(userId).getDocument { documentSnapshot, error in
-          if let error = error {
-            print("Error fetching username for userId \(userId): \(error.localizedDescription)")
-          } else if let document = documentSnapshot, document.exists,
-                    let username = document.data()?["username"] as? String {
-            usernames.append(username)
-          } else {
-            print("Document does not exist or username not found for userId \(userId)")
-          }
-          group.leave()
-        }
-      }
-
-      group.notify(queue: .main) {
-        completion(usernames)
-      }
-    }
-
-    func fetchUsers(userIds: [String], completion: @escaping ([User]) -> Void) {
-      let db = Firestore.firestore()
-      var users: [User] = []
-
-      let group = DispatchGroup()
-
-      for userId in userIds {
-        group.enter()
-        db.collection("users").document(userId).getDocument { documentSnapshot, error in
-          if let error = error {
-            print("Error fetching user data for userId \(userId): \(error.localizedDescription)")
-          } else if let document = documentSnapshot, document.exists,
-                    var data = document.data() {
-            print("Fetched data for userId \(userId): \(data)")
-            if let username = data["username"] as? String {
-              data["username"] = username
+            // Sort userDetails to match the order of userIds
+            let sortedUserDetails = userIds.compactMap { userId in
+                userDetails.first { $0.userId == userId }
             }
-
-            // Create User from parsed data
-            if let user = User(data: data) {
-              users.append(user)
-            } else {
-              print("Failed to parse user data for userId \(userId)")
-            }
-          } else {
-            print("Document does not exist or error occurred for userId \(userId)")
-          }
-          group.leave()
+            completion(sortedUserDetails)
         }
-      }
-
-      group.notify(queue: .main) {
-        completion(users)
-      }
     }
 
+    // MARK: - TableView DataSource
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filteredMembers.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell(style: .value1, reuseIdentifier: "memberCell")
+        let cell = tableView.dequeueReusableCell(withIdentifier: MemberTableViewCell.identifier, for: indexPath) as! MemberTableViewCell
 
         if indexPath.row < filteredMembers.count {
             let member = filteredMembers[indexPath.row]
-            cell.textLabel?.text = "\(indexPath.row + 1). \(member.username)"
-            cell.detailTextLabel?.text = "\(member.totalPoints)"
-            cell.detailTextLabel?.textColor = .systemBlue
+            cell.nameLabel.text = "\(member.username)"
+            cell.pointsLabel.text = "\(member.totalPoints)"
+            
+            // Fetch profile picture from the dictionary
+            if let profilePicture = self.profilePictures[member.userId] {
+                cell.profileImageView.image = profilePicture
+            } else {
+                cell.profileImageView.image = UIImage(named: "defaultProfileImage")
+            }
         }
 
         cell.backgroundColor = .clear
         return cell
     }
-    
+
+    // MARK: - TableView Delegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Row \(indexPath.row) tapped.")
 
-        // Calculate the reversed index
         let reversedIndex = (selectedUserId.count - 1) - indexPath.row
 
-        // Ensure the reversed index is within bounds
         guard reversedIndex >= 0 && reversedIndex < selectedUserId.count else {
             print("Reversed index out of bounds for members or selectedUserId array.")
             return
         }
 
-        let memberId = selectedUserId[reversedIndex]  // Use reversed index
+        let memberId = selectedUserId[reversedIndex]
 
-        fetchUsers(userIds: [memberId]) { users in
-            guard let user = users.first else { return }
+        fetchUserDetails(userIds: [memberId]) { userDetails in
+            guard let user = userDetails.first else { return }
 
             if let memberDetailsVC = self.storyboard?.instantiateViewController(withIdentifier: "MemberDetailsViewController") as? MemberDetailsViewController {
                 memberDetailsVC.memberId = user.userId
