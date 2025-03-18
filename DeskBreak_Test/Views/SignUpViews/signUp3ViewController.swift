@@ -89,6 +89,97 @@ class signUp3ViewController: UIViewController {
         }
     }
 
+    private func saveUserData(userId: String, profileImageUrl: String) {
+        let db = Firestore.firestore()
+        let userRef = db.collection("users").document(userId)
+
+        let userData: [String: Any] = [
+            "userId": userId,
+            "username": registrationData.username,
+            "email": registrationData.email,
+            "dailyTarget": registrationData.dailyTarget,
+            "totalMinutes": 0,
+            "totalPoints": 0,
+            "dailyMinutes": 0,
+            "dailyPoints": 0,
+            "dateOfBirth": registrationData.dateOfBirth ?? Date(),
+            "contactNumber": registrationData.contactNumber,
+            "createdAt": Timestamp(date: Date()),
+            "lastActivityDate": Timestamp(date: Date()),
+            "profilePictureURL": profileImageUrl
+        ]
+
+        userRef.setData(userData) { error in
+            if let error = error {
+                self.hideLoadingIndicator()
+                self.showAlert(message: "Failed to save user data: \(error.localizedDescription)")
+            } else {
+                // Automatically sign in the user after registration
+                self.signInUser(email: self.registrationData.email, password: self.registrationData.password)
+            }
+        }
+    }
+
+    private func signInUser(email: String, password: String) {
+        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
+            self.hideLoadingIndicator()
+            if let error = error {
+                self.showAlert(message: "Automatic login failed: \(error.localizedDescription)")
+                return
+            }
+
+            // Fetch user data and navigate to the main screen
+            if let userId = authResult?.user.uid {
+                self.fetchUserData(userId: userId)
+            }
+        }
+    }
+
+    private func fetchUserData(userId: String) {
+        let db = Firestore.firestore()
+        let userRef = db.collection("users").document(userId)
+
+        userRef.getDocument { document, error in
+            if let error = error {
+                self.showAlert(message: "Failed to fetch user data: \(error.localizedDescription)")
+                return
+            }
+
+            if let document = document, document.exists {
+                let userData = document.data()
+                self.saveUserSession(userData: userData)
+                self.navigateToTabBarController()
+            } else {
+                self.showAlert(message: "User data not found.")
+            }
+        }
+    }
+
+    private func saveUserSession(userData: [String: Any]?) {
+        let defaults = UserDefaults.standard
+
+        defaults.set(userData?["userId"] as? String, forKey: "userId")
+        defaults.set(userData?["username"] as? String, forKey: "userName")
+        defaults.set(userData?["email"] as? String, forKey: "userEmail")
+        defaults.set(userData?["dailyTarget"] as? Int, forKey: "dailyTarget")
+        defaults.set(userData?["totalMinutes"] as? Int, forKey: "totalMinutes")
+        defaults.set(userData?["totalPoints"] as? Int, forKey: "totalPoints")
+        defaults.set(userData?["dateOfBirth"] as? Date, forKey: "dateOfBirth")
+        defaults.set(userData?["contactNumber"] as? String, forKey: "contactNumber")
+        defaults.set(userData?["profilePictureURL"] as? String, forKey: "profilePictureURL")
+        defaults.set(true, forKey: "isLoggedIn")
+    }
+
+    private func navigateToTabBarController() {
+        DispatchQueue.main.async {
+            if let window = UIApplication.shared.windows.first {
+                let tabBarController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TabBarController") as! UITabBarController
+                window.rootViewController = tabBarController
+                window.makeKeyAndVisible()
+            }
+        }
+    }
+
     private func uploadProfilePicture(_ image: UIImage, userId: String, completion: @escaping (String?) -> Void) {
         // Convert image to JPEG data
         guard let imageData = image.jpegData(compressionQuality: 0.8) else {
@@ -118,36 +209,6 @@ class signUp3ViewController: UIViewController {
 
                 // Return the image URL
                 completion(url?.absoluteString)
-            }
-        }
-    }
-
-    private func saveUserData(userId: String, profileImageUrl: String) {
-        let db = Firestore.firestore()
-        let userRef = db.collection("users").document(userId)
-
-        let userData: [String: Any] = [
-            "userId": userId,
-            "username": registrationData.username,
-            "email": registrationData.email,
-            "dailyTarget": registrationData.dailyTarget,
-            "totalMinutes": 0,
-            "totalPoints": 0,
-            "dailyMinutes": 0,
-            "dailyPoints": 0,
-            "dateOfBirth": registrationData.dateOfBirth ?? Date(),
-            "contactNumber": registrationData.contactNumber,
-            "createdAt": Timestamp(date: Date()),
-            "lastActivityDate": Timestamp(date: Date()),
-            "profilePictureURL": profileImageUrl
-        ]
-
-        userRef.setData(userData) { error in
-            self.hideLoadingIndicator()
-            if let error = error {
-                self.showAlert(message: "Failed to save user data: \(error.localizedDescription)")
-            } else {
-                self.navigateToLoginScreen()
             }
         }
     }

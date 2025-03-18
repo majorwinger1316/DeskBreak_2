@@ -21,7 +21,7 @@ struct UserRegistrationData {
 
 class ProfileImageCache {
     static let shared = ProfileImageCache()
-    private init() {} // Prevents external initialization
+    private init() {}
 
     var profileImage: UIImage?
 }

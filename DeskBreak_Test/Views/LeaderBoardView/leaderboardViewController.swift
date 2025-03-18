@@ -9,8 +9,8 @@ class leaderboardViewController: UIViewController {
     @IBOutlet weak var profileImage: UIImageView!
     @IBOutlet weak var positionLabel: UILabel!
     
-    var peoples: [(username: String, userId: String, totalPoints: Int32)] = []
-    var displayedPeoples: [(username: String, userId: String, totalPoints: Int32)] = []
+    var peoples: [(username: String, userId: String, totalPoints: Int32, profilePictureURL: String?)] = []
+    var displayedPeoples: [(username: String, userId: String, totalPoints: Int32, profilePictureURL: String?)] = []
     var currentUser: User?
     var itemsToShow = 10
     let db = Firestore.firestore()
@@ -79,7 +79,8 @@ class leaderboardViewController: UIViewController {
                 guard let username = data["username"] as? String,
                       let userId = data["userId"] as? String,
                       let totalPoints = data["totalPoints"] as? Int32 else { return nil }
-                return (username, userId, totalPoints)
+                let profilePictureURL = data["profilePictureURL"] as? String
+                return (username, userId, totalPoints, profilePictureURL)
             }.sorted { $0.totalPoints > $1.totalPoints }
             
             DispatchQueue.main.async {
@@ -136,6 +137,13 @@ extension leaderboardViewController: UITableViewDataSource, UITableViewDelegate 
             cell.nameLabel.text = person.username
             cell.pointsLabel.text = "\(person.totalPoints)"
             
+            // Set profile image
+            if let profilePictureURL = person.profilePictureURL {
+                cell.profileImageView.loadImage(from: profilePictureURL)
+            } else {
+                cell.profileImageView.image = UIImage(named: "defaultProfileImage")
+            }
+            
             if person.userId == currentUser?.userId {
                 cell.backgroundColor = UIColor.card
                 cell.nameLabel.textColor = UIColor.main
@@ -149,7 +157,7 @@ extension leaderboardViewController: UITableViewDataSource, UITableViewDelegate 
             return cell
         } else {
             let cell = UITableViewCell()
-            cell.textLabel?.text = "Load More"
+            cell.textLabel?.text = "View More"
             cell.textLabel?.textAlignment = .center
             return cell
         }

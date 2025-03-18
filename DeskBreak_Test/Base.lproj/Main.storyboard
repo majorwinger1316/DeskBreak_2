@@ -2122,12 +2122,6 @@
                     </view>
                     <navigationItem key="navigationItem" largeTitleDisplayMode="never" id="g9t-Im-u7J">
                         <rightBarButtonItems>
-                            <barButtonItem title="Item" image="bell" catalog="system" id="P6J-Jt-I7w">
-                                <color key="tintColor" name="mainColor"/>
-                                <connections>
-                                    <action selector="sendNotificationButton:" destination="zVs-9E-90X" id="6ZX-Po-xev"/>
-                                </connections>
-                            </barButtonItem>
                             <barButtonItem title="Item" image="square.and.arrow.up" catalog="system" id="J5V-Hg-NCv">
                                 <color key="tintColor" name="mainColor"/>
                                 <connections>
@@ -2549,7 +2543,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RkF-B3-uly">
-                                <rect key="frame" x="16" y="685" width="361" height="40"/>
+                                <rect key="frame" x="16" y="742" width="361" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="361" id="5AA-cV-KyU"/>
                                     <constraint firstAttribute="height" constant="40" id="zz9-tB-JXt"/>
@@ -2569,6 +2563,10 @@
                                 <color key="textColor" name="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="Hm0-SA-Aug">
+                                <rect key="frame" x="0.0" y="399" width="393" height="127"/>
+                                <color key="color" name="textColor"/>
+                            </activityIndicatorView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Choose your Daily Target" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aRy-Cg-ty3">
                                 <rect key="frame" x="16" y="275" width="361" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -2623,16 +2621,21 @@
                                     <action selector="dailyGoalSelected:" destination="6un-EH-yCy" eventType="touchUpInside" id="0hb-AU-dyB"/>
                                 </connections>
                             </button>
-                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="Hm0-SA-Aug">
-                                <rect key="frame" x="0.0" y="399" width="393" height="127"/>
-                                <color key="color" name="textColor"/>
-                            </activityIndicatorView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="In the future, users will be able to change their daily stretching target from the profile page" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="4" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rTi-8J-iy2">
+                                <rect key="frame" x="16" y="625" width="361" height="64"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="361" id="i15-R3-Ixi"/>
+                                    <constraint firstAttribute="height" constant="64" id="iHy-vm-7CE"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="1it-Mw-Lv0"/>
                         <color key="backgroundColor" name="modal"/>
                         <constraints>
                             <constraint firstItem="jGT-Vf-CnX" firstAttribute="leading" secondItem="1it-Mw-Lv0" secondAttribute="leading" constant="16" id="1yB-jD-91R"/>
-                            <constraint firstItem="RkF-B3-uly" firstAttribute="top" secondItem="jGT-Vf-CnX" secondAttribute="bottom" constant="84" id="6Vv-eT-qZu"/>
                             <constraint firstItem="GU6-hA-FOg" firstAttribute="top" secondItem="aRy-Cg-ty3" secondAttribute="bottom" constant="28" id="6ue-ZP-ZjQ"/>
                             <constraint firstItem="2vx-DW-VKT" firstAttribute="leading" secondItem="1it-Mw-Lv0" secondAttribute="leading" constant="142" id="9JB-Ff-kYi"/>
                             <constraint firstItem="jGT-Vf-CnX" firstAttribute="top" secondItem="Hm0-SA-Aug" secondAttribute="bottom" id="HUo-TF-bfc"/>
@@ -2640,20 +2643,24 @@
                             <constraint firstItem="1it-Mw-Lv0" firstAttribute="trailing" secondItem="GU6-hA-FOg" secondAttribute="trailing" constant="16" id="OvW-Wx-NnD"/>
                             <constraint firstItem="Hm0-SA-Aug" firstAttribute="leading" secondItem="1it-Mw-Lv0" secondAttribute="leading" id="PRJ-vb-vb8"/>
                             <constraint firstItem="1it-Mw-Lv0" firstAttribute="trailing" secondItem="Hm0-SA-Aug" secondAttribute="trailing" id="QA4-Jg-JW3"/>
+                            <constraint firstItem="rTi-8J-iy2" firstAttribute="top" secondItem="jGT-Vf-CnX" secondAttribute="bottom" constant="24" id="S5z-EH-rMf"/>
                             <constraint firstItem="2vx-DW-VKT" firstAttribute="top" secondItem="1it-Mw-Lv0" secondAttribute="top" constant="70" id="SHY-Iz-tc2"/>
                             <constraint firstItem="aRy-Cg-ty3" firstAttribute="top" secondItem="aJh-3j-e9j" secondAttribute="bottom" constant="53" id="VuO-L0-j4e"/>
                             <constraint firstItem="1it-Mw-Lv0" firstAttribute="trailing" secondItem="ihg-R1-SvQ" secondAttribute="trailing" constant="16" id="aJL-3w-RJq"/>
                             <constraint firstItem="jGT-Vf-CnX" firstAttribute="top" secondItem="ihg-R1-SvQ" secondAttribute="bottom" constant="26" id="bSY-2I-Pti"/>
                             <constraint firstItem="ihg-R1-SvQ" firstAttribute="top" secondItem="GU6-hA-FOg" secondAttribute="bottom" constant="26" id="buY-4G-PqV"/>
                             <constraint firstItem="aJh-3j-e9j" firstAttribute="top" secondItem="2vx-DW-VKT" secondAttribute="bottom" constant="8" id="djD-fP-pkK"/>
+                            <constraint firstItem="RkF-B3-uly" firstAttribute="top" secondItem="rTi-8J-iy2" secondAttribute="bottom" constant="53" id="elm-0S-z0n"/>
                             <constraint firstItem="aRy-Cg-ty3" firstAttribute="leading" secondItem="1it-Mw-Lv0" secondAttribute="leading" constant="16" id="exj-eN-chY"/>
                             <constraint firstItem="ihg-R1-SvQ" firstAttribute="leading" secondItem="1it-Mw-Lv0" secondAttribute="leading" constant="16" id="fwT-cZ-hF5"/>
                             <constraint firstItem="Hm0-SA-Aug" firstAttribute="top" secondItem="GU6-hA-FOg" secondAttribute="bottom" id="p1p-Xv-Oid"/>
+                            <constraint firstItem="1it-Mw-Lv0" firstAttribute="trailing" secondItem="rTi-8J-iy2" secondAttribute="trailing" constant="16" id="pep-fv-gYj"/>
                             <constraint firstItem="GU6-hA-FOg" firstAttribute="leading" secondItem="1it-Mw-Lv0" secondAttribute="leading" constant="16" id="raz-Ic-HRx"/>
                             <constraint firstItem="1it-Mw-Lv0" firstAttribute="trailing" secondItem="jGT-Vf-CnX" secondAttribute="trailing" constant="16" id="sXa-E8-mjU"/>
                             <constraint firstItem="1it-Mw-Lv0" firstAttribute="trailing" secondItem="aRy-Cg-ty3" secondAttribute="trailing" constant="16" id="tOZ-rY-OcE"/>
                             <constraint firstItem="1it-Mw-Lv0" firstAttribute="trailing" secondItem="RkF-B3-uly" secondAttribute="trailing" constant="16" id="vEo-AP-wr6"/>
                             <constraint firstItem="aJh-3j-e9j" firstAttribute="leading" secondItem="1it-Mw-Lv0" secondAttribute="leading" constant="96" id="wk1-1b-rYi"/>
+                            <constraint firstItem="rTi-8J-iy2" firstAttribute="leading" secondItem="1it-Mw-Lv0" secondAttribute="leading" constant="16" id="zZv-S6-eQF"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="244-ak-SNj"/>
@@ -3505,7 +3512,6 @@
         <image name="NeckFlex_info" width="700" height="320"/>
         <image name="applelogo" catalog="system" width="105" height="128"/>
         <image name="arcade.stick.console" catalog="system" width="128" height="76"/>
-        <image name="bell" catalog="system" width="125" height="128"/>
         <image name="bell.badge.waveform" catalog="system" width="120" height="128"/>
         <image name="bolt" catalog="system" width="100" height="128"/>
         <image name="chart.bar.xaxis.ascending.badge.clock" catalog="system" width="128" height="109"/>

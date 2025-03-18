@@ -65,16 +65,8 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
     }
     
     private func fetchProfileImage() {
-        if let cachedImage = ProfileImageCache.shared.profileImage {
-            // Use the cached image
-            DispatchQueue.main.async {
-                self.setupNavigationBarWithProfileImage(image: cachedImage)
-            }
-            return
-        }
-        else {
-            self.setupNavigationBarWithProfileImage(image: UIImage(named: "defaultProfileImage"))
-        }
+        // Always fetch fresh profile image, ignoring cache
+        ProfileImageCache.shared.profileImage = nil
 
         guard let userId = UserDefaults.standard.string(forKey: "userId") else {
             print("Error: userId not found in UserDefaults.")
@@ -312,9 +304,13 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
     
     func loginUser() {
         UserDefaults.standard.set(true, forKey: "isLoggedIn")
+
+        fetchProfileImage()
     }
 
     func logoutUser() {
         UserDefaults.standard.set(false, forKey: "isLoggedIn")
+
+        ProfileImageCache.shared.profileImage = nil
     }
 }

@@ -48,6 +48,19 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
             titleLabel.text = community.communityName
             codeLabel.text = "Community Code: \(community.communityCode)"
             fetchMembers()
+            
+            // Check if the current user is the admin (createdBy user) or if createdBy is nil
+            if let currentUserId = Auth.auth().currentUser?.uid {
+                if community.createdBy == nil || currentUserId == community.createdBy {
+                    // Enable delete button for admin or if createdBy is nil
+                    navigationItem.rightBarButtonItems?.append(UIBarButtonItem(
+                        title: "Delete",
+                        style: .plain,
+                        target: self,
+                        action: #selector(deleteCommunityButtonPressed)
+                    ))
+                }
+            }
         }
         configurePopUpButton()
     }
@@ -171,8 +184,57 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
             }
     }
     
-    @IBAction func sendNotificationButton(_ sender: UIBarButtonItem) {
+    @IBAction func deleteCommunityButton(_ sender: UIBarButtonItem) {
+    }
 
+    @objc func deleteCommunityButtonPressed() {
+        guard let community = community else { return }
+
+        let alertController = UIAlertController(
+            title: "Delete Community?",
+            message: "Are you sure you want to delete this community? This action cannot be undone.",
+            preferredStyle: .alert
+        )
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        let confirmAction = UIAlertAction(title: "Delete", style: .destructive) { _ in
+            self.deleteCommunity()
+        }
+
+        alertController.addAction(cancelAction)
+        alertController.addAction(confirmAction)
+        
+        present(alertController, animated: true, completion: nil)
+    }
+
+    func deleteCommunity() {
+        guard let community = community else { return }
+
+        let db = Firestore.firestore()
+
+        // Delete the community document
+        db.collection("communities").document(community.communityId).delete { error in
+            if let error = error {
+                print("Error deleting community: \(error.localizedDescription)")
+                self.showAlert(message: "Failed to delete the community. Please try again.")
+                return
+            }
+
+            print("Community successfully deleted.")
+            
+            // Provide feedback to the user
+            self.showAlert(message: "The community has been successfully deleted.")
+
+            // Navigate back to the previous screen
+            if let navController = self.navigationController {
+                navController.popViewController(animated: true)
+                
+                // Refresh the community list in the previous view controller
+                if let communityVC = navController.viewControllers.first(where: { $0 is communityViewController }) as? communityViewController {
+                    communityVC.fetchUserCommunities()
+                }
+            }
+        }
     }
     
     @IBAction func shareButtonPressed(_ sender: UIBarButtonItem) {
@@ -336,6 +398,14 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
                 cell.profileImageView.image = profilePicture
             } else {
                 cell.profileImageView.image = UIImage(named: "defaultProfileImage")
+            }
+            
+            // Mark the admin (createdBy user) if createdBy exists
+            if let community = community{
+                
+                if member.userId == community.createdBy {
+                    cell.nameLabel.text = "👑 \(member.username)" 
+                }
             }
         }
 

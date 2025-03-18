@@ -137,21 +137,30 @@ class userDetailsViewController: UIViewController {
     }
     
     private func setupCalendarMenu() {
-        guard !availableMonths.isEmpty else {
-            print("Error: No available months to populate menu")
-            return
-        }
-
-        let menuActions = availableMonths.map { month in
-            let monthDisplayName = monthDictionary[month] ?? month
-
-            return UIAction(title: monthDisplayName, handler: { _ in
-                self.fetchDailyData(for: month)
+        if availableMonths.isEmpty {
+            // If there are no available months, set a default action or disable the button
+            let noDataAction = UIAction(title: "No Data", handler: { _ in
+                // Optionally, you can show an alert or handle the no data case
+                print("No data available")
             })
-        }
+            
+            calendarPopUpButton.menu = UIMenu(title: "Select Month", children: [noDataAction])
+            calendarPopUpButton.showsMenuAsPrimaryAction = true
+            calendarPopUpButton.isEnabled = false // Optionally disable the button
+        } else {
+            // If there are available months, set up the menu as usual
+            let menuActions = availableMonths.map { month in
+                let monthDisplayName = monthDictionary[month] ?? month
 
-        calendarPopUpButton.menu = UIMenu(title: "Select Month", children: menuActions)
-        calendarPopUpButton.showsMenuAsPrimaryAction = true
+                return UIAction(title: monthDisplayName, handler: { _ in
+                    self.fetchDailyData(for: month)
+                })
+            }
+
+            calendarPopUpButton.menu = UIMenu(title: "Select Month", children: menuActions)
+            calendarPopUpButton.showsMenuAsPrimaryAction = true
+            calendarPopUpButton.isEnabled = true // Ensure the button is enabled
+        }
     }
 
     private var monthDictionary: [String: String] = [:] // Stores yyyy-MM → "Month Year"
