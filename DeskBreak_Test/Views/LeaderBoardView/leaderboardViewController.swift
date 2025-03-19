@@ -34,6 +34,12 @@ class leaderboardViewController: UIViewController {
         fetchCurrentUser()
         fetchLeaderboardData()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        fetchLeaderboardData()
+    }
 
     func fetchCurrentUser() {
         // Fetch current user from UserDefaults instead of Firestore

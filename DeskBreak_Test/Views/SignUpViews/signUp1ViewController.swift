@@ -30,10 +30,15 @@ class signUp1ViewController: UIViewController, UIImagePickerControllerDelegate, 
     }()
     
     override func viewDidLoad() {
-         super.viewDidLoad()
-         setupDatePicker()
-         setupDoneButton(for: userNameText)
-         setupProfileImageView()
+        super.viewDidLoad()
+        setupDatePicker()
+        setupProfileImageView()
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true) // Hide keyboard when tapping outside
     }
     
     private func setupProfileImageView() {

@@ -92,6 +92,7 @@ class communityViewController: UIViewController, UITableViewDelegate, UITableVie
     @IBOutlet weak var communityTable: UITableView!
     @IBOutlet weak var communitySearchBar: UISearchBar!
     
+    let activityIndicator = UIActivityIndicatorView(style: .large)
     var userCommunities: [Community] = []
     var filteredCommunities: [Community] = []
     var isSearching = false
@@ -106,6 +107,11 @@ class communityViewController: UIViewController, UITableViewDelegate, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Configure activity indicator
+        activityIndicator.center = view.center
+        activityIndicator.hidesWhenStopped = true
+        view.addSubview(activityIndicator)
+        
         communityTable.delegate = self
         communityTable.dataSource = self
         communityTable.register(UITableViewCell.self, forCellReuseIdentifier: "CommunityCell")
@@ -118,54 +124,89 @@ class communityViewController: UIViewController, UITableViewDelegate, UITableVie
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
         locationManager.startUpdatingLocation()
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false // Allows table view selection while the keyboard is dismissed
+        view.addGestureRecognizer(tapGesture)
+        tapGesture.isEnabled = false // Disabled initially
+
+        // Observe keyboard events
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    @objc func keyboardWillShow() {
+        view.gestureRecognizers?.first(where: { $0 is UITapGestureRecognizer })?.isEnabled = true
+    }
+    
+    func startLoading() {
+        DispatchQueue.main.async {
+            self.activityIndicator.startAnimating()
+        }
+    }
+
+    func stopLoading() {
+        DispatchQueue.main.async {
+            self.activityIndicator.stopAnimating()
+        }
+    }
+
+    // Disable tap gesture when the keyboard disappears
+    @objc func keyboardWillHide() {
+        view.gestureRecognizers?.first(where: { $0 is UITapGestureRecognizer })?.isEnabled = false
+    }
+
+    @objc func dismissKeyboard() {
+        view.endEditing(true) // Hide keyboard
     }
     
     func fetchUserCommunities() {
+        startLoading() // Start animation
+
         let db = Firestore.firestore()
         let userId = UserDefaults.standard.string(forKey: "userId") ?? ""
 
-        db.collection("communities")
-            .getDocuments { querySnapshot, error in
-                if let error = error {
-                    print("Error fetching communities: \(error.localizedDescription)")
-                    return
-                }
+        db.collection("communities").getDocuments { querySnapshot, error in
+            if let error = error {
+                print("Error fetching communities: \(error.localizedDescription)")
+                self.stopLoading() // Stop animation if there is an error
+                return
+            }
+
+            guard let querySnapshot = querySnapshot else {
+                print("No communities found.")
+                self.stopLoading()
+                return
+            }
+
+            var communityIds: [String] = []
+            let group = DispatchGroup()
+
+            for document in querySnapshot.documents {
+                let communityId = document.documentID
+                group.enter()
                 
-                guard let querySnapshot = querySnapshot else {
-                    print("No communities found.")
-                    return
-                }
-                
-                var communityIds: [String] = []
-                let group = DispatchGroup()
-                
-                // Iterate through communities to find the ones the user belongs to
-                for document in querySnapshot.documents {
-                    let communityId = document.documentID
-                    group.enter()
-                    
-                    db.collection("communities").document(communityId)
-                        .collection("members")
-                        .document(userId)
-                        .getDocument { memberSnapshot, error in
-                            if let error = error {
-                                print("Error checking member in community \(communityId): \(error.localizedDescription)")
-                            } else if let memberSnapshot = memberSnapshot, memberSnapshot.exists {
-                                // If the user is found in the "members" sub-collection, add the communityId
-                                communityIds.append(communityId)
-                            }
-                            group.leave()
+                db.collection("communities").document(communityId)
+                    .collection("members")
+                    .document(userId)
+                    .getDocument { memberSnapshot, error in
+                        if let error = error {
+                            print("Error checking member in community \(communityId): \(error.localizedDescription)")
+                        } else if let memberSnapshot = memberSnapshot, memberSnapshot.exists {
+                            communityIds.append(communityId)
                         }
-                }
-                
-                group.notify(queue: .main) {
-                    // After checking all communities, fetch the details
-                    self.fetchCommunityDetails(communityIds: communityIds) { communities in
-                        self.userCommunities = communities
-                        self.communityTable.reloadData() // Reload table with updated data
+                        group.leave()
                     }
+            }
+
+            group.notify(queue: .main) {
+                self.fetchCommunityDetails(communityIds: communityIds) { communities in
+                    self.userCommunities = communities
+                    self.communityTable.reloadData()
+                    self.stopLoading() // Stop animation once data is loaded
                 }
             }
+        }
     }
 
     func fetchCommunityDetails(communityIds: [String], completion: @escaping ([Community]) -> Void) {
@@ -228,6 +269,11 @@ class communityViewController: UIViewController, UITableViewDelegate, UITableVie
         let chevronImage = UIImageView(image: UIImage(systemName: "chevron.right"))
         chevronImage.tintColor = .systemGray
         cell.accessoryView = chevronImage
+        
+        UIView.animate(withDuration: 0.5, delay: 0.05 * Double(indexPath.row), usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
+            cell.transform = CGAffineTransform.identity
+            cell.alpha = 1
+        }, completion: nil)
         
         return cell
     }

@@ -32,7 +32,7 @@
                                                 <color key="textColor" name="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rw7-ck-a4q" customClass="HomeCard" customModule="DeskBreak_Test" customModuleProvider="target">
+                                            <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Rw7-ck-a4q" customClass="HomeCard" customModule="DeskBreak_Test" customModuleProvider="target">
                                                 <rect key="frame" x="16" y="56.333333333333343" width="360" height="150"/>
                                                 <subviews>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="heart.text.square" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="pLT-vV-Qvm">
@@ -74,7 +74,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="chevron.right" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="Uya-cr-UL5">
-                                                        <rect key="frame" x="324" y="14.999999999999998" width="28" height="16.000000000000007"/>
+                                                        <rect key="frame" x="324" y="14.999999999999996" width="28" height="16.000000000000004"/>
                                                         <color key="tintColor" name="mainColor"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="28" id="Ckz-87-JK8"/>
@@ -82,7 +82,7 @@
                                                         </constraints>
                                                     </imageView>
                                                 </subviews>
-                                                <color key="backgroundColor" name="cardColor"/>
+                                                <color key="backgroundColor" red="0.13300000131130219" green="0.13300000131130219" blue="0.13300000131130219" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
                                                     <constraint firstItem="1ls-WO-nhT" firstAttribute="top" secondItem="wsq-ma-pw5" secondAttribute="bottom" constant="19.329999999999998" id="0Gk-f0-x6N"/>
                                                     <constraint firstItem="Pqb-Qw-08g" firstAttribute="top" secondItem="Rw7-ck-a4q" secondAttribute="top" constant="13" id="0ZW-ZF-kfz"/>
@@ -110,7 +110,7 @@
                                                 <nil key="textColor"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Sca-XC-Eri" customClass="HomeCardSecond" customModule="DeskBreak_Test" customModuleProvider="target">
+                                            <view opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Sca-XC-Eri" customClass="HomeCardSecond" customModule="DeskBreak_Test" customModuleProvider="target">
                                                 <rect key="frame" x="16" y="222.33333333333331" width="360" height="150"/>
                                                 <subviews>
                                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Uk7-GA-Mho">
@@ -151,7 +151,7 @@
                                                         <nil key="highlightedColor"/>
                                                     </label>
                                                 </subviews>
-                                                <color key="backgroundColor" name="cardColor"/>
+                                                <color key="backgroundColor" red="0.13300000131130219" green="0.13300000131130219" blue="0.13300000131130219" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
                                                 <constraints>
                                                     <constraint firstItem="JeO-Sa-oe5" firstAttribute="leading" secondItem="Sca-XC-Eri" secondAttribute="leading" constant="27" id="0F5-Yv-Xa0"/>
                                                     <constraint firstAttribute="width" constant="360" id="6sg-ch-NQu"/>
@@ -204,7 +204,7 @@
                                                 </connections>
                                             </button>
                                         </subviews>
-                                        <color key="backgroundColor" name="bgColor"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstItem="GtK-nf-CE7" firstAttribute="leading" secondItem="S0B-Je-AgD" secondAttribute="leading" constant="16" id="1A2-x5-49D"/>
                                             <constraint firstItem="Sca-XC-Eri" firstAttribute="leading" secondItem="S0B-Je-AgD" secondAttribute="leading" constant="16" id="2EP-dB-81M"/>
@@ -234,6 +234,7 @@
                                         </constraints>
                                     </view>
                                 </subviews>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstItem="S0B-Je-AgD" firstAttribute="leading" secondItem="KgA-7L-1Js" secondAttribute="leading" id="AAZ-yu-ntI"/>
                                     <constraint firstAttribute="bottom" secondItem="S0B-Je-AgD" secondAttribute="bottom" constant="96" id="CUe-GO-90s"/>
@@ -246,7 +247,7 @@
                             </scrollView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Olo-uf-x4K"/>
-                        <color key="backgroundColor" name="bgColor"/>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstAttribute="bottom" secondItem="KgA-7L-1Js" secondAttribute="bottom" id="a8c-RM-sqf"/>
                             <constraint firstItem="KgA-7L-1Js" firstAttribute="trailing" secondItem="Olo-uf-x4K" secondAttribute="trailing" id="cux-vd-gCN"/>
@@ -261,6 +262,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="contentView" destination="S0B-Je-AgD" id="VGl-z8-Rf4"/>
                         <outlet property="dailyMinsLabel" destination="vKa-Zj-b3Y" id="p6H-3N-AGP"/>
                         <outlet property="dailyTargetLabel" destination="Chu-Q2-abz" id="iID-9w-fbx"/>
                         <outlet property="flameImageView" destination="Uk7-GA-Mho" id="JDy-gA-7nu"/>
@@ -269,6 +271,7 @@
                         <outlet property="playLabel" destination="wZQ-hZ-5Dr" id="Z2p-7U-L4T"/>
                         <outlet property="playersThisWeekLabel" destination="uxZ-Oh-qj2" id="vSa-vx-0UL"/>
                         <outlet property="profileBarButton" destination="UHx-S9-fLB" id="jm4-qs-HsY"/>
+                        <outlet property="scrollView" destination="KgA-7L-1Js" id="YPM-4A-Qlu"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mVm-Au-rye" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -496,7 +499,7 @@
                                     <segue destination="Kdz-9U-nqL" kind="presentation" id="zoa-Aj-jue"/>
                                 </connections>
                             </button>
-                            <searchBar contentMode="redraw" placeholder="Search for a Community" showsCancelButton="YES" translatesAutoresizingMaskIntoConstraints="NO" id="z3z-p1-Q6q">
+                            <searchBar contentMode="redraw" placeholder="Search for a Community" translatesAutoresizingMaskIntoConstraints="NO" id="z3z-p1-Q6q">
                                 <rect key="frame" x="0.0" y="108" width="393" height="44"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="aXA-N5-nxD"/>
@@ -1021,7 +1024,7 @@
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Pih-p8-g0x"/>
-                        <color key="backgroundColor" name="modal"/>
+                        <color key="backgroundColor" name="bgColor"/>
                         <constraints>
                             <constraint firstItem="Pih-p8-g0x" firstAttribute="trailing" secondItem="JuN-SS-CJh" secondAttribute="trailing" constant="16" id="1UD-rk-mqe"/>
                             <constraint firstItem="6pk-XU-kNL" firstAttribute="top" secondItem="2cT-rT-Qpq" secondAttribute="bottom" constant="8" id="37Z-nk-riG"/>
@@ -1328,7 +1331,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="Umd-43-Jxc">
                                         <rect key="frame" x="9" y="108.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="FTl-jc-9wZ"/>
                                             <constraint firstAttribute="height" constant="45" id="JWy-j3-H37"/>
@@ -1336,7 +1339,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="JtN-1N-f8U">
                                         <rect key="frame" x="59" y="108.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="FxF-0q-G4H"/>
                                             <constraint firstAttribute="width" constant="42" id="xQx-LQ-4m4"/>
@@ -1344,7 +1347,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="5h3-So-tRo">
                                         <rect key="frame" x="109" y="108.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="Ao2-6a-hPz"/>
                                             <constraint firstAttribute="height" constant="45" id="zCd-C5-GAp"/>
@@ -1352,7 +1355,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="epZ-ck-erg">
                                         <rect key="frame" x="209" y="108.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="6Xh-Ya-Nji"/>
                                             <constraint firstAttribute="width" constant="42" id="K7h-hb-3Of"/>
@@ -1360,7 +1363,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="Aai-II-bwx">
                                         <rect key="frame" x="259" y="108.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="UT5-X5-vNr"/>
                                             <constraint firstAttribute="width" constant="42" id="pt3-gK-eFk"/>
@@ -1368,7 +1371,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="2G6-GX-dZD">
                                         <rect key="frame" x="309" y="108.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="Tsw-IF-ey0"/>
                                             <constraint firstAttribute="width" constant="42" id="coU-DF-qKV"/>
@@ -1416,7 +1419,7 @@
                                     </label>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="3a5-cQ-4Kp">
                                         <rect key="frame" x="159" y="108.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="jp5-b8-Wd6"/>
                                             <constraint firstAttribute="width" constant="42" id="txC-WR-Qoe"/>
@@ -1424,7 +1427,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="ftW-w1-6l4">
                                         <rect key="frame" x="9" y="161.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="5ax-pT-zIB"/>
                                             <constraint firstAttribute="height" constant="45" id="M8O-vr-Xig"/>
@@ -1432,7 +1435,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="e2M-K0-n8O">
                                         <rect key="frame" x="59" y="161.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="3xu-gI-60b"/>
                                             <constraint firstAttribute="width" constant="42" id="IEl-3x-War"/>
@@ -1440,7 +1443,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="4Hk-lF-VBG">
                                         <rect key="frame" x="109" y="161.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="iAx-Hc-Hka"/>
                                             <constraint firstAttribute="width" constant="42" id="psv-fr-zsA"/>
@@ -1448,7 +1451,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="tC8-Eb-I0i">
                                         <rect key="frame" x="209" y="161.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="3h4-eK-G0w"/>
                                             <constraint firstAttribute="width" constant="42" id="FJW-wt-PEz"/>
@@ -1456,7 +1459,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="Vjc-qH-EjI">
                                         <rect key="frame" x="259" y="161.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="BUd-ZG-Gq5"/>
                                             <constraint firstAttribute="height" constant="45" id="aFD-bn-LbR"/>
@@ -1464,7 +1467,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="JXx-8U-Mpq">
                                         <rect key="frame" x="309" y="161.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="JSp-gW-O7S"/>
                                             <constraint firstAttribute="height" constant="45" id="iLm-H0-zer"/>
@@ -1472,7 +1475,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="B10-Xw-lx5">
                                         <rect key="frame" x="159" y="161.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="gGs-uU-7q3"/>
                                             <constraint firstAttribute="height" constant="45" id="nhe-fu-gss"/>
@@ -1480,7 +1483,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="tdk-X0-X5R">
                                         <rect key="frame" x="9" y="214.66666666666666" width="42" height="41.999999999999972"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="2zz-uy-hix"/>
                                             <constraint firstAttribute="height" constant="45" id="7w4-Gc-eTf"/>
@@ -1488,7 +1491,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="f5H-XB-ApK">
                                         <rect key="frame" x="59" y="214.66666666666666" width="42" height="41.999999999999972"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="A9n-wm-CrW"/>
                                             <constraint firstAttribute="width" constant="42" id="NZj-L6-bCZ"/>
@@ -1496,7 +1499,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="Bkp-YW-OYl">
                                         <rect key="frame" x="109" y="214.66666666666666" width="42" height="41.999999999999972"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="UWc-jw-ePo"/>
                                             <constraint firstAttribute="width" constant="42" id="vAC-nx-M9o"/>
@@ -1504,7 +1507,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="cZb-HM-g7p">
                                         <rect key="frame" x="209" y="214.66666666666666" width="42" height="41.999999999999972"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="OL5-va-sUS"/>
                                             <constraint firstAttribute="width" constant="42" id="bu9-wV-ixf"/>
@@ -1512,7 +1515,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="16B-ax-P7Q">
                                         <rect key="frame" x="259" y="214.66666666666666" width="42" height="41.999999999999972"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="juv-mN-Nwg"/>
                                             <constraint firstAttribute="width" constant="42" id="o2X-52-4zL"/>
@@ -1520,7 +1523,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="d0M-FD-EEl">
                                         <rect key="frame" x="309" y="214.66666666666666" width="42" height="41.999999999999972"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="PJe-DQ-4eU"/>
                                             <constraint firstAttribute="width" constant="42" id="kgb-4A-qv6"/>
@@ -1528,7 +1531,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="Zfn-Om-B3C">
                                         <rect key="frame" x="159" y="214.66666666666666" width="42" height="41.999999999999972"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="1Tw-Ai-dtU"/>
                                             <constraint firstAttribute="height" constant="45" id="IkW-OL-P7d"/>
@@ -1536,7 +1539,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="16V-3H-WDz">
                                         <rect key="frame" x="9" y="267.66666666666669" width="42" height="41.999999999999943"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="nNm-SV-gGo"/>
                                             <constraint firstAttribute="height" constant="45" id="yaH-SP-0zl"/>
@@ -1544,7 +1547,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="tNh-l2-WL4">
                                         <rect key="frame" x="59" y="267.66666666666669" width="42" height="41.999999999999943"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="aIe-sZ-6uG"/>
                                             <constraint firstAttribute="width" constant="42" id="vMa-XG-aJG"/>
@@ -1552,7 +1555,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="LrM-Gj-4Bs">
                                         <rect key="frame" x="109" y="267.66666666666669" width="42" height="41.999999999999943"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="Deq-qE-Lff"/>
                                             <constraint firstAttribute="height" constant="45" id="u9j-Cj-gLJ"/>
@@ -1560,7 +1563,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="NhE-1a-Ck9">
                                         <rect key="frame" x="209" y="267.66666666666669" width="42" height="41.999999999999943"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="7SM-Ig-L4a"/>
                                             <constraint firstAttribute="height" constant="45" id="PIS-cc-UiH"/>
@@ -1568,7 +1571,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="lpL-t2-Djt">
                                         <rect key="frame" x="259" y="267.66666666666669" width="42" height="41.999999999999943"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="1cc-wY-o2a"/>
                                             <constraint firstAttribute="width" constant="42" id="9eA-gu-003"/>
@@ -1576,7 +1579,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="Bv6-xE-GMf">
                                         <rect key="frame" x="309" y="267.66666666666669" width="42" height="41.999999999999943"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="5A4-q2-MI1"/>
                                             <constraint firstAttribute="height" constant="45" id="PSG-kx-ovt"/>
@@ -1584,7 +1587,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="KDa-BS-VEj">
                                         <rect key="frame" x="159" y="267.66666666666669" width="42" height="41.999999999999943"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="5AJ-f3-FVO"/>
                                             <constraint firstAttribute="height" constant="45" id="MZr-cl-F7l"/>
@@ -1836,16 +1839,27 @@
         <!--Game View Controller-->
         <scene sceneID="zwM-Wh-Tb7">
             <objects>
-                <viewController modalPresentationStyle="fullScreen" id="2zy-hs-cIm" customClass="GameViewController" customModule="DeskBreak_Test" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="2zy-hs-cIm" customClass="GameViewController" customModule="DeskBreak_Test" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="pVh-BM-pKI">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="vCP-rn-Azy"/>
                         <color key="backgroundColor" name="bgColor"/>
                     </view>
-                    <navigationItem key="navigationItem" id="w8R-g2-0NB"/>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" id="w8R-g2-0NB">
+                        <barButtonItem key="rightBarButtonItem" systemItem="cancel" id="Pat-06-R6F">
+                            <color key="tintColor" name="mainColor"/>
+                            <connections>
+                                <segue destination="tlp-xY-5TV" kind="unwind" unwindAction="unwindToHomeWithSegue:" id="77L-yo-Q9R"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Yna-p6-hEy" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <exit id="tlp-xY-5TV" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="9849.6183206106871" y="3497.8873239436621"/>
         </scene>
@@ -2025,8 +2039,8 @@
                                 <color key="textColor" name="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="insetGrouped" separatorStyle="singleLineEtched" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Xyy-7Q-bcs">
-                                <rect key="frame" x="0.0" y="98" width="393" height="568"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="insetGrouped" separatorStyle="singleLineEtched" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Xyy-7Q-bcs">
+                                <rect key="frame" x="0.0" y="154" width="393" height="512"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <color key="tintColor" name="mainColor"/>
                                 <color key="sectionIndexBackgroundColor" name="bgColor"/>
@@ -2484,6 +2498,9 @@
                                 <fontDescription key="fontDescription" type="system" weight="medium" pointSize="20"/>
                                 <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
                             </textField>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="uc2-OD-7b9">
+                                <rect key="frame" x="0.0" y="386" width="393" height="104"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="XaA-ch-QD5"/>
                         <color key="backgroundColor" name="modal"/>
@@ -2492,11 +2509,14 @@
                             <constraint firstItem="0K8-zb-LNG" firstAttribute="leading" secondItem="XaA-ch-QD5" secondAttribute="leading" constant="16" id="1Ox-d4-ebg"/>
                             <constraint firstItem="Jvg-xK-fH4" firstAttribute="leading" secondItem="XaA-ch-QD5" secondAttribute="leading" constant="96" id="4PV-pW-Aqu"/>
                             <constraint firstItem="2e9-4E-vdy" firstAttribute="top" secondItem="0K8-zb-LNG" secondAttribute="bottom" constant="8" id="91a-0d-GO1"/>
+                            <constraint firstItem="uc2-OD-7b9" firstAttribute="leading" secondItem="XaA-ch-QD5" secondAttribute="leading" id="CoM-lu-6eo"/>
+                            <constraint firstItem="uc2-OD-7b9" firstAttribute="top" secondItem="0K8-zb-LNG" secondAttribute="bottom" id="EjT-VP-ebp"/>
                             <constraint firstItem="xT7-hG-iPq" firstAttribute="leading" secondItem="XaA-ch-QD5" secondAttribute="leading" constant="16" id="Lhd-ov-hge"/>
                             <constraint firstItem="Jvg-xK-fH4" firstAttribute="top" secondItem="mVm-WJ-T5L" secondAttribute="bottom" constant="8" id="PcG-x6-8Wc"/>
                             <constraint firstItem="XaA-ch-QD5" firstAttribute="trailing" secondItem="xT7-hG-iPq" secondAttribute="trailing" constant="16" id="Sig-Gq-t5B"/>
                             <constraint firstItem="mVm-WJ-T5L" firstAttribute="leading" secondItem="XaA-ch-QD5" secondAttribute="leading" constant="142" id="Thl-ho-yCm"/>
                             <constraint firstItem="XaA-ch-QD5" firstAttribute="trailing" secondItem="HuW-Qi-Q2A" secondAttribute="trailing" constant="16" id="XsB-8g-qNU"/>
+                            <constraint firstItem="xT7-hG-iPq" firstAttribute="top" secondItem="uc2-OD-7b9" secondAttribute="bottom" id="ZFD-bW-VSs"/>
                             <constraint firstItem="mVm-WJ-T5L" firstAttribute="top" secondItem="XaA-ch-QD5" secondAttribute="top" constant="70" id="di1-Or-0w0"/>
                             <constraint firstItem="2e9-4E-vdy" firstAttribute="leading" secondItem="XaA-ch-QD5" secondAttribute="leading" constant="16" id="eEQ-P2-ENZ"/>
                             <constraint firstItem="XaA-ch-QD5" firstAttribute="trailing" secondItem="0K8-zb-LNG" secondAttribute="trailing" constant="16" id="f85-LQ-6MC"/>
@@ -2504,6 +2524,7 @@
                             <constraint firstItem="HuW-Qi-Q2A" firstAttribute="top" secondItem="2e9-4E-vdy" secondAttribute="bottom" constant="8" id="ic6-9E-N6d"/>
                             <constraint firstItem="XaA-ch-QD5" firstAttribute="trailing" secondItem="2e9-4E-vdy" secondAttribute="trailing" constant="16" id="kJo-Na-fUt"/>
                             <constraint firstItem="XaA-ch-QD5" firstAttribute="trailing" secondItem="suc-ox-7Br" secondAttribute="trailing" constant="16" id="kzw-7I-qLR"/>
+                            <constraint firstItem="XaA-ch-QD5" firstAttribute="trailing" secondItem="uc2-OD-7b9" secondAttribute="trailing" id="l47-k0-T9g"/>
                             <constraint firstItem="0K8-zb-LNG" firstAttribute="top" secondItem="Jvg-xK-fH4" secondAttribute="bottom" constant="80" id="o4i-NF-RKc"/>
                             <constraint firstItem="xT7-hG-iPq" firstAttribute="top" secondItem="HuW-Qi-Q2A" secondAttribute="bottom" constant="8" id="p7d-2c-Rwi"/>
                             <constraint firstItem="suc-ox-7Br" firstAttribute="leading" secondItem="XaA-ch-QD5" secondAttribute="leading" constant="16" id="rDc-3q-nj8"/>
@@ -2517,6 +2538,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="loadingIndicator" destination="uc2-OD-7b9" id="qwB-ra-NO9"/>
                         <outlet property="userConfirmPasswordText" destination="xT7-hG-iPq" id="IdY-bx-8AN"/>
                         <outlet property="userContactText" destination="2e9-4E-vdy" id="y5r-f6-2h4"/>
                         <outlet property="userEmailText" destination="0K8-zb-LNG" id="zOd-wl-css"/>
@@ -2583,7 +2605,7 @@
                                 <buttonConfiguration key="configuration" style="gray" title="Active Mover (12 min)" imagePadding="18">
                                     <imageReference key="image" image="figure.run" catalog="system" symbolScale="large" renderingMode="template" variableValue="1"/>
                                     <fontDescription key="titleFontDescription" style="UICTFontTextStyleTitle2"/>
-                                    <color key="baseForegroundColor" systemColor="systemBlueColor"/>
+                                    <color key="baseForegroundColor" red="0.20000000000000001" green="0.40000000000000002" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 </buttonConfiguration>
                                 <connections>
                                     <action selector="dailyGoalSelected:" destination="6un-EH-yCy" eventType="touchUpInside" id="FeH-yH-TXj"/>
@@ -2599,7 +2621,7 @@
                                 <buttonConfiguration key="configuration" style="gray" title="Peak Performer (25 min)" imagePadding="18">
                                     <imageReference key="image" image="trophy.fill" catalog="system" symbolScale="large" renderingMode="template" variableValue="1"/>
                                     <fontDescription key="titleFontDescription" style="UICTFontTextStyleTitle2"/>
-                                    <color key="baseForegroundColor" red="1" green="0.80000000000000004" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="baseForegroundColor" red="1" green="0.20000000000000001" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 </buttonConfiguration>
                                 <connections>
                                     <action selector="dailyGoalSelected:" destination="6un-EH-yCy" eventType="touchUpInside" id="CPl-Bg-eb0"/>
@@ -2615,7 +2637,7 @@
                                     <imageReference key="image" image="bolt" catalog="system" symbolScale="large" renderingMode="template" variableValue="1"/>
                                     <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage"/>
                                     <fontDescription key="titleFontDescription" style="UICTFontTextStyleTitle2"/>
-                                    <color key="baseForegroundColor" systemColor="systemGreenColor"/>
+                                    <color key="baseForegroundColor" name="mainColor"/>
                                 </buttonConfiguration>
                                 <connections>
                                     <action selector="dailyGoalSelected:" destination="6un-EH-yCy" eventType="touchUpInside" id="0hb-AU-dyB"/>
@@ -2791,7 +2813,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="tbl-CN-aty">
                                         <rect key="frame" x="9" y="108.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="Fc9-Yj-lkt"/>
                                             <constraint firstAttribute="width" constant="42" id="Hau-Wn-rN2"/>
@@ -2799,7 +2821,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="B6e-04-rPw">
                                         <rect key="frame" x="59" y="108.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="Ed8-Rj-4cp"/>
                                             <constraint firstAttribute="width" constant="42" id="Lz7-Of-FA6"/>
@@ -2807,7 +2829,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="hEk-gB-Xh0">
                                         <rect key="frame" x="109" y="108.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="FGw-co-8M2"/>
                                             <constraint firstAttribute="height" constant="45" id="POD-KJ-OZ2"/>
@@ -2815,7 +2837,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="tqj-6u-AvW">
                                         <rect key="frame" x="209" y="108.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="bRL-EC-Bzp"/>
                                             <constraint firstAttribute="height" constant="45" id="vvx-dt-tJJ"/>
@@ -2823,7 +2845,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="aVb-yd-zgT">
                                         <rect key="frame" x="259" y="108.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="fpk-rz-lpW"/>
                                             <constraint firstAttribute="width" constant="42" id="vtK-Xt-vIH"/>
@@ -2831,7 +2853,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="ZXU-Cq-2U5">
                                         <rect key="frame" x="309" y="108.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="WDD-Om-iaF"/>
                                             <constraint firstAttribute="width" constant="42" id="WEq-QI-Ou3"/>
@@ -2879,7 +2901,7 @@
                                     </label>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="qKd-jz-tYN">
                                         <rect key="frame" x="159" y="108.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="jQZ-BQ-cbu"/>
                                             <constraint firstAttribute="height" constant="45" id="uuP-T1-A9m"/>
@@ -2887,7 +2909,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="kzy-PE-x1T">
                                         <rect key="frame" x="9" y="161.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="7n0-Yq-Aho"/>
                                             <constraint firstAttribute="width" constant="42" id="I9D-0k-iqZ"/>
@@ -2895,7 +2917,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="PdR-6u-bvn">
                                         <rect key="frame" x="59" y="161.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="JnQ-EK-Y8I"/>
                                             <constraint firstAttribute="width" constant="42" id="Umz-x7-du0"/>
@@ -2903,7 +2925,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="rrK-4D-SKb">
                                         <rect key="frame" x="109" y="161.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="S42-Ke-0sa"/>
                                             <constraint firstAttribute="height" constant="45" id="nEY-Jw-xfA"/>
@@ -2911,7 +2933,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="OhC-B0-cOv">
                                         <rect key="frame" x="209" y="161.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="LeO-7q-h07"/>
                                             <constraint firstAttribute="width" constant="42" id="qF3-xJ-IBy"/>
@@ -2919,7 +2941,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="BS3-Ge-Rhb">
                                         <rect key="frame" x="259" y="161.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="A8k-XU-R26"/>
                                             <constraint firstAttribute="height" constant="45" id="bDo-g6-zcf"/>
@@ -2927,7 +2949,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="uzU-Be-AYV">
                                         <rect key="frame" x="309" y="161.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="KJp-7q-JhE"/>
                                             <constraint firstAttribute="height" constant="45" id="XyS-bT-6WA"/>
@@ -2935,7 +2957,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="cLT-OL-sd9">
                                         <rect key="frame" x="159" y="161.66666666666666" width="42" height="42"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="afO-hc-SS4"/>
                                             <constraint firstAttribute="height" constant="45" id="aiE-2X-7Lm"/>
@@ -2943,7 +2965,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="Xc1-d0-mcS">
                                         <rect key="frame" x="9" y="214.66666666666666" width="42" height="41.999999999999972"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="5t7-Mo-AjJ"/>
                                             <constraint firstAttribute="width" constant="42" id="WZR-hg-nw1"/>
@@ -2951,7 +2973,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="Rvz-rU-TNM">
                                         <rect key="frame" x="59" y="214.66666666666666" width="42" height="41.999999999999972"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="CAf-Ws-qMM"/>
                                             <constraint firstAttribute="width" constant="42" id="uYm-qo-MJL"/>
@@ -2959,7 +2981,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="FrJ-qL-aBb">
                                         <rect key="frame" x="109" y="214.66666666666666" width="42" height="41.999999999999972"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="GMh-Uu-B9S"/>
                                             <constraint firstAttribute="width" constant="42" id="Xca-bP-0hw"/>
@@ -2967,7 +2989,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="sDr-7t-oKf">
                                         <rect key="frame" x="209" y="214.66666666666666" width="42" height="41.999999999999972"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="1zB-so-OfS"/>
                                             <constraint firstAttribute="height" constant="45" id="ciV-jL-gB0"/>
@@ -2975,7 +2997,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="JQ0-Q2-N9y">
                                         <rect key="frame" x="259" y="214.66666666666666" width="42" height="41.999999999999972"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="21M-X6-Au5"/>
                                             <constraint firstAttribute="width" constant="42" id="As4-aF-GTU"/>
@@ -2983,7 +3005,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="gYe-G8-RcH">
                                         <rect key="frame" x="309" y="214.66666666666666" width="42" height="41.999999999999972"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="VPI-6a-W6O"/>
                                             <constraint firstAttribute="width" constant="42" id="i28-rM-Qga"/>
@@ -2991,7 +3013,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="tah-BX-RqJ">
                                         <rect key="frame" x="159" y="214.66666666666666" width="42" height="41.999999999999972"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="dJr-OR-xQN"/>
                                             <constraint firstAttribute="width" constant="42" id="wLt-hO-5g4"/>
@@ -2999,7 +3021,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="v6d-pE-1zA">
                                         <rect key="frame" x="9" y="267.66666666666669" width="42" height="41.999999999999943"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="3F9-PC-MJq"/>
                                             <constraint firstAttribute="width" constant="42" id="DV0-N6-opz"/>
@@ -3007,7 +3029,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="HKb-kF-dyM">
                                         <rect key="frame" x="59" y="267.66666666666669" width="42" height="41.999999999999943"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="BPg-Yk-JZ4"/>
                                             <constraint firstAttribute="height" constant="45" id="lO5-tp-tyj"/>
@@ -3015,7 +3037,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="Gr1-az-3zj">
                                         <rect key="frame" x="109" y="267.66666666666669" width="42" height="41.999999999999943"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="LOv-pM-N6z"/>
                                             <constraint firstAttribute="width" constant="42" id="uKj-Cq-J9d"/>
@@ -3023,7 +3045,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="B24-BM-90E">
                                         <rect key="frame" x="209" y="267.66666666666669" width="42" height="41.999999999999943"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="9yG-nD-oVD"/>
                                             <constraint firstAttribute="width" constant="42" id="QIb-YR-bPt"/>
@@ -3031,7 +3053,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="wzI-l3-Rxy">
                                         <rect key="frame" x="259" y="267.66666666666669" width="42" height="41.999999999999943"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="UyO-t4-4eL"/>
                                             <constraint firstAttribute="width" constant="42" id="eBs-ra-YzL"/>
@@ -3039,7 +3061,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="UIs-dt-2vw">
                                         <rect key="frame" x="309" y="267.66666666666669" width="42" height="41.999999999999943"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="42" id="zBj-kT-Cfi"/>
                                             <constraint firstAttribute="height" constant="45" id="zXS-7L-I5Z"/>
@@ -3047,7 +3069,7 @@
                                     </imageView>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="square.fill" catalog="system" highlightedImage="user" translatesAutoresizingMaskIntoConstraints="NO" id="TJf-tt-f03">
                                         <rect key="frame" x="159" y="267.66666666666669" width="42" height="41.999999999999943"/>
-                                        <color key="tintColor" name="git"/>
+                                        <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="6RT-EJ-0gd"/>
                                             <constraint firstAttribute="width" constant="42" id="XCE-8G-vmU"/>
@@ -3540,9 +3562,6 @@
         <namedColor name="cardColor">
             <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
-        <namedColor name="git">
-            <color red="0.0" green="0.0" blue="0.0" alpha="0.50400000810623169" colorSpace="custom" customColorSpace="displayP3"/>
-        </namedColor>
         <namedColor name="mainColor">
             <color red="0.3529999852180481" green="0.67799997329711914" blue="0.68999999761581421" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
@@ -3563,9 +3582,6 @@
         </systemColor>
         <systemColor name="systemGrayColor">
             <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-        </systemColor>
-        <systemColor name="systemGreenColor">
-            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemOrangeColor">
             <color red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

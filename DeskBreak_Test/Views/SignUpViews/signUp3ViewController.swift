@@ -25,28 +25,46 @@ class signUp3ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         activityIndicator.isHidden = true
+        setupButtons()
     }
     
     private func setupButtons() {
         let buttons = [fiveMinButton, twelveMinButton, twentyFiveMinButton]
         for button in buttons {
             button?.layer.cornerRadius = 10
-            button?.layer.borderWidth = 2
+            button?.layer.borderWidth = 1
+            button?.layer.borderColor = UIColor.lightGray.cgColor
             button?.setTitleColor(.black, for: .normal)
+            button?.backgroundColor = .clear
         }
+        
+        // Set 12 min as the default selected button
+        twelveMinButton.layer.borderColor = UIColor.main.cgColor
+        twelveMinButton.layer.borderWidth = 2
+        twelveMinButton.setTitleColor(UIColor.main, for: .normal)
+        
+        // Set the default daily target value
+        registrationData.dailyTarget = 12
     }
     
     @IBAction func dailyGoalSelected(_ sender: UIButton) {
         let buttons = [fiveMinButton, twelveMinButton, twentyFiveMinButton]
+        
         for button in buttons {
-            button?.backgroundColor = .black.withAlphaComponent(0.8)
-            button?.layer.borderColor = UIColor.main.cgColor
+            button?.backgroundColor = .clear
+            button?.layer.borderColor = UIColor.lightGray.cgColor
+            button?.setTitleColor(.black, for: .normal)
+            button?.layer.borderWidth = 1
         }
         
-        sender.backgroundColor = UIColor.systemBlue
-        sender.layer.borderColor = UIColor.systemBlue.cgColor
-        sender.setTitleColor(.white, for: .normal)
-        
+        sender.layer.borderColor = UIColor.main.cgColor
+        sender.layer.borderWidth = 2
+        sender.setTitleColor(UIColor.main, for: .normal)
+
+        // Provide haptic feedback
+        let generator = UIImpactFeedbackGenerator(style: .light)
+        generator.impactOccurred()
+
         if sender == fiveMinButton {
             registrationData.dailyTarget = 5
         } else if sender == twelveMinButton {

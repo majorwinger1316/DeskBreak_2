@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import FirebaseAuth
+import FirebaseFirestore
 
 class signUp2ViewController: UIViewController {
     
@@ -17,14 +19,18 @@ class signUp2ViewController: UIViewController {
     
     @IBOutlet weak var userConfirmPasswordText: UITextField!
     
+    @IBOutlet weak var loadingIndicator: UIActivityIndicatorView!
+    
     var registrationData: UserRegistrationData!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupDoneButton(for: userEmailText)
-        setupDoneButton(for: userContactText)
-        setupDoneButton(for: userPasswordText)
-        setupDoneButton(for: userConfirmPasswordText)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true) // Hide keyboard when tapping outside
     }
     
     @IBAction func continueButton(_ sender: UIButton) {
@@ -50,13 +56,46 @@ class signUp2ViewController: UIViewController {
             return
         }
 
-        registrationData.email = email
-        registrationData.contactNumber = contactNumber
-        registrationData.password = password
+        // Check if email exists before proceeding
+        checkIfEmailExists(email) { [weak self] exists in
+            guard let self = self else { return }
 
-        if let nextVC = storyboard?.instantiateViewController(withIdentifier: "SignUpViewController1") as? signUp1ViewController {
-            nextVC.registrationData = registrationData
-            navigationController?.pushViewController(nextVC, animated: true)
+            if exists {
+                self.showAlert(message: "This email is already registered. Please use a different email.")
+            } else {
+                self.registrationData.email = email
+                self.registrationData.contactNumber = contactNumber
+                self.registrationData.password = password
+
+                if let nextVC = self.storyboard?.instantiateViewController(withIdentifier: "SignUpViewController1") as? signUp1ViewController {
+                    nextVC.registrationData = self.registrationData
+                    self.navigationController?.pushViewController(nextVC, animated: true)
+                }
+            }
+        }
+    }
+    
+    private func checkIfEmailExists(_ email: String, completion: @escaping (Bool) -> Void) {
+        let db = Firestore.firestore()
+        let usersRef = db.collection("users")
+
+        // Start loading indicator
+        DispatchQueue.main.async {
+            self.loadingIndicator.startAnimating()
+        }
+
+        usersRef.whereField("email", isEqualTo: email).getDocuments { (querySnapshot, error) in
+            // Stop loading indicator
+            DispatchQueue.main.async {
+                self.loadingIndicator.stopAnimating()
+            }
+
+            if let error = error {
+                print("Error checking email existence: \(error.localizedDescription)")
+                completion(false) // Assume email doesn’t exist if there's an error
+            } else {
+                completion(!querySnapshot!.documents.isEmpty) // If documents exist, email exists
+            }
         }
     }
 

@@ -20,6 +20,12 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var popUpButton: UIButton!
     
+    var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = .gray
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
     var selectedUserId : Array<String> = []
     var members: [(userId: String, username: String, totalPoints: Int32)] = []
     var filteredMembers: [(userId: String, username: String, totalPoints: Int32)] = []
@@ -42,6 +48,15 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
         
         tableView.backgroundColor = .clear
         tableView.separatorColor = .lightGray
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGesture.cancelsTouchesInView = false // Allows table view selection while the keyboard is dismissed
+        view.addGestureRecognizer(tapGesture)
+        tapGesture.isEnabled = false // Disabled initially
+
+        // Observe keyboard events
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
 
         // Update UI with community details
         if let community = community {
@@ -63,6 +78,38 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
             }
         }
         configurePopUpButton()
+        activityIndicator.center = view.center
+        view.addSubview(activityIndicator)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        if let tabBarController = self.tabBarController,
+           let navigationController = self.navigationController {
+            
+            // Check if this view is not the topmost view controller
+            if navigationController.viewControllers.last !== self {
+                navigationController.popToRootViewController(animated: false)
+            }
+        }
+
+        tableView.register(MemberTableViewCell.self, forCellReuseIdentifier: MemberTableViewCell.identifier)
+        configurePopUpButton()
+    }
+
+    
+    @objc func keyboardWillShow() {
+        view.gestureRecognizers?.first(where: { $0 is UITapGestureRecognizer })?.isEnabled = true
+    }
+
+    // Disable tap gesture when the keyboard disappears
+    @objc func keyboardWillHide() {
+        view.gestureRecognizers?.first(where: { $0 is UITapGestureRecognizer })?.isEnabled = false
+    }
+
+    @objc func dismissKeyboard() {
+        view.endEditing(true) // Hide keyboard
     }
     
     @objc func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -277,35 +324,50 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
 
         let db = Firestore.firestore()
 
+        // Start the loading animation
+        activityIndicator.startAnimating()
+        tableView.isHidden = true  // Hide table until data is loaded
+
         db.collection("communities")
             .document(community.communityId)
             .collection("members")
             .getDocuments { querySnapshot, error in
                 if let error = error {
                     print("Error fetching members: \(error.localizedDescription)")
+                    DispatchQueue.main.async {
+                        self.activityIndicator.stopAnimating()
+                    }
                     return
                 }
 
-                let userIds = querySnapshot?.documents.compactMap { document -> String? in
-                    return document.data()["userId"] as? String
-                } ?? []
-
+                let userIds = querySnapshot?.documents.compactMap { $0.data()["userId"] as? String } ?? []
                 self.selectedUserId = userIds
 
-                // Fetch user details including profile pictures
                 self.fetchUserDetails(userIds: userIds) { userDetails in
                     self.members = userDetails.map { (userId: $0.userId, username: $0.username, totalPoints: $0.totalPoints) }
                     self.filteredMembers = self.members
-                    self.memberLabel.text = "Members: \(userIds.count)"
-                    
-                    // Store profile pictures in the dictionary
+
                     for detail in userDetails {
                         self.profilePictures[detail.userId] = detail.profilePicture
                     }
-                    
-                    self.tableView.reloadData()
+
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                        self.activityIndicator.stopAnimating()
+                        self.tableView.isHidden = false
+
+                        // Animate table view appearance
+                        self.animateTableView()
+                    }
                 }
             }
+    }
+    
+    func animateTableView() {
+        tableView.alpha = 0
+        UIView.animate(withDuration: 0.5, animations: {
+            self.tableView.alpha = 1
+        })
     }
 
     func fetchUserDetails(userIds: [String], completion: @escaping ([(userId: String, username: String, totalPoints: Int32, profilePicture: UIImage)]) -> Void) {
@@ -410,21 +472,25 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
         }
 
         cell.backgroundColor = .clear
+        cell.alpha = 0
+         UIView.animate(withDuration: 0.3, delay: 0.05 * Double(indexPath.row), options: .curveEaseInOut, animations: {
+             cell.alpha = 1
+         }, completion: nil)
         return cell
     }
 
-    // MARK: - TableView Delegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print("Row \(indexPath.row) tapped.")
 
-        let reversedIndex = (selectedUserId.count - 1) - indexPath.row
-
-        guard reversedIndex >= 0 && reversedIndex < selectedUserId.count else {
-            print("Reversed index out of bounds for members or selectedUserId array.")
+        // Ensure the index is within bounds
+        guard indexPath.row < filteredMembers.count else {
+            print("Index out of bounds for filteredMembers array.")
             return
         }
 
-        let memberId = selectedUserId[reversedIndex]
+        // Get the selected member
+        let selectedMember = filteredMembers[indexPath.row]
+        let memberId = selectedMember.userId
 
         fetchUserDetails(userIds: [memberId]) { userDetails in
             guard let user = userDetails.first else { return }

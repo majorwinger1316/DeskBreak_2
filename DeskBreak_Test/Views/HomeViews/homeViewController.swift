@@ -45,6 +45,7 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
         fetchDailyTargetandMinutesFromFirebase()
         fetchStreakFromFirebase()
         fetchStreakFromFirebase()
+        fetchProfileImage()
     }
     
     override func viewDidLoad() {
@@ -62,6 +63,22 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(homeCardTapped))
         homeCardView.addGestureRecognizer(tapGesture)
         homeCardView.isUserInteractionEnabled = true
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.layoutIfNeeded()
+        animateFlameBounce()
+        
+        // Add a subtle entrance animation for content
+        let originalTransform = contentView.transform
+        contentView.transform = originalTransform.translatedBy(x: 0, y: 20)
+        contentView.alpha = 0
+        
+        UIView.animate(withDuration: 0.5, delay: 0.1, options: .curveEaseOut, animations: {
+            self.contentView.transform = originalTransform
+            self.contentView.alpha = 1
+        }, completion: nil)
     }
     
     private func fetchProfileImage() {
@@ -222,18 +239,80 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
                 return
             }
 
-            guard let data = snapshot?.data(),
-                  let streak = data["streak"] as? Int else {
-                print("Error: Missing or invalid streak data in monthlyStats.")
-                return
-            }
+            // Check if the document exists and has streak data
+            if let data = snapshot?.data(), let streak = data["streak"] as? Int {
+                print("Fetched streak: \(streak)")
 
-            print("Fetched streak: \(streak)")
-
-            // Update the UI with the fetched streak
-            DispatchQueue.main.async {
-                self.playersThisWeekLabel.text = "\(streak)"
+                // Update the UI with the fetched streak
+                DispatchQueue.main.async {
+                    self.playersThisWeekLabel.text = "\(streak)"
+                    self.removeBlurMask() // Remove blur mask if it exists
+                }
+            } else {
+                // If no streak data is found, display the blur mask with the message
+                DispatchQueue.main.async {
+                    self.addBlurMask(withMessage: "To start a streak, perform any stretching")
+                }
             }
+        }
+    }
+
+    // MARK: - Blur Mask Setup
+
+    private func addBlurMask(withMessage message: String) {
+        // Remove existing blur mask if any
+        removeBlurMask()
+
+        // Create a blur effect
+        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterial)
+        let blurView = UIVisualEffectView(effect: blurEffect)
+        blurView.frame = homeCardSecondView.bounds
+        blurView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        blurView.layer.cornerRadius = homeCardSecondView.layer.cornerRadius
+        blurView.clipsToBounds = true
+        blurView.tag = 1001 // Tag to identify the blur view later
+
+        // Add a semi-transparent background
+        let tintView = UIView(frame: blurView.bounds)
+        tintView.backgroundColor = UIColor.card.withAlphaComponent(0.1)
+        tintView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        blurView.contentView.addSubview(tintView)
+
+        // Add an info icon
+        let iconImageView = UIImageView(image: UIImage(systemName: "info.circle.fill"))
+        iconImageView.tintColor = .lightGray
+        iconImageView.translatesAutoresizingMaskIntoConstraints = false
+        blurView.contentView.addSubview(iconImageView)
+
+        // Add the message label
+        let messageLabel = UILabel()
+        messageLabel.text = message
+        messageLabel.textColor = .lightGray
+        messageLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        messageLabel.textAlignment = .center
+        messageLabel.numberOfLines = 0
+        messageLabel.translatesAutoresizingMaskIntoConstraints = false
+        blurView.contentView.addSubview(messageLabel)
+
+        // Add constraints for the icon and label
+        NSLayoutConstraint.activate([
+            iconImageView.centerXAnchor.constraint(equalTo: blurView.contentView.centerXAnchor),
+            iconImageView.bottomAnchor.constraint(equalTo: messageLabel.topAnchor, constant: -8),
+            iconImageView.widthAnchor.constraint(equalToConstant: 32),
+            iconImageView.heightAnchor.constraint(equalToConstant: 32),
+
+            messageLabel.leadingAnchor.constraint(equalTo: blurView.contentView.leadingAnchor, constant: 16),
+            messageLabel.trailingAnchor.constraint(equalTo: blurView.contentView.trailingAnchor, constant: -16),
+            messageLabel.centerYAnchor.constraint(equalTo: blurView.contentView.centerYAnchor)
+        ])
+
+        // Add the blur view to the home card
+        homeCardSecondView.addSubview(blurView)
+    }
+
+    private func removeBlurMask() {
+        if let blurView = homeCardSecondView.viewWithTag(1001) {
+            blurView.removeFromSuperview()
         }
     }
     
@@ -244,12 +323,6 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
     
     func updateProfileImage(_ image: UIImage) {
         profileBarButton?.image = image
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.navigationBar.layoutIfNeeded()
-        animateFlameBounce()
     }
 
     private func setupNavigationBarWithProfileImage(image: UIImage?) {
@@ -286,13 +359,28 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
     private func setupGradientLayer() {
         let mainColor = UIColor.main
         
+        // Configure the gradient layer
         gradientLayer.colors = [
             mainColor.withAlphaComponent(1.0).cgColor,
             mainColor.withAlphaComponent(0.0).cgColor
         ]
         gradientLayer.locations = [0.0, 1.0]
-        gradientLayer.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 200)
-        view.layer.addSublayer(gradientLayer)
+        gradientLayer.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 500)
+        
+        // Make sure the gradient is behind all content but still visible
+        view.layer.insertSublayer(gradientLayer, at: 0)
+        
+        // Ensure the scrollView is above the gradient
+        if let scrollView = scrollView {
+            view.bringSubviewToFront(scrollView)
+        }
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        // Update gradient frame to match the view's current bounds
+        gradientLayer.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 200)
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -300,6 +388,7 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
         let maxFadeOffset: CGFloat = 100
         let opacity = max(0, 1 - offset / maxFadeOffset)
         gradientLayer.opacity = Float(opacity)
+        
     }
     
     func loginUser() {
