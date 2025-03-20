@@ -25,7 +25,6 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
         return "games/High V"
     }
     
-    
     @IBOutlet weak var flameImageView: UIImageView!
     @IBOutlet weak var homeCardSecondView: HomeCardSecond!
     @IBOutlet weak var homeCardView: HomeCard!
@@ -40,6 +39,8 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
     @IBOutlet weak var minutesView: UIView!
     @IBOutlet weak var targetView: UIView!
     @IBOutlet weak var scoreView: UIView!
+    @IBOutlet weak var workShiftView: UIView!
+    
     
     private let gradientLayer = CAGradientLayer()
     private let initialBackgroundColor = UIColor.bg
@@ -58,7 +59,7 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
         minutesView.layer.cornerRadius = 12
         targetView.layer.cornerRadius = 12
         scoreView.layer.cornerRadius = 12
-//        setupNavigationBarWithProfileImage(image: UIImage(named: "profile"))
+
         fetchNameFromFirebase()
         scheduleStretchNotifications()
         
@@ -82,10 +83,11 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
             self.contentView.transform = originalTransform
             self.contentView.alpha = 1
         }, completion: nil)
+        fetchDailyTargetandMinutesFromFirebase()
+        fetchStreakFromFirebase()
     }
     
     private func fetchProfileImage() {
-        // Always fetch fresh profile image, ignoring cache
         ProfileImageCache.shared.profileImage = nil
 
         guard let userId = UserDefaults.standard.string(forKey: "userId") else {
@@ -150,28 +152,6 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
     
     deinit {
         NotificationCenter.default.removeObserver(self, name: .progressUpdated, object: nil)
-    }
-    
-    private func animateFlameBounce() {
-        let bounceAnimation = CABasicAnimation(keyPath: "position.y")
-        bounceAnimation.fromValue = flameImageView.layer.position.y
-        bounceAnimation.toValue = flameImageView.layer.position.y - 10
-        bounceAnimation.duration = 0.6
-        bounceAnimation.repeatCount = .infinity
-        bounceAnimation.autoreverses = true
-        bounceAnimation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-        
-        let opacityAnimation = CABasicAnimation(keyPath: "opacity")
-        opacityAnimation.fromValue = 1.0
-        opacityAnimation.toValue = 0.5
-        opacityAnimation.duration = 0.6
-        opacityAnimation.repeatCount = .infinity
-        opacityAnimation.autoreverses = true
-        opacityAnimation.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-
-        // Add animations to the layer
-        flameImageView.layer.add(bounceAnimation, forKey: "bounce")
-        flameImageView.layer.add(opacityAnimation, forKey: "opacity")
     }
     
     private func fetchDailyTargetandMinutesFromFirebase() {
@@ -250,8 +230,14 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
 
                 // Update the UI with the fetched streak
                 DispatchQueue.main.async {
-                    self.playersThisWeekLabel.text = "\(streak)"
-                    self.removeBlurMask() // Remove blur mask if it exists
+                    if streak == 1 {
+                        self.playersThisWeekLabel.text = "\(streak) day"
+                        self.removeBlurMask()
+                    }
+                    else {
+                        self.playersThisWeekLabel.text = "\(streak) days"
+                        self.removeBlurMask()
+                    }
                 }
             } else {
                 // If no streak data is found, display the blur mask with the message
@@ -261,8 +247,6 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
             }
         }
     }
-
-    // MARK: - Blur Mask Setup
 
     private func addBlurMask(withMessage message: String) {
         // Remove existing blur mask if any
@@ -383,8 +367,6 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        
-        // Update gradient frame to match the view's current bounds
         gradientLayer.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 500)
     }
 
@@ -398,13 +380,11 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
     
     func loginUser() {
         UserDefaults.standard.set(true, forKey: "isLoggedIn")
-
         fetchProfileImage()
     }
 
     func logoutUser() {
         UserDefaults.standard.set(false, forKey: "isLoggedIn")
-
         ProfileImageCache.shared.profileImage = nil
     }
 }

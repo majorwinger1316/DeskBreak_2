@@ -14,8 +14,6 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
     
     var details: [(type: DetailType, value: Any)] = []
     
-    let pickerData = (1...30).map { "\($0) min" }
-    
     let shiftOptions = [
         "9 AM - 5 PM",
         "10 AM - 6 PM",
@@ -50,10 +48,10 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
             // Fetch again if not in cache (only needed in rare cases)
             self.profilePicImage.image = UIImage(named: "defaultProfileImage")
         }
-        detailTableView.reloadData()
         setupUI()
         fetchUserData()
         setupProfileImageView()
+        setupShiftPicker()
     }
     
     private func setupShiftPicker() {
@@ -135,13 +133,13 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
         
         switch detail.type {
         case .name:
-            cell.configure(title: "Name", detail: detail.value as! String, textColor: .text)
+            cell.configure(title: "Name", detail: detail.value as? String ?? "", textColor: .text)
         case .dateOfBirth:
-            cell.configure(title: "Date of Birth", detail: detail.value as! String, textColor: .text)
+            cell.configure(title: "Date of Birth", detail: detail.value as? String ?? "", textColor: .text)
         case .email:
-            cell.configure(title: "Email", detail: detail.value as! String, textColor: .text)
+            cell.configure(title: "Email", detail: detail.value as? String ?? "", textColor: .text)
         case .contactNumber:
-            cell.configure(title: "Contact Number", detail: detail.value as! String, textColor: .text)
+            cell.configure(title: "Contact Number", detail: detail.value as? String ?? "", textColor: .text)
         case .workShift:
             cell.configure(title: "Work Shift", detail: selectedShift, textColor: .gray)
         }
@@ -154,6 +152,7 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
             pickerVC.selectedShift = selectedShift
             pickerVC.onShiftSelected = { [weak self] shift in
                 self?.selectedShift = shift
+                UserDefaults.standard.set(shift, forKey: "selectedShift") // Save the selected shift
                 self?.detailTableView.reloadData()
             }
             pickerVC.modalPresentationStyle = .custom

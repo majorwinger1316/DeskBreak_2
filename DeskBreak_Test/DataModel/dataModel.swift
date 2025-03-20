@@ -236,6 +236,29 @@ func fetchCommunityDetails(communityIds: [String], completion: @escaping ([Commu
     }
 }
 
+enum StretchType {
+    case liftUp
+    case neckFlex
+    
+    var title: String {
+        switch self {
+        case .liftUp:
+            return "LiftUp"
+        case .neckFlex:
+            return "NeckFlex"
+        }
+    }
+    
+    var targetAreas: String {
+        switch self {
+        case .liftUp:
+            return "Shoulder, Back"
+        case .neckFlex:
+            return "Neck"
+        }
+    }
+}
+
 // CommunityMembership class for representing a user's membership in a community
 class CommunityMembership {
     var membershipId: String

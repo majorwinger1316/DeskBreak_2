@@ -55,6 +55,24 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
         sceneView.session.run(configuration)
     }
     
+    @IBAction func cancelButtonpressed(_ sender: UIButton) {
+        self.cancelButtonTapped()
+    }
+    
+    @objc private func cancelButtonTapped() {
+        // Invalidate any active timers
+        timer?.invalidate()
+        restTimer?.invalidate()
+        sessionTimer?.invalidate()
+
+        // Dismiss the view controller
+        if let navigationController = self.navigationController {
+            navigationController.popViewController(animated: true)
+        } else {
+            self.dismiss(animated: true, completion: nil)
+        }
+    }
+    
     private func setupUI() {
         view.backgroundColor = UIColor(red: 0.1, green: 0.1, blue: 0.1, alpha: 1.0)
         

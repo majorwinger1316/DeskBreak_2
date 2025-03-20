@@ -22,6 +22,8 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
     @IBOutlet weak var popUpButton: UIButton!
     @IBOutlet weak var communityImageView: UIImageView!
     
+    let refreshControl = UIRefreshControl()
+    
     var activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.color = .gray
@@ -59,6 +61,9 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
         // Observe keyboard events
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
+        tableView.refreshControl = refreshControl
         
         // Check if the current user is the admin of the community
         if let community = community, let currentUserId = Auth.auth().currentUser?.uid {
@@ -102,6 +107,10 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
     private func setupProfileImageView() {
         communityImageView.layer.cornerRadius = communityImageView.frame.width / 2
         communityImageView.clipsToBounds = true
+    }
+    
+    @objc func refreshData(_ sender: UIRefreshControl) {
+        fetchMembers() // Refresh the data
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -306,6 +315,20 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
         }
     }
     
+    func startLoading() {
+        DispatchQueue.main.async {
+            self.activityIndicator.startAnimating()
+            self.refreshControl.isEnabled = false // Disable refresh control while loading
+        }
+    }
+
+    func stopLoading() {
+        DispatchQueue.main.async {
+            self.activityIndicator.stopAnimating()
+            self.refreshControl.isEnabled = true // Re-enable refresh control after loading
+        }
+    }
+    
     @IBAction func shareButtonPressed(_ sender: UIBarButtonItem) {
         guard let community = community else { return }
 
@@ -341,6 +364,7 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
     func fetchMembers() {
         guard let community = community else {
             print("Community is nil")
+            refreshControl.endRefreshing() // Stop refresh control animation
             return
         }
 
@@ -358,6 +382,7 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
                     print("Error fetching members: \(error.localizedDescription)")
                     DispatchQueue.main.async {
                         self.activityIndicator.stopAnimating()
+                        self.refreshControl.endRefreshing() // Stop refresh control animation
                     }
                     return
                 }
@@ -377,6 +402,7 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
                         self.tableView.reloadData()
                         self.activityIndicator.stopAnimating()
                         self.tableView.isHidden = false
+                        self.refreshControl.endRefreshing() // Stop refresh control animation
 
                         // Animate table view appearance
                         self.animateTableView()

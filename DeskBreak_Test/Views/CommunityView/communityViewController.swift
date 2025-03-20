@@ -11,7 +11,7 @@ import CoreLocation
 import Foundation
 import MapKit
 
-class communityViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, CLLocationManagerDelegate, MKMapViewDelegate, MapViewControllerDelegate{
+class communityViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, CLLocationManagerDelegate, MKMapViewDelegate, MapViewControllerDelegate, JoinCommunityDelegate{
     
     func joinCommunityAlert(community: Community) {
         let alertController = UIAlertController(title: "Join Community", message: "Do you want to join the community \(community.communityName)?", preferredStyle: .alert)
@@ -38,6 +38,7 @@ class communityViewController: UIViewController, UICollectionViewDelegate, UICol
     
     let locationManager = CLLocationManager()
     var userLocation: CLLocation?
+    let refreshControl = UIRefreshControl()
     
     @IBAction func unwindToCommunity(Segue : UIStoryboardSegue){
         fetchUserCommunities()
@@ -66,6 +67,9 @@ class communityViewController: UIViewController, UICollectionViewDelegate, UICol
         
         fetchUserCommunities()
         
+        refreshControl.addTarget(self, action: #selector(refreshData(_:)), for: .valueChanged)
+        communityCollectionView.refreshControl = refreshControl
+        
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.requestWhenInUseAuthorization()
@@ -79,6 +83,53 @@ class communityViewController: UIViewController, UICollectionViewDelegate, UICol
         // Observe keyboard events
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        reorderTabs()
+    }
+    
+    @objc func refreshData(_ sender: UIRefreshControl) {
+        fetchUserCommunities() // Refresh the data
+    }
+    
+    func reorderTabs() {
+        // Access the UITabBarController
+        guard let tabBarController = self.tabBarController else {
+            print("Tab bar controller is nil")
+            return
+        }
+
+        // Get the current view controllers
+        guard var viewControllers = tabBarController.viewControllers else {
+            print("View controllers array is nil")
+            return
+        }
+
+        // Ensure there are at least 3 tabs
+        if viewControllers.count < 3 {
+            print("Not enough tabs to reorder")
+            return
+        }
+
+        // Print original order for debugging
+        print("Original order: \(viewControllers.map { $0.tabBarItem.title ?? "Untitled" })")
+
+        // Reorder the tabs
+        let firstTab = viewControllers[0]
+        let middleTab = viewControllers[1]
+        let lastTab = viewControllers[2]
+
+        viewControllers[0] = middleTab
+        viewControllers[1] = lastTab
+        viewControllers[2] = firstTab
+
+        // Assign the reordered view controllers back to the tab bar controller
+        tabBarController.viewControllers = viewControllers
+
+        // Set the selected index to the new first tab
+        tabBarController.selectedIndex = 0
+
+        // Print reordered order for debugging
+        print("Reordered order: \(viewControllers.map { $0.tabBarItem.title ?? "Untitled" })")
     }
     
     @objc func keyboardWillShow() {
@@ -96,17 +147,23 @@ class communityViewController: UIViewController, UICollectionViewDelegate, UICol
            let selectedCommunity = sender as? Community {
             destinationVC.community = selectedCommunity
         }
+        if segue.identifier == "showJoinCommunity",
+           let destinationVC = segue.destination as? joinCommunityViewController {
+            destinationVC.delegate = self // Set the delegate
+        }
     }
     
     func startLoading() {
         DispatchQueue.main.async {
             self.activityIndicator.startAnimating()
+            self.refreshControl.isEnabled = false // Disable refresh control while loading
         }
     }
 
     func stopLoading() {
         DispatchQueue.main.async {
             self.activityIndicator.stopAnimating()
+            self.refreshControl.isEnabled = true // Re-enable refresh control after loading
         }
     }
 
@@ -120,7 +177,7 @@ class communityViewController: UIViewController, UICollectionViewDelegate, UICol
     }
     
     func fetchUserCommunities() {
-        startLoading() // Start animation
+        startLoading() // Start activity indicator animation
 
         let db = Firestore.firestore()
         let userId = UserDefaults.standard.string(forKey: "userId") ?? ""
@@ -128,13 +185,15 @@ class communityViewController: UIViewController, UICollectionViewDelegate, UICol
         db.collection("communities").getDocuments { querySnapshot, error in
             if let error = error {
                 print("Error fetching communities: \(error.localizedDescription)")
-                self.stopLoading() // Stop animation if there is an error
+                self.stopLoading() // Stop activity indicator
+                self.refreshControl.endRefreshing() // Stop refresh control animation
                 return
             }
 
             guard let querySnapshot = querySnapshot else {
                 print("No communities found.")
-                self.stopLoading()
+                self.stopLoading() // Stop activity indicator
+                self.refreshControl.endRefreshing() // Stop refresh control animation
                 return
             }
 
@@ -162,7 +221,8 @@ class communityViewController: UIViewController, UICollectionViewDelegate, UICol
                 self.fetchCommunityDetails(communityIds: communityIds) { communities in
                     self.userCommunities = communities
                     self.communityCollectionView.reloadData()
-                    self.stopLoading() // Stop animation once data is loaded
+                    self.stopLoading() // Stop activity indicator
+                    self.refreshControl.endRefreshing() // Stop refresh control animation
                 }
             }
         }
@@ -227,6 +287,15 @@ class communityViewController: UIViewController, UICollectionViewDelegate, UICol
     @IBAction func nearbyCommunitiesButtonPressed(_ sender: UIButton) {
     }
     
+    @IBAction func joinCommunityButtonPressed(_ sender: UIBarButtonItem) {
+        performSegue(withIdentifier: "showJoinCommunity", sender: self)
+    }
+
+    // MARK: - JoinCommunityDelegate
+    func didJoinCommunity() {
+        fetchUserCommunities() // Refresh the data
+    }
+    
     func showNearbyCommunitiesAlert(community: Community) {
         let alertController = UIAlertController(title: "Nearby Community", message: "Do you want to join this community?", preferredStyle: .alert)
         
@@ -239,9 +308,6 @@ class communityViewController: UIViewController, UICollectionViewDelegate, UICol
         present(alertController, animated: true, completion: nil)
     }
     
-    @IBAction func addCommunityButtonPressed(_ sender: UIBarButtonItem) {
-    }
-    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
             userLocation = location
@@ -250,62 +316,6 @@ class communityViewController: UIViewController, UICollectionViewDelegate, UICol
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print("Failed to get location: \(error.localizedDescription)")
-    }
-    
-    @objc func segmentedControlValueChanged(_ sender: UISegmentedControl) {
-            // Update the placeholder text based on the selected segment
-            if let alertController = presentedViewController as? UIAlertController,
-               let textField = alertController.textFields?.first {
-                if sender.selectedSegmentIndex == 0 {
-                    textField.placeholder = "Enter community name"
-                } else {
-                    textField.placeholder = "Enter community code"
-                }
-            }
-        }
-
-    // MARK: - Create Community
-    func createCommunity(name: String, code: String) {
-        let db = Firestore.firestore()
-        let userId = UserDefaults.standard.string(forKey: "userId") ?? ""
-        let communityId = UUID().uuidString
-
-        guard let userLocation = userLocation else {
-            showAlert(title: "Error", message: "Unable to fetch your location. Please enable location services.")
-            return
-        }
-
-        let latitude = userLocation.coordinate.latitude
-        let longitude = userLocation.coordinate.longitude
-        let geohash = geohashEncode(latitude: latitude, longitude: longitude)
-
-        let communityData: [String: Any] = [
-            "communityId": communityId,
-            "communityName": name,
-            "communityCode": code,
-            "createdBy": userId,
-            "createdAt": Date(),
-            "latitude": latitude,
-            "longitude": longitude,
-            "geohash": geohash
-        ]
-
-        db.collection("communities").document(communityId).setData(communityData) { error in
-            if let error = error {
-                print("Error creating community: \(error.localizedDescription)")
-                self.showAlert(title: "Error", message: "Failed to create community.")
-            } else {
-                self.addMemberToCommunity(communityId: communityId, userId: userId) { membershipError in
-                    if let membershipError = membershipError {
-                        print("Error adding membership: \(membershipError.localizedDescription)")
-                        self.showAlert(title: "Error", message: "Failed to add you as a member.")
-                    } else {
-                        self.showAlert(title: "Community Created", message: "Community code is \(code). Share it with others.")
-                        self.fetchUserCommunities()
-                    }
-                }
-            }
-        }
     }
 
     func geohashEncode(latitude: Double, longitude: Double, precision: Int = 9) -> String {

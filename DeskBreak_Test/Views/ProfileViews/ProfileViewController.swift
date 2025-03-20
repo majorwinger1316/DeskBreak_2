@@ -19,17 +19,22 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
     @IBOutlet weak var profileTableView: UITableView!
     @IBOutlet weak var profileLabel: UILabel!
     @IBOutlet weak var profileImageView: UIImageView!
-    
+    private let profileCellIdentifier = "ProfileCell"
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Configure Table View
         profileTableView.dataSource = self
         profileTableView.delegate = self
-        profileTableView.backgroundColor = .card
+        profileTableView.backgroundColor = .modal
         profileTableView.separatorColor = .gray
         profileTableView.layer.cornerRadius = 12
         profileTableView.layer.masksToBounds = true
+
+        // Enable dynamic row height
+        profileTableView.rowHeight = UITableView.automaticDimension
+        profileTableView.estimatedRowHeight = 44
 
         setupProfileImageView()
         setupUsernameLabel()
@@ -43,8 +48,7 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
 
         // Load Profile Image
         fetchUserProfileFromFirebase()
-
-        // Fetch Daily Target from Firebase
+        
         fetchDailyTargetFromFirebase()
     }
 
@@ -84,7 +88,6 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
         present(alert, animated: true, completion: nil)
     }
     
-    
     private func fetchUserProfileFromFirebase() {
         if let userId = UserDefaults.standard.string(forKey: "userId") {
             let db = Firestore.firestore()
@@ -106,50 +109,38 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
             }
         }
     }
-    
-        private func setupProfileImageView() {
-            profileImageView.layer.cornerRadius = profileImageView.frame.width / 2
-            profileImageView.clipsToBounds = true
-        }
 
-        private func setupUsernameLabel() {
-            if let username = UserDefaults.standard.string(forKey: "userName") {
-                profileLabel.text = username
-            } else {
-                profileLabel.text = "User"
-            }
-        }
-
-    private func loadProfileImage(from urlString: String) {
-        guard let url = URL(string: urlString), !urlString.isEmpty else {
-            self.profileImageView.image = UIImage(named: "defaultProfileImage")
-            return
-        }
-        URLSession.shared.dataTask(with: url) { data, _, error in
-            if let profileImage = ProfileImageCache.shared.profileImage {
-                self.profileImageView.image = profileImage
-            } else {
-                // Fetch again if not in cache (only needed in rare cases)
-                self.profileImageView.image = UIImage(named: "defaultProfileImage")
-            }
-        }.resume()
+    private func setupProfileImageView() {
+        profileImageView.layer.cornerRadius = profileImageView.frame.width / 2
+        profileImageView.clipsToBounds = true
     }
 
-        // MARK: - TableView DataSource and Delegate
+    private func setupUsernameLabel() {
+        if let username = UserDefaults.standard.string(forKey: "userName") {
+            profileLabel.text = username
+        } else {
+            profileLabel.text = "User"
+        }
+    }
+
+    // MARK: - TableView DataSource and Delegate
     func numberOfSections(in tableView: UITableView) -> Int {
-        return sections.count // Just 1 section for "Profile"
+        return sections.count
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return profileItems.count // Three items in the profile section
+        return profileItems.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ProfileCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: profileCellIdentifier, for: indexPath)
         let item = profileItems[indexPath.row]
         cell.textLabel?.text = item
         cell.backgroundColor = .modalComponents
-        cell.contentView.backgroundColor = .clear
+        cell.contentView.backgroundColor = .modalComponents
+
+        // Remove existing subviews to avoid duplication
+        cell.contentView.subviews.forEach { $0.removeFromSuperview() }
 
         if item == "Daily Goal" {
             let timeLabel = UILabel()
@@ -163,7 +154,11 @@ class ProfileViewController: UIViewController, UITableViewDataSource, UITableVie
                 timeLabel.trailingAnchor.constraint(equalTo: cell.contentView.trailingAnchor, constant: -16),
                 timeLabel.centerYAnchor.constraint(equalTo: cell.contentView.centerYAnchor)
             ])
+
+            // Remove chevron for "Daily Goal"
+            cell.accessoryView = nil
         } else {
+            // Add chevron for other rows
             let chevron = UIImageView(image: UIImage(systemName: "chevron.right"))
             chevron.tintColor = .lightGray
             cell.accessoryView = chevron
