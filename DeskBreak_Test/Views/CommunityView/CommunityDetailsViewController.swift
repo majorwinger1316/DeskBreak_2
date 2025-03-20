@@ -14,11 +14,13 @@ import FirebaseStorage
 class CommunityDetailsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
     
     @IBOutlet weak var tableView: UITableView!
-    @IBOutlet weak var memberLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var codeLabel: UILabel!
+    @IBOutlet weak var communityDescriptionLabel: UILabel!
+    @IBOutlet weak var communityLocationLabel: UILabel!
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var popUpButton: UIButton!
+    @IBOutlet weak var communityImageView: UIImageView!
     
     var activityIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
@@ -57,29 +59,49 @@ class CommunityDetailsViewController: UIViewController, UITableViewDataSource, U
         // Observe keyboard events
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-
-        // Update UI with community details
-        if let community = community {
-            titleLabel.text = community.communityName
-            codeLabel.text = "Community Code: \(community.communityCode)"
-            fetchMembers()
-            
-            // Check if the current user is the admin (createdBy user) or if createdBy is nil
-            if let currentUserId = Auth.auth().currentUser?.uid {
-                if community.createdBy == nil || currentUserId == community.createdBy {
-                    // Enable delete button for admin or if createdBy is nil
-                    navigationItem.rightBarButtonItems?.append(UIBarButtonItem(
-                        title: "Delete",
-                        style: .plain,
-                        target: self,
-                        action: #selector(deleteCommunityButtonPressed)
-                    ))
-                }
+        
+        // Check if the current user is the admin of the community
+        if let community = community, let currentUserId = Auth.auth().currentUser?.uid {
+            if community.createdBy == currentUserId {
+                navigationItem.rightBarButtonItems?.append(UIBarButtonItem(
+                    title: "Delete",
+                    style: .plain,
+                    target: self,
+                    action: #selector(deleteCommunityButtonPressed)
+                ))
+            } else {
+                navigationItem.rightBarButtonItem = nil
             }
         }
+
+        if let community = community {
+            titleLabel.text = community.communityName
+            codeLabel.text = "Community Code - \(community.communityCode)"
+            communityDescriptionLabel.text = community.communityDescription ?? "No description available."
+            communityLocationLabel.text = community.placeName ?? "Location not available."
+            
+            if let imageUrl = community.communityImageUrl, let url = URL(string: imageUrl) {
+                URLSession.shared.dataTask(with: url) { data, response, error in
+                    if let data = data, let image = UIImage(data: data) {
+                        DispatchQueue.main.async {
+                            self.communityImageView.image = image
+                        }
+                    }
+                }.resume()
+            } else {
+                communityImageView.image = UIImage(systemName: "person.3.fill")?.withTintColor(.gray, renderingMode: .alwaysOriginal)
+            }
+        }
+        fetchMembers()
         configurePopUpButton()
         activityIndicator.center = view.center
         view.addSubview(activityIndicator)
+        setupProfileImageView()
+    }
+    
+    private func setupProfileImageView() {
+        communityImageView.layer.cornerRadius = communityImageView.frame.width / 2
+        communityImageView.clipsToBounds = true
     }
     
     override func viewWillAppear(_ animated: Bool) {

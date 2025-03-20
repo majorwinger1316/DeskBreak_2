@@ -103,9 +103,9 @@ class HomeCard: UIView {
         detail.frame = CGRect(x: (contentView.bounds.width - 50), y: 0, width: contentView.bounds.width - iconSize - 8 - 50, height: iconSize)
         
         let progressSize: CGFloat = 90
-        circularProgressView.frame = CGRect(x: contentView.bounds.width - progressSize - 30, y: (contentView.bounds.height - progressSize + 10) / 2, width: progressSize, height: progressSize)
+        circularProgressView.frame = CGRect(x: contentView.bounds.width - progressSize - 27, y: (contentView.bounds.height - progressSize - 20) / 2, width: progressSize, height: progressSize)
 
-        percentage.frame = CGRect(x: contentView.bounds.width - progressSize - 10, y: (contentView.bounds.height - progressSize + 5) / 2, width: progressSize, height: progressSize)
+        percentage.frame = CGRect(x: contentView.bounds.width - progressSize - 7, y: (contentView.bounds.height - progressSize - 25) / 2, width: progressSize, height: progressSize)
         
         circularProgressView.setupLayers()
     }

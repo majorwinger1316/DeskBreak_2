@@ -11,68 +11,7 @@ import CoreLocation
 import Foundation
 import MapKit
 
-struct Geohash {
-    static let base32 = Array("0123456789bcdefghjkmnpqrstuvwxyz")
-    static let bits = [16, 8, 4, 2, 1]
-    
-    static func encode(latitude: Double, longitude: Double, precision: Int = 9) -> String {
-        var isEven = true
-        var bit = 0
-        var currentChar = 0
-        var geohash = ""
-        
-        var minLat = -90.0
-        var maxLat = 90.0
-        var minLon = -180.0
-        var maxLon = 180.0
-        
-        while geohash.count < precision {
-            if isEven {
-                let mid = (minLon + maxLon) / 2
-                if longitude > mid {
-                    currentChar |= bits[bit]
-                    minLon = mid
-                } else {
-                    maxLon = mid
-                }
-            } else {
-                let mid = (minLat + maxLat) / 2
-                if latitude > mid {
-                    currentChar |= bits[bit]
-                    minLat = mid
-                } else {
-                    maxLat = mid
-                }
-            }
-            
-            isEven.toggle()
-            
-            if bit < 4 {
-                bit += 1
-            } else {
-                geohash.append(base32[currentChar])
-                bit = 0
-                currentChar = 0
-            }
-        }
-        return geohash
-    }
-    
-    // Generate a list of geohashes within a specific radius
-    static func surroundingGeohashes(geohash: String, radiusInMeters: Double) -> [String] {
-        // Example: In a real implementation, you would calculate neighboring geohashes based on the radius
-        return [geohash] // For simplicity, we're just returning the geohash itself.
-    }
-
-    // Calculate bounds for querying
-    static func queryBounds(latitude: Double, longitude: Double, radiusInMeters: Double) -> [String] {
-        let geohash = encode(latitude: latitude, longitude: longitude, precision: 5) // Precision of 5 gives a good balance between region size and query efficiency
-        let surrounding = surroundingGeohashes(geohash: geohash, radiusInMeters: radiusInMeters)
-        return surrounding
-    }
-}
-
-class communityViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, CLLocationManagerDelegate, MKMapViewDelegate, MapViewControllerDelegate{
+class communityViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, CLLocationManagerDelegate, MKMapViewDelegate, MapViewControllerDelegate{
     
     func joinCommunityAlert(community: Community) {
         let alertController = UIAlertController(title: "Join Community", message: "Do you want to join the community \(community.communityName)?", preferredStyle: .alert)
@@ -89,7 +28,7 @@ class communityViewController: UIViewController, UITableViewDelegate, UITableVie
         present(alertController, animated: true, completion: nil)
     }
     
-    @IBOutlet weak var communityTable: UITableView!
+    @IBOutlet weak var communityCollectionView: UICollectionView!
     @IBOutlet weak var communitySearchBar: UISearchBar!
     
     let activityIndicator = UIActivityIndicatorView(style: .large)
@@ -100,23 +39,30 @@ class communityViewController: UIViewController, UITableViewDelegate, UITableVie
     let locationManager = CLLocationManager()
     var userLocation: CLLocation?
     
-    @IBAction func unwindToCommunity(segue : UIStoryboardSegue){
+    @IBAction func unwindToCommunity(Segue : UIStoryboardSegue){
         fetchUserCommunities()
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        communityCollectionView.delegate = self
+        communityCollectionView.dataSource = self
+        communityCollectionView.register(CommunityCollectionViewCell.self, forCellWithReuseIdentifier: "CommunityCell")
+        
+        // Configure layout
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.itemSize = CGSize(width: view.frame.width - 32, height: 120) // Adjust size as needed
+        layout.minimumLineSpacing = 8 // Reduced space between cells
+        layout.minimumInteritemSpacing = 8
+        layout.sectionInset = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8) // Reduced padding
+        communityCollectionView.collectionViewLayout = layout
+        
         // Configure activity indicator
         activityIndicator.center = view.center
         activityIndicator.hidesWhenStopped = true
         view.addSubview(activityIndicator)
-        
-        communityTable.delegate = self
-        communityTable.dataSource = self
-        communityTable.register(UITableViewCell.self, forCellReuseIdentifier: "CommunityCell")
-        communityTable.layer.cornerRadius = 12
-        communityTable.layer.masksToBounds = true
         
         fetchUserCommunities()
         
@@ -137,6 +83,19 @@ class communityViewController: UIViewController, UITableViewDelegate, UITableVie
     
     @objc func keyboardWillShow() {
         view.gestureRecognizers?.first(where: { $0 is UITapGestureRecognizer })?.isEnabled = true
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        fetchUserCommunities() // Refresh the data when the view appears
+    }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showCommunityDetails",
+           let destinationVC = segue.destination as? CommunityDetailsViewController,
+           let selectedCommunity = sender as? Community {
+            destinationVC.community = selectedCommunity
+        }
     }
     
     func startLoading() {
@@ -202,7 +161,7 @@ class communityViewController: UIViewController, UITableViewDelegate, UITableVie
             group.notify(queue: .main) {
                 self.fetchCommunityDetails(communityIds: communityIds) { communities in
                     self.userCommunities = communities
-                    self.communityTable.reloadData()
+                    self.communityCollectionView.reloadData()
                     self.stopLoading() // Stop animation once data is loaded
                 }
             }
@@ -239,45 +198,31 @@ class communityViewController: UIViewController, UITableViewDelegate, UITableVie
         }
     }
     
-    // MARK: - TableView Methods
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    // MARK: - UICollectionViewDataSource
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return isSearching ? filteredCommunities.count : userCommunities.count
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: "showCommunityDetails", sender: userCommunities[indexPath.row])
-    }
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showCommunityDetails",
-           let destinationVC = segue.destination as? CommunityDetailsViewController,
-           let selectedCommunity = sender as? Community {
-            destinationVC.community = selectedCommunity
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CommunityCell", for: indexPath) as? CommunityCollectionViewCell else {
+            fatalError("Unable to dequeue CommunityCollectionViewCell")
         }
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CommunityCell", for: indexPath)
+        
+        // Configure the cell
         let community = isSearching ? filteredCommunities[indexPath.row] : userCommunities[indexPath.row]
-        
-        cell.textLabel?.text = community.communityName
-        cell.textLabel?.textColor = .main
-        cell.imageView?.image = UIImage(systemName: "person.3")?.withTintColor(.gray, renderingMode: .alwaysOriginal)
-        cell.contentView.layer.masksToBounds = true
-        cell.backgroundColor = .card
-        
-        let chevronImage = UIImageView(image: UIImage(systemName: "chevron.right"))
-        chevronImage.tintColor = .systemGray
-        cell.accessoryView = chevronImage
-        
-        UIView.animate(withDuration: 0.5, delay: 0.05 * Double(indexPath.row), usingSpringWithDamping: 0.7, initialSpringVelocity: 0, options: .curveEaseInOut, animations: {
-            cell.transform = CGAffineTransform.identity
-            cell.alpha = 1
-        }, completion: nil)
+        cell.configure(with: community)
         
         return cell
     }
-
+    
+    // MARK: - UICollectionViewDelegate
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        // Get the selected community
+        let community = isSearching ? filteredCommunities[indexPath.row] : userCommunities[indexPath.row]
+        
+        // Navigate to CommunityDetailsViewController
+        performSegue(withIdentifier: "showCommunityDetails", sender: community)
+    }
     
     @IBAction func nearbyCommunitiesButtonPressed(_ sender: UIButton) {
     }
@@ -295,49 +240,6 @@ class communityViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     @IBAction func addCommunityButtonPressed(_ sender: UIBarButtonItem) {
-        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .alert)
-
-        let segmentedControl = UISegmentedControl(items: ["Create", "Join"])
-        segmentedControl.selectedSegmentIndex = 0
-        alertController.view.addSubview(segmentedControl)
-        segmentedControl.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            segmentedControl.topAnchor.constraint(equalTo: alertController.view.topAnchor, constant: 15),
-            segmentedControl.leadingAnchor.constraint(equalTo: alertController.view.leadingAnchor, constant: 20),
-            segmentedControl.trailingAnchor.constraint(equalTo: alertController.view.trailingAnchor, constant: -20),
-            segmentedControl.heightAnchor.constraint(equalToConstant: 30)
-        ])
-
-        alertController.addTextField { textField in
-            textField.placeholder = "Enter community name"
-            textField.clearButtonMode = .whileEditing
-            textField.autocapitalizationType = .none
-            textField.autocorrectionType = .no
-            textField.spellCheckingType = .no
-            textField.keyboardType = .default
-        }
-
-        let doneAction = UIAlertAction(title: "Done", style: .default) { [weak self] _ in
-            guard let self = self, let textFieldInput = alertController.textFields?.first?.text, !textFieldInput.isEmpty else { return }
-
-            if segmentedControl.selectedSegmentIndex == 0 {
-                // Create Community
-                let communityCode = String(Int.random(in: 1000...9999))
-                self.createCommunity(name: textFieldInput, code: communityCode)
-            } else {
-                // Join Community
-                if let communityCode = alertController.textFields?.first?.text {
-                    self.joinCommunity(code: communityCode)
-                }
-            }
-        }
-
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
-        alertController.addAction(doneAction)
-        alertController.view.heightAnchor.constraint(greaterThanOrEqualToConstant: 150).isActive = true
-        present(alertController, animated: true, completion: nil)
-
-        segmentedControl.addTarget(self, action: #selector(segmentedControlValueChanged(_:)), for: .valueChanged)
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
@@ -549,13 +451,13 @@ extension communityViewController: UISearchBarDelegate {
                 $0.communityName.lowercased().contains(searchText.lowercased())
             }
         }
-        communityTable.reloadData()
+        communityCollectionView.reloadData()
     }
 
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         isSearching = false
         searchBar.text = ""
-        communityTable.reloadData()
+        communityCollectionView.reloadData()
         searchBar.resignFirstResponder()
     }
 }

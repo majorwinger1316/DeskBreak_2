@@ -169,88 +169,72 @@ class GameSession {
     }
 }
 
-// Community and CommunityMembership models can be similarly adjusted to match Firestore documents
-// Community class for representing a community
-class Community {
-    var communityId: String
-    var communityName: String
-    var descriptionText: String
-    var communityCode: String
-    var latitude: Double
-    var longitude: Double
-    var createdBy: String
-    var createdAt: Date
-    var members: [String] = []
+struct Community {
+    let communityId: String
+    let communityName: String
+    let communityCode: String
+    let communityDescription: String?
+    let placeName: String?
+    let communityImageUrl: String?
+    let createdBy: String
+    let createdAt: Date
+    let latitude: Double
+    let longitude: Double
+    let geohash: String
+}
 
-    init(communityId: String, communityName: String, descriptionText: String, communityCode: String, latitude: Double, longitude: Double, createdBy: String, createdAt: Date) {
-        self.communityId = communityId
-        self.communityName = communityName
-        self.descriptionText = descriptionText
-        self.communityCode = communityCode
-        self.latitude = latitude
-        self.longitude = longitude
-        self.createdBy = createdBy
-        self.createdAt = createdAt
-    }
-
-    convenience init?(document: DocumentSnapshot) {
-        guard let data = document.data() else {
-            print("No data found for document: \(document.documentID)")
-            return nil
-        }
-
-        print("Document Data: \(data)")
-
-        // Ensure that communityCode is extracted from Firestore
-        guard let communityId = data["communityId"] as? String,
-              let communityName = data["communityName"] as? String,
-              let communityCode = data["communityCode"] as? String,
-              let latitude = data["latitude"] as? Double,
-              let longitude = data["longitude"] as? Double,
-              let createdBy = data["createdBy"] as? String,
-              let createdAtTimestamp = data["createdAt"] as? Timestamp else {
-            print("Missing required fields or wrong data types in document \(document.documentID)")
-            return nil
-        }
-
-        let descriptionText = data["descriptionText"] as? String ?? ""
-
-        self.init(communityId: communityId,
-                  communityName: communityName,
-                  descriptionText: descriptionText,
-                  communityCode: communityCode,
-                  latitude : latitude,
-                  longitude: longitude,
-                  createdBy: createdBy,
-                  createdAt: createdAtTimestamp.dateValue())
-    }
-
-    // MARK: - Fetch Community Members from Firestore
-    func fetchMembersFromFirestore(completion: @escaping ([User]) -> Void) {
-        let db = Firestore.firestore()
-        db.collection("communities")
-            .document(communityId)
-            .collection("members")
-            .getDocuments { snapshot, error in
-                if let error = error {
-                    print("Error fetching members: \(error)")
-                    completion([])
-                    return
-                }
-
-                var fetchedMembers: [User] = []
-                for document in snapshot?.documents ?? [] {
-                    if let userData = document.data() as? [String: Any] {
-                        if let user = User.fromFirestoreData(userData) {
-                            fetchedMembers.append(user)
-                        }
-                    }
-                }
-                completion(fetchedMembers)
-            }
+extension Community {
+    init?(document: DocumentSnapshot) {
+        guard let data = document.data() else { return nil }
+        
+        self.communityId = document.documentID
+        self.communityName = data["communityName"] as? String ?? ""
+        self.communityCode = data["communityCode"] as? String ?? ""
+        self.communityDescription = data["communityDescription"] as? String ?? ""
+        self.placeName = data["placeName"] as? String ?? ""
+        self.communityImageUrl = data["communityImageUrl"] as? String ?? ""
+        self.createdBy = data["createdBy"] as? String ?? ""
+        self.createdAt = (data["createdAt"] as? Timestamp)?.dateValue() ?? Date()
+        self.latitude = data["latitude"] as? Double ?? 0.0
+        self.longitude = data["longitude"] as? Double ?? 0.0
+        self.geohash = data["geohash"] as? String ?? ""
     }
 }
 
+func fetchCommunityDetails(communityIds: [String], completion: @escaping ([Community]) -> Void) {
+    let db = Firestore.firestore()
+    var communities: [Community] = []
+
+    let group = DispatchGroup()
+
+    for communityId in communityIds {
+        group.enter()
+        db.collection("communities").document(communityId).getDocument { document, error in
+            if let document = document, document.exists {
+                let data = document.data()
+                let community = Community(
+                    communityId: communityId,
+                    communityName: data?["communityName"] as? String ?? "",
+                    communityCode: data?["communityCode"] as? String ?? "",
+                    communityDescription: data?["communityDescription"] as? String ?? "",
+                    placeName: data?["placeName"] as? String ?? "",
+                    communityImageUrl: data?["communityImageUrl"] as? String ?? "",
+                    createdBy: data?["createdBy"] as? String ?? "",
+                    createdAt: (data?["createdAt"] as? Timestamp)?.dateValue() ?? Date(),
+                    latitude: data?["latitude"] as? Double ?? 0.0,
+                    longitude: data?["longitude"] as? Double ?? 0.0,
+                    geohash: data?["geohash"] as? String ?? ""
+                )
+                communities.append(community)
+            }
+            group.leave()
+        }
+    }
+
+    group.notify(queue: .main) {
+        completion(communities)
+    }
+}
 
 // CommunityMembership class for representing a user's membership in a community
 class CommunityMembership {

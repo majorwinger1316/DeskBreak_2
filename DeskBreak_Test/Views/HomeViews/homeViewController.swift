@@ -36,8 +36,10 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
     @IBOutlet weak var playersThisWeekLabel: UILabel!
     @IBOutlet weak var dailyMinsLabel: UILabel!
     @IBOutlet weak var dailyTargetLabel: UILabel!
-    
-    
+    @IBOutlet weak var dailyPointsLabel: UILabel!
+    @IBOutlet weak var minutesView: UIView!
+    @IBOutlet weak var targetView: UIView!
+    @IBOutlet weak var scoreView: UIView!
     
     private let gradientLayer = CAGradientLayer()
     private let initialBackgroundColor = UIColor.bg
@@ -53,9 +55,11 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
         setupGradientLayer()
         fetchDailyTargetandMinutesFromFirebase()
         fetchStreakFromFirebase()
+        minutesView.layer.cornerRadius = 12
+        targetView.layer.cornerRadius = 12
+        scoreView.layer.cornerRadius = 12
 //        setupNavigationBarWithProfileImage(image: UIImage(named: "profile"))
         fetchNameFromFirebase()
-        animateFlameBounce()
         scheduleStretchNotifications()
         
         fetchProfileImage()
@@ -68,7 +72,6 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController?.navigationBar.layoutIfNeeded()
-        animateFlameBounce()
         
         // Add a subtle entrance animation for content
         let originalTransform = contentView.transform
@@ -183,12 +186,14 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
                 if let document = document, document.exists {
                     let dailyTarget = document.data()?["dailyTarget"] as? Int16 ?? 1
                     let dailyMinutes = document.data()?["dailyMinutes"] as? Int16 ?? 1
+                    let dailyPoints = document.data()?["dailyPoints"] as? Int16 ?? 1
                     print("daily min = \(dailyMinutes)")
                     print("daily tar = \(dailyTarget)")
                     DispatchQueue.main.async {
                         self.homeCardView.setProgress(minutes: CGFloat(dailyMinutes), dailyTarget: CGFloat(dailyTarget))
                         self.dailyMinsLabel.text = String(dailyMinutes)
                         self.dailyTargetLabel.text = String(dailyTarget)
+                        self.dailyPointsLabel.text = String(dailyPoints)
                     }
                 }
             }
@@ -207,7 +212,7 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
                 if let document = document, document.exists {
                     let userName = document.data()?["username"] as? String
                     DispatchQueue.main.async {
-                        self.navigationItem.title = "Hey \(userName ?? "user")"
+                        self.navigationItem.title = "Hey, \(userName ?? "user")!"
                     }
                 }
             }
@@ -380,7 +385,7 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
         super.viewDidLayoutSubviews()
         
         // Update gradient frame to match the view's current bounds
-        gradientLayer.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 200)
+        gradientLayer.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 500)
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
