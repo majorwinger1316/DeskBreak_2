@@ -10,7 +10,7 @@
 			<key>CFBundleURLIconFile</key>
 			<string></string>
 			<key>CFBundleURLName</key>
-			<string>Google Sign In</string>
+			<string>GIDSignIn</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.553775639740-brpnm4v8q5n9e59juekbpaeon8ihqi4m</string>

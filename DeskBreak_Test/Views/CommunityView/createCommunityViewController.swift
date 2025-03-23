@@ -169,7 +169,6 @@ class createCommunityViewController: UIViewController, UIImagePickerControllerDe
         if let image = info[.originalImage] as? UIImage {
             selectedImage = image
 
-            // Crop the image to a circle and display it
             if let croppedImage = cropImageToCircle(image) {
                 communityImage.image = croppedImage
             }

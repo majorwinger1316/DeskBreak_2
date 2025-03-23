@@ -8,10 +8,17 @@
 import UIKit
 
 class HomeCard: UIView {
-    // MARK: - UI Components
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 17, weight: .bold)
+        label.textColor = .main
+        label.text = "Daily Progress"
+        return label
+    }()
+    
     private let percentageLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.font = UIFont.systemFont(ofSize: 24, weight: .bold)
         label.textColor = .main
         label.textAlignment = .left
         return label
@@ -19,7 +26,7 @@ class HomeCard: UIView {
     
     private let minutesLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 18, weight: .medium)
+        label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         label.textColor = .systemGray
         label.textAlignment = .right
         return label
@@ -27,16 +34,13 @@ class HomeCard: UIView {
     
     private let progressBar: UIProgressView = {
         let progressView = UIProgressView(progressViewStyle: .default)
-        progressView.trackTintColor = .main.withAlphaComponent(0.2)
+        progressView.trackTintColor = .main.withAlphaComponent(0.3)
         progressView.progressTintColor = .main
-        progressView.layer.cornerRadius = 6
+        progressView.layer.cornerRadius = 4
         progressView.clipsToBounds = true
         return progressView
     }()
-    
-    private let gradientLayer = CAGradientLayer()
-    
-    // MARK: - Initializers
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -46,64 +50,54 @@ class HomeCard: UIView {
         super.init(coder: coder)
         setupView()
     }
-    
-    // MARK: - Setup View
+
     private func setupView() {
         backgroundColor = .card
-        layer.cornerRadius = 16
+        layer.cornerRadius = 12
         layer.masksToBounds = false
         
         // Add shadow
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOpacity = 0.1
-        layer.shadowOffset = CGSize(width: 0, height: 4)
-        layer.shadowRadius = 8
-        
-        // Add gradient background
-        gradientLayer.colors = [
-            UIColor.main.withAlphaComponent(0.1).cgColor,
-            UIColor.main.withAlphaComponent(0.05).cgColor
-        ]
-        gradientLayer.locations = [0.0, 1.0]
-        gradientLayer.cornerRadius = 16
-        layer.insertSublayer(gradientLayer, at: 0)
+        layer.shadowOffset = CGSize(width: 0, height: 2)
+        layer.shadowRadius = 4
         
         // Add subviews
+        addSubview(titleLabel)
         addSubview(percentageLabel)
         addSubview(minutesLabel)
         addSubview(progressBar)
         
         // Layout constraints
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
         percentageLabel.translatesAutoresizingMaskIntoConstraints = false
         minutesLabel.translatesAutoresizingMaskIntoConstraints = false
         progressBar.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
+            // Title Label
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 16),
+            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            
             // Percentage Label
-            percentageLabel.topAnchor.constraint(equalTo: topAnchor, constant: 24),
-            percentageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
+            percentageLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
+            percentageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
             
             // Minutes Label
-            minutesLabel.topAnchor.constraint(equalTo: percentageLabel.bottomAnchor, constant: 8),
-            minutesLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
-            minutesLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
+            minutesLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
+            minutesLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            minutesLabel.leadingAnchor.constraint(equalTo: percentageLabel.trailingAnchor, constant: 8),
             
             // Progress Bar
-            progressBar.topAnchor.constraint(equalTo: minutesLabel.bottomAnchor, constant: 24),
-            progressBar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
-            progressBar.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -24),
-            progressBar.heightAnchor.constraint(equalToConstant: 12),
-            progressBar.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24)
+            progressBar.topAnchor.constraint(equalTo: percentageLabel.bottomAnchor, constant: 16),
+            progressBar.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            progressBar.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
+            progressBar.heightAnchor.constraint(equalToConstant: 8),
+            progressBar.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16)
         ])
     }
-    
-    // MARK: - Layout Subviews
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        gradientLayer.frame = bounds
-    }
-    
-    // MARK: - Update Progress
+
     func setProgress(minutes: CGFloat, dailyTarget: CGFloat) {
         let progress = max(0, min(1, minutes / dailyTarget))
         
@@ -115,6 +109,6 @@ class HomeCard: UIView {
         percentageLabel.text = "\(Int(percentageValue))%"
         
         // Update minutes label
-        minutesLabel.text = "\(Int(minutes)) of \(Int(dailyTarget)) mins"
+        minutesLabel.text = "\(Int(minutes))/\(Int(dailyTarget)) mins"
     }
 }

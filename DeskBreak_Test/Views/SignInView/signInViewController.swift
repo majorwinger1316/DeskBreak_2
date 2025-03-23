@@ -48,7 +48,7 @@ class signInViewController: UIViewController {
     }
     
     @objc func dismissKeyboard() {
-        view.endEditing(true) // Hide keyboard when tapping outside
+        view.endEditing(true)
     }
     
     @objc func showPassword(tapGestureRecognizer: UITapGestureRecognizer) {
@@ -91,16 +91,14 @@ class signInViewController: UIViewController {
             return
         }
         activityIndicator.startAnimating()
-        
-        // Firebase Authentication Sign-In
+
         Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
             if let error = error {
                 self.activityIndicator.stopAnimating()
                 self.showAlert(message: "Login failed: \(error.localizedDescription)")
                 return
             }
-            
-            // Retrieve userId and fetch user data from Firestore
+
             guard let userId = authResult?.user.uid else {
                 self.activityIndicator.stopAnimating()
                 self.showAlert(message: "Error retrieving user information.")
@@ -173,6 +171,9 @@ class signInViewController: UIViewController {
         }
     }
     
+    @IBAction func continueWithGoogleButtonPressed(_ sender: UIButton) {
+    }
+    
     public func downloadProfileImage(from url: URL) {
         URLSession.shared.dataTask(with: url) { data, _, error in
             if let error = error {
@@ -190,7 +191,6 @@ class signInViewController: UIViewController {
             }
         }.resume()
     }
-
     
     private func navigateToTabBarController() {
         DispatchQueue.main.async {
@@ -198,15 +198,12 @@ class signInViewController: UIViewController {
                 let tabBarController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TabBarController") as! UITabBarController
 
                 if let homeVC = tabBarController.viewControllers?.first(where: { $0 is homeViewController }) as? homeViewController {
-                    // Pass the user data to the home view controller
-                    homeVC.profileUpdateDelegate = self  // Set the delegate
-                    
-                    // Retrieve user data from UserDefaults
+                    homeVC.profileUpdateDelegate = self
+
                     let defaults = UserDefaults.standard
                     let totalMinutes = defaults.float(forKey: "totalMinutes")
                     let dailyTarget = defaults.float(forKey: "dailyTarget")
                     
-                    // Pass the data to the HomeCard via homeVC
                     homeVC.updateHomeCard(totalMinutes: totalMinutes, dailyTarget: dailyTarget)
                 }
 
@@ -233,11 +230,10 @@ class signInViewController: UIViewController {
     }
 
     @objc private func doneButtonTapped() {
-        view.endEditing(true) // Dismiss the keyboard
+        view.endEditing(true)
     }
 }
 
-// MARK: - ProfileUpdateDelegate Implementation
 extension signInViewController: ProfileUpdateDelegate {
     func updateProfileImage(_ image: UIImage) {
         print("Profile image updated successfully.")

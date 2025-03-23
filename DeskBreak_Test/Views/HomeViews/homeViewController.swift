@@ -40,6 +40,8 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
     @IBOutlet weak var targetView: UIView!
     @IBOutlet weak var scoreView: UIView!
     @IBOutlet weak var workShiftView: UIView!
+    @IBOutlet weak var routineCardView: RoutineCardView!
+    @IBOutlet weak var stretchCardView: startStretchView!
     
     
     private let gradientLayer = CAGradientLayer()
@@ -59,15 +61,43 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
         minutesView.layer.cornerRadius = 12
         targetView.layer.cornerRadius = 12
         scoreView.layer.cornerRadius = 12
+        stretchCardView.layer.cornerRadius = 12
+        workShiftView.layer.cornerRadius = 12
+        
+        let upcomingRoutine = RoutineStore.shared.getNextUpcomingRoutine()
+        routineCardView.configure(with: upcomingRoutine)
 
         fetchNameFromFirebase()
-        scheduleStretchNotifications()
+//        scheduleStretchNotifications()
         
         fetchProfileImage()
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(homeCardTapped))
         homeCardView.addGestureRecognizer(tapGesture)
         homeCardView.isUserInteractionEnabled = true
+        
+        let workShiftTapGesture = UITapGestureRecognizer(target: self, action: #selector(workShiftViewTapped))
+        workShiftView.addGestureRecognizer(workShiftTapGesture)
+        workShiftView.isUserInteractionEnabled = true
+    }
+    
+    func deleteRoutine(at index: Int) {
+        // Delete the routine
+        RoutineStore.shared.removeRoutine(at: index)
+        
+        // Fetch the updated upcoming routine
+        let upcomingRoutine = RoutineStore.shared.getNextUpcomingRoutine()
+        
+        // Update the card
+        routineCardView.configure(with: upcomingRoutine)
+    }
+    
+    @objc private func workShiftViewTapped() {
+        if let routineListVC = storyboard?.instantiateViewController(withIdentifier: "RoutineListViewController") as? RoutineListViewController {
+            navigationController?.pushViewController(routineListVC, animated: true)
+        } else {
+            print("Failed to instantiate RoutineListViewController. Check storyboard ID.")
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -85,6 +115,9 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
         }, completion: nil)
         fetchDailyTargetandMinutesFromFirebase()
         fetchStreakFromFirebase()
+        
+        let upcomingRoutine = RoutineStore.shared.getNextUpcomingRoutine()
+        routineCardView.configure(with: upcomingRoutine)
     }
     
     private func fetchProfileImage() {
@@ -114,6 +147,15 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
                     self.setupNavigationBarWithProfileImage(image: defaultImage)
                 }
             }
+        }
+    }
+    
+    @IBAction func viewAllButtonTapped(_ sender: UIButton) {
+        if let userDetailsVC = storyboard?.instantiateViewController(withIdentifier: "userDetailsViewController") as? userDetailsViewController {
+            let navController = UINavigationController(rootViewController: userDetailsVC)
+            navController.modalPresentationStyle = .pageSheet
+            userDetailsVC.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(dismissUserDetails))
+            present(navController, animated: true)
         }
     }
 
@@ -167,8 +209,13 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
                     let dailyTarget = document.data()?["dailyTarget"] as? Int16 ?? 1
                     let dailyMinutes = document.data()?["dailyMinutes"] as? Int16 ?? 1
                     let dailyPoints = document.data()?["dailyPoints"] as? Int16 ?? 1
+                    
+                    // Store dailyTarget in UserDefaults
+                    UserDefaults.standard.set(dailyTarget, forKey: "dailyTarget")
+                    
                     print("daily min = \(dailyMinutes)")
                     print("daily tar = \(dailyTarget)")
+                    
                     DispatchQueue.main.async {
                         self.homeCardView.setProgress(minutes: CGFloat(dailyMinutes), dailyTarget: CGFloat(dailyTarget))
                         self.dailyMinsLabel.text = String(dailyMinutes)
@@ -267,12 +314,6 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
         tintView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         blurView.contentView.addSubview(tintView)
 
-        // Add an info icon
-        let iconImageView = UIImageView(image: UIImage(systemName: "info.circle.fill"))
-        iconImageView.tintColor = .lightGray
-        iconImageView.translatesAutoresizingMaskIntoConstraints = false
-        blurView.contentView.addSubview(iconImageView)
-
         // Add the message label
         let messageLabel = UILabel()
         messageLabel.text = message
@@ -285,10 +326,6 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
 
         // Add constraints for the icon and label
         NSLayoutConstraint.activate([
-            iconImageView.centerXAnchor.constraint(equalTo: blurView.contentView.centerXAnchor),
-            iconImageView.bottomAnchor.constraint(equalTo: messageLabel.topAnchor, constant: -8),
-            iconImageView.widthAnchor.constraint(equalToConstant: 32),
-            iconImageView.heightAnchor.constraint(equalToConstant: 32),
 
             messageLabel.leadingAnchor.constraint(equalTo: blurView.contentView.leadingAnchor, constant: 16),
             messageLabel.trailingAnchor.constraint(equalTo: blurView.contentView.trailingAnchor, constant: -16),
@@ -354,12 +391,11 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
             mainColor.withAlphaComponent(0.0).cgColor
         ]
         gradientLayer.locations = [0.0, 1.0]
-        gradientLayer.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 500)
+        gradientLayer.frame = CGRect(x: 0, y: 0, width: view.frame.width, height: 10)
         
         // Make sure the gradient is behind all content but still visible
         view.layer.insertSublayer(gradientLayer, at: 0)
         
-        // Ensure the scrollView is above the gradient
         if let scrollView = scrollView {
             view.bringSubviewToFront(scrollView)
         }
@@ -367,7 +403,7 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        gradientLayer.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 500)
+        gradientLayer.frame = CGRect(x: 0, y: 0, width: view.bounds.width, height: 150)
     }
 
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -375,7 +411,6 @@ class homeViewController: UIViewController, ProfileUpdateDelegate {
         let maxFadeOffset: CGFloat = 100
         let opacity = max(0, 1 - offset / maxFadeOffset)
         gradientLayer.opacity = Float(opacity)
-        
     }
     
     func loginUser() {

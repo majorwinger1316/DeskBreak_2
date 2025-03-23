@@ -30,10 +30,10 @@ class signUp2ViewController: UIViewController {
     }
     
     @objc func dismissKeyboard() {
-        view.endEditing(true) // Hide keyboard when tapping outside
+        view.endEditing(true)
     }
     
-    @IBAction func continueButton(_ sender: UIButton) {
+    @IBAction func continueButton(_ sender: UIBarButtonItem) {
         if registrationData == nil {
             registrationData = UserRegistrationData()
         }

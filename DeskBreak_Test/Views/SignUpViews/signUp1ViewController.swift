@@ -68,7 +68,7 @@ class signUp1ViewController: UIViewController, UIImagePickerControllerDelegate, 
         userDateOfBirth.resignFirstResponder()
     }
     
-    @IBAction func continueButtonPressed(_ sender: UIButton) {
+    @IBAction func continueButtonPressed(_ sender: UIBarButtonItem) {
         guard let username = userNameText.text, !username.isEmpty,
               let dateOfBirthString = userDateOfBirth.text, !dateOfBirthString.isEmpty else {
             showAlert(message: "Please fill in all fields.")

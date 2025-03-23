@@ -64,7 +64,7 @@ class HalfModalDetailsView: UIViewController, UIPickerViewDataSource, UIPickerVi
             self.selectedShift = self.shiftOptions[selectedIndex]
             UserDefaults.standard.set(self.selectedShift, forKey: "selectedShift")
             print("Shift Timings changed to \(selectedshift)")
-            scheduleStretchNotifications()
+//            scheduleStretchNotifications()
         }
         dismiss(animated: true)
         if let detailsVC = self.presentingViewController as? DetailsViewController {

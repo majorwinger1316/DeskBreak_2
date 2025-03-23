@@ -11,6 +11,7 @@ import Vision
 import FirebaseFirestore
 import FirebaseAuth
 import FirebaseDatabaseInternal
+import CoreHaptics
 
 class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
     
@@ -35,6 +36,9 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
     private var isResting = false
     private var synthesizer = AVSpeechSynthesizer()
     private var totalPoints = 0
+    var speechSynthesizer = AVSpeechSynthesizer()
+    var hapticEngine: CHHapticEngine?
+    var isSessionStarted = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -178,6 +182,7 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
         totalPoints = 0
         pointsLabel.text = "Points 0"
         startStretchSequence()
+        isSessionStarted = true
     }
     
     private func endSession() {
@@ -191,9 +196,11 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
         startButton.isHidden = false
         originalSessionTime /= 60
         
-        // Use originalSessionTime instead of sessionTime
+        let dailyTarget = UserDefaults.standard.integer(forKey: "dailyTarget")
+
         updateUserProgressInFirebase(duration: originalSessionTime, score: totalPoints)
-        updateMonthlyStatsInFirebase(minutes: originalSessionTime)
+        updateMonthlyStatsInFirebase(minutes: originalSessionTime, points: totalPoints, dailyTarget: dailyTarget)
+        updateWeeklyStatsInFirebase(minutes: originalSessionTime, points: totalPoints, dailyTarget: dailyTarget)
         presentSuccessViewController(duration: originalSessionTime, score: totalPoints)
         self.navigationController?.popToRootViewController(animated: true)
     }
@@ -212,7 +219,7 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
         }
     }
     
-    func updateMonthlyStatsInFirebase(minutes: Int) {
+    private func updateMonthlyStatsInFirebase(minutes: Int, points: Int, dailyTarget: Int) {
         guard let userId = Auth.auth().currentUser?.uid else {
             print("User is not logged in.")
             return
@@ -236,23 +243,23 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
             }
             
             var dailyMinutes = [String: Int]()
+            var dailyPoints = [String: Int]()
+            var dailyTargets = [String: Int]()
             var streak = 0
             var lastActiveDay: Int?
             
-            if let data = document?.data(), let existingDailyMinutes = data["dailyMinutes"] as? [String: Int] {
-                dailyMinutes = existingDailyMinutes
-                
-                // Get the last active day if available
-                lastActiveDay = existingDailyMinutes.keys.compactMap { Int($0) }.sorted().last
+            if let data = document?.data() {
+                dailyMinutes = data["dailyMinutes"] as? [String: Int] ?? [:]
+                dailyPoints = data["dailyPoints"] as? [String: Int] ?? [:]
+                dailyTargets = data["dailyTarget"] as? [String: Int] ?? [:]
                 streak = data["streak"] as? Int ?? 0
+                lastActiveDay = dailyMinutes.keys.compactMap { Int($0) }.sorted().last
             }
             
-            // Update minutes for the current day
-            if let currentDayMinutes = dailyMinutes[dayString] {
-                dailyMinutes[dayString] = currentDayMinutes + minutes
-            } else {
-                dailyMinutes[dayString] = minutes
-            }
+            // Update minutes, points, and target for the current day
+            dailyMinutes[dayString] = (dailyMinutes[dayString] ?? 0) + minutes
+            dailyPoints[dayString] = (dailyPoints[dayString] ?? 0) + points
+            dailyTargets[dayString] = dailyTarget // Update or set the daily target
             
             // Check if the current day is consecutive to the last active day
             if let lastActive = lastActiveDay, let currentDay = Int(dayString), currentDay == lastActive + 1 {
@@ -262,19 +269,104 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
                 streak = 1
             }
             
+            // Calculate total minutes and points for the month
             let totalMinutes = dailyMinutes.values.reduce(0, +)
+            let totalPoints = dailyPoints.values.reduce(0, +)
             
             // Update Firestore with new data
             monthlyStatsRef.setData([
                 "month": monthString,
                 "dailyMinutes": dailyMinutes,
+                "dailyPoints": dailyPoints,
+                "dailyTarget": dailyTargets,
                 "totalMinutes": totalMinutes,
+                "totalPoints": totalPoints,
                 "streak": streak
             ], merge: true) { error in
                 if let error = error {
                     print("Error updating monthlyStats: \(error.localizedDescription)")
                 } else {
                     print("Monthly stats updated successfully in Firestore.")
+                }
+            }
+        }
+    }
+    
+    private func updateWeeklyStatsInFirebase(minutes: Int, points: Int, dailyTarget: Int) {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            print("User is not logged in.")
+            return
+        }
+        
+        let db = Firestore.firestore()
+        
+        // Get the current week's start and end dates
+        let calendar = Calendar.current
+        let today = Date()
+        let weekStartDate = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: today))!
+        let weekEndDate = calendar.date(byAdding: .day, value: 6, to: weekStartDate)!
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let weekString = "\(dateFormatter.string(from: weekStartDate))_\(dateFormatter.string(from: weekEndDate))"
+        
+        let dayFormatter = DateFormatter()
+        dayFormatter.dateFormat = "dd"
+        let dayString = dayFormatter.string(from: today)
+        
+        let weeklyStatsRef = db.collection("users").document(userId).collection("weeklyStats").document(weekString)
+        
+        weeklyStatsRef.getDocument { (document, error) in
+            if let error = error {
+                print("Error fetching weeklyStats: \(error.localizedDescription)")
+                return
+            }
+            
+            var dailyMinutes = [String: Int]()
+            var dailyPoints = [String: Int]()
+            var dailyTargets = [String: Int]()
+            var streak = 0
+            var lastActiveDay: Int?
+            
+            if let data = document?.data() {
+                dailyMinutes = data["dailyMinutes"] as? [String: Int] ?? [:]
+                dailyPoints = data["dailyPoints"] as? [String: Int] ?? [:]
+                dailyTargets = data["dailyTarget"] as? [String: Int] ?? [:]
+                streak = data["streak"] as? Int ?? 0
+                lastActiveDay = dailyMinutes.keys.compactMap { Int($0) }.sorted().last
+            }
+            
+            // Update minutes, points, and target for the current day
+            dailyMinutes[dayString] = (dailyMinutes[dayString] ?? 0) + minutes
+            dailyPoints[dayString] = (dailyPoints[dayString] ?? 0) + points
+            dailyTargets[dayString] = dailyTarget // Update or set the daily target
+            
+            // Check if the current day is consecutive to the last active day
+            if let lastActive = lastActiveDay, let currentDay = Int(dayString), currentDay == lastActive + 1 {
+                streak += 1
+            } else {
+                // Reset the streak if the current day is not consecutive
+                streak = 1
+            }
+            
+            // Calculate total minutes and points for the week
+            let totalMinutes = dailyMinutes.values.reduce(0, +)
+            let totalPoints = dailyPoints.values.reduce(0, +)
+            
+            // Update Firestore with new data
+            weeklyStatsRef.setData([
+                "week": weekString,
+                "dailyMinutes": dailyMinutes,
+                "dailyPoints": dailyPoints,
+                "dailyTarget": dailyTargets,
+                "totalMinutes": totalMinutes,
+                "totalPoints": totalPoints,
+                "streak": streak
+            ], merge: true) { error in
+                if let error = error {
+                    print("Error updating weeklyStats: \(error.localizedDescription)")
+                } else {
+                    print("Weekly stats updated successfully in Firestore.")
                 }
             }
         }
@@ -368,7 +460,7 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
     }
     
     private func detectHeadPosition(pitch: Float, yaw: Float, roll: Float) {
-        let threshold: Float = 0.3
+        let threshold: Float = 0.1
         
         var detectedPose = ""
 
@@ -423,10 +515,25 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
     private func startRestPeriod() {
         isResting = true
         updateInstruction("Rest")
-        speak("Break")
+        speak("Rest")
+        vibrateDevice()
         restTime = 5
         updateRestTimerLabel()
         restTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateRestTimer), userInfo: nil, repeats: true)
+    }
+    
+    func prepareHaptics() {
+        do {
+            hapticEngine = try CHHapticEngine()
+            try hapticEngine?.start()
+        } catch {
+            print("Haptic engine error: \(error.localizedDescription)")
+        }
+    }
+    
+    func vibrateDevice() {
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
     }
     
     @objc private func updateRestTimer() {
@@ -460,10 +567,11 @@ class NeckFlexGameViewController: UIViewController, ARSessionDelegate {
     }
     
     private func speak(_ text: String) {
-        let utterance = AVSpeechUtterance(string: text)
-        utterance.postUtteranceDelay = 1.0
-        utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
-        synthesizer.speak(utterance)
+        if isSessionStarted {
+            let utterance = AVSpeechUtterance(string: text)
+            utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+            synthesizer.speak(utterance)
+        }
     }
 }
 

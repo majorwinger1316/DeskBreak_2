@@ -9,20 +9,39 @@ import UIKit
 import FirebaseCore
 import Firebase
 import GoogleSignIn
+import UserNotifications
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         FirebaseApp.configure()
         ProfileImageCache.shared.profileImage = nil
+        requestNotificationPermission()
+        // Configure Google Sign-In
+        if let clientID = FirebaseApp.app()?.options.clientID {
+            let config = GIDConfiguration(clientID: clientID)
+            GIDSignIn.sharedInstance.configuration = config
+        }
         return true
     }
     
-    // MARK: UISceneSession Lifecycle
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        return GIDSignIn.sharedInstance.handle(url)
+    }
+    
+    func requestNotificationPermission() {
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if granted {
+                print("Notification permission granted ✅")
+            } else {
+                print("Notification permission denied ❌")
+            }
+        }
+    }
 
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         // Called when a new scene session is being created.

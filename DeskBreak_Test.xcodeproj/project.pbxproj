@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2132208F2D90641E0073CECD /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 2132208E2D90641E0073CECD /* GoogleSignIn */; };
+		213220912D90641E0073CECD /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 213220902D90641E0073CECD /* GoogleSignInSwift */; };
 		21373BA92D5140D300E0811A /* HighV_Tutorial.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 21373BA82D5140D300E0811A /* HighV_Tutorial.mp4 */; };
 		214168342CD90070000FD404 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 214168322CD90070000FD404 /* Main.storyboard */; };
 		2144B4062D88DA2F00F7C807 /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = 2144B4052D88DA2F00F7C807 /* SDWebImage */; };
@@ -88,6 +90,8 @@
 				21BE76A02D188A6F00A9B13C /* FirebaseCore in Frameworks */,
 				21B716642CFE36D900F433DE /* FirebaseFirestore in Frameworks */,
 				21BE76A42D188A6F00A9B13C /* FirebaseFirestore in Frameworks */,
+				2132208F2D90641E0073CECD /* GoogleSignIn in Frameworks */,
+				213220912D90641E0073CECD /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -496,6 +500,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		2132208E2D90641E0073CECD /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 218E23332D887D2C005A3875 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		213220902D90641E0073CECD /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 218E23332D887D2C005A3875 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
 		2144B4052D88DA2F00F7C807 /* SDWebImage */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 2144B4042D88DA2F00F7C807 /* XCRemoteSwiftPackageReference "SDWebImage" */;

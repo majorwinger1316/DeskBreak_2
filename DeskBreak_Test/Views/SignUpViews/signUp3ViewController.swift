@@ -192,14 +192,8 @@ class signUp3ViewController: UIViewController {
         DispatchQueue.main.async {
             if let window = UIApplication.shared.windows.first {
                 let tabBarController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "TabBarController") as! UITabBarController
-                
-                // Set the selected index to 1 (second tab)
-                tabBarController.selectedIndex = 2
-                
-                // Add a transition animation
-                UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve, animations: {
-                    window.rootViewController = tabBarController
-                }, completion: nil)
+                window.rootViewController = tabBarController
+                window.makeKeyAndVisible()
             }
         }
     }

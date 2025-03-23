@@ -3,28 +3,16 @@ import Firebase
 import FirebaseAuth
 import FirebaseFirestore
 
-class DetailsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UIPickerViewDelegate, UIPickerViewDataSource {
+class DetailsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
     @IBOutlet weak var profilePicImage: UIImageView!
     @IBOutlet weak var detailTableView: UITableView!
     
     enum DetailType {
-        case name, dateOfBirth, email, contactNumber, workShift
+        case name, dateOfBirth, email, contactNumber
     }
     
     var details: [(type: DetailType, value: Any)] = []
-    
-    let shiftOptions = [
-        "9 AM - 5 PM",
-        "10 AM - 6 PM",
-        "11 AM - 7 PM",
-        "12 PM - 8 PM",
-        "1 PM - 9 PM"
-        ]
-    
-    var selectedShift: String = UserDefaults.standard.string(forKey: "selectedShift") ?? "9 AM - 5 PM"
-    
-    let shiftPicker = UIPickerView()
     
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -51,16 +39,6 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
         setupUI()
         fetchUserData()
         setupProfileImageView()
-        setupShiftPicker()
-    }
-    
-    private func setupShiftPicker() {
-        shiftPicker.delegate = self
-        shiftPicker.dataSource = self
-        
-        if let index = shiftOptions.firstIndex(of: selectedShift) {
-            shiftPicker.selectRow(index, inComponent: 0, animated: false)
-        }
     }
     
     private func setupUI() {
@@ -111,7 +89,6 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
                         (.dateOfBirth, dateOfBirth),
                         (.email, email),
                         (.contactNumber, contactNumber),
-                        (.workShift, self.selectedShift)
                     ]
                     self.detailTableView.reloadData()
                 }
@@ -140,38 +117,16 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
             cell.configure(title: "Email", detail: detail.value as? String ?? "", textColor: .text)
         case .contactNumber:
             cell.configure(title: "Contact Number", detail: detail.value as? String ?? "", textColor: .text)
-        case .workShift:
-            cell.configure(title: "Work Shift", detail: selectedShift, textColor: .gray)
         }
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if details[indexPath.row].type == .workShift {
-            let pickerVC = HalfModalDetailsView()
-            pickerVC.selectedShift = selectedShift
-            pickerVC.onShiftSelected = { [weak self] shift in
-                self?.selectedShift = shift
-                UserDefaults.standard.set(shift, forKey: "selectedShift") // Save the selected shift
-                self?.detailTableView.reloadData()
-            }
-            pickerVC.modalPresentationStyle = .custom
-            pickerVC.transitioningDelegate = self
-            present(pickerVC, animated: true)
-        }
+
     }
     
     func numberOfComponents(in pickerView: UIPickerView) -> Int {
         return 1  // Number of columns in the picker
-    }
-
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return shiftOptions.count  // Number of rows in the column
-    }
-
-    // MARK: - UIPickerViewDelegate
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return shiftOptions[row]  // Title for each row
     }
 
     private func showAlert(message: String) {
@@ -223,11 +178,5 @@ class DetailCell: UITableViewCell {
         titleLabel.text = title
         detailLabel.text = detail
         detailLabel.textColor = textColor
-    }
-}
-
-extension DetailsViewController: UIViewControllerTransitioningDelegate {
-    func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        return HalfModalPresentationController(presentedViewController: presented, presenting: presenting)
     }
 }
