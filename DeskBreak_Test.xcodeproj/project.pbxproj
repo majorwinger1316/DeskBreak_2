@@ -16,8 +16,7 @@
 		216007C12CEBC1DE00545888 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 216007C02CEBC1DE00545888 /* Assets.xcassets */; };
 		218E23352D887D2C005A3875 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 218E23342D887D2C005A3875 /* GoogleSignIn */; };
 		218E23372D887D2C005A3875 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 218E23362D887D2C005A3875 /* GoogleSignInSwift */; };
-		218E233B2D887DA0005A3875 /* GoogleService-Info 2.plist in Resources */ = {isa = PBXBuildFile; fileRef = 218E233A2D887DA0005A3875 /* GoogleService-Info 2.plist */; };
-		21B716512CFD10FF00F433DE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 21B716502CFD10FF00F433DE /* GoogleService-Info.plist */; };
+		218E233B2D887DA0005A3875 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 218E233A2D887DA0005A3875 /* GoogleService-Info.plist */; };
 		21B716542CFD123200F433DE /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 21B716532CFD123200F433DE /* FirebaseAnalytics */; };
 		21B716562CFD123200F433DE /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 21B716552CFD123200F433DE /* FirebaseAnalyticsWithoutAdIdSupport */; };
 		21B7165E2CFE35EB00F433DE /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 21B7165D2CFE35EB00F433DE /* FirebaseAuth */; };
@@ -42,11 +41,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		213220922D9099010073CECD /* DeskBreak_Test.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DeskBreak_Test.entitlements; sourceTree = "<group>"; };
 		21373BA82D5140D300E0811A /* HighV_Tutorial.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = HighV_Tutorial.mp4; sourceTree = "<group>"; };
 		214168332CD90070000FD404 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		216007C02CEBC1DE00545888 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		218E233A2D887DA0005A3875 /* GoogleService-Info 2.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info 2.plist"; sourceTree = "<group>"; };
-		21B716502CFD10FF00F433DE /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		218E233A2D887DA0005A3875 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		21B716722D08D20A00F433DE /* progressManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = progressManager.swift; sourceTree = "<group>"; };
 		21B716742D08D71800F433DE /* FireBaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireBaseManager.swift; sourceTree = "<group>"; };
 		F92D610A2C9E23C800314A6B /* DeskBreak_Test.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DeskBreak_Test.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -117,6 +116,7 @@
 		F92D610C2C9E23C800314A6B /* DeskBreak_Test */ = {
 			isa = PBXGroup;
 			children = (
+				213220922D9099010073CECD /* DeskBreak_Test.entitlements */,
 				21FFB0DB2D870189005D65A6 /* coreData */,
 				21CE5CFC2D739B8500457252 /* Notifications */,
 				2102CA992D659AF90095384F /* MlModels */,
@@ -127,8 +127,7 @@
 				216007C02CEBC1DE00545888 /* Assets.xcassets */,
 				F92D610D2C9E23C800314A6B /* AppDelegate.swift */,
 				F92D610F2C9E23C800314A6B /* SceneDelegate.swift */,
-				218E233A2D887DA0005A3875 /* GoogleService-Info 2.plist */,
-				21B716502CFD10FF00F433DE /* GoogleService-Info.plist */,
+				218E233A2D887DA0005A3875 /* GoogleService-Info.plist */,
 				F92D61182C9E23C900314A6B /* LaunchScreen.storyboard */,
 				F92D611B2C9E23C900314A6B /* Info.plist */,
 				214168322CD90070000FD404 /* Main.storyboard */,
@@ -210,9 +209,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				214168342CD90070000FD404 /* Main.storyboard in Resources */,
-				218E233B2D887DA0005A3875 /* GoogleService-Info 2.plist in Resources */,
+				218E233B2D887DA0005A3875 /* GoogleService-Info.plist in Resources */,
 				21373BA92D5140D300E0811A /* HighV_Tutorial.mp4 in Resources */,
-				21B716512CFD10FF00F433DE /* GoogleService-Info.plist in Resources */,
 				216007C12CEBC1DE00545888 /* Assets.xcassets in Resources */,
 				F92D611A2C9E23C900314A6B /* Base in Resources */,
 			);
@@ -378,6 +376,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = DeskBreak_Test/DeskBreak_Test.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COREML_CODEGEN_LANGUAGE = Swift;
 				CURRENT_PROJECT_VERSION = 1;
@@ -416,6 +415,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = DeskBreak_Test/DeskBreak_Test.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COREML_CODEGEN_LANGUAGE = Swift;
 				CURRENT_PROJECT_VERSION = 1;

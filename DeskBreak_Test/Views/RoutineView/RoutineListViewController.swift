@@ -37,9 +37,14 @@ class RoutineListViewController: UITableViewController {
     
     @objc private func reloadData() {
         tableView.reloadData()
+        refreshCardView() // Refresh the card view when data is reloaded
     }
     
-    // MARK: - Table view data source
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
+        refreshCardView() // Refresh the card view when the view appears
+    }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return store.routines.count
@@ -48,28 +53,18 @@ class RoutineListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "RoutineCell", for: indexPath) as! RoutineTableViewCell
         
-        let routine = store.routines[indexPath.row]
+        let sortedRoutines = store.getSortedRoutines()
+        let routine = sortedRoutines[indexPath.row]
         cell.configure(with: routine)
         
         return cell
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        tableView.reloadData()
-        refreshCardView()
-        
-        // Update the card view with the next upcoming routine
-        if let cardView = view.viewWithTag(100) as? RoutineCardView {
-            let nextUpcomingRoutine = store.getNextUpcomingRoutine()
-            cardView.configure(with: nextUpcomingRoutine)
-        }
-    }
-    
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            let routine = store.routines[indexPath.row]
-            store.routines.remove(at: indexPath.row)
+            let sortedRoutines = store.getSortedRoutines()
+            let routine = sortedRoutines[indexPath.row]
+            store.routines.removeAll { $0.exerciseName == routine.exerciseName && $0.time == routine.time }
             tableView.deleteRows(at: [indexPath], with: .fade)
 
             removeNotifications(for: routine)
@@ -101,7 +96,8 @@ class RoutineListViewController: UITableViewController {
            let indexPath = sender as? IndexPath,
            let destVC = segue.destination as? AddRoutineViewController {
             
-            destVC.routine = store.routines[indexPath.row]
+            let sortedRoutines = store.getSortedRoutines()
+            destVC.routine = sortedRoutines[indexPath.row]
             destVC.editIndex = indexPath.row
         }
     }

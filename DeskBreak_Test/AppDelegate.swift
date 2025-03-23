@@ -8,8 +8,8 @@
 import UIKit
 import FirebaseCore
 import Firebase
-import GoogleSignIn
 import UserNotifications
+import GoogleSignIn
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {

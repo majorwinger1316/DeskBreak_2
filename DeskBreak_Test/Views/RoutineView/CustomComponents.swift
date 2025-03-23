@@ -25,10 +25,33 @@ class RoutineStore {
         }
     }
     
+    // Get routines sorted by the next upcoming occurrence
+    func getSortedRoutines() -> [Routine] {
+        let now = Date()
+        return routines.sorted { routine1, routine2 in
+            let nextOccurrence1 = routine1.nextOccurrence(after: now) ?? Date.distantFuture
+            let nextOccurrence2 = routine2.nextOccurrence(after: now) ?? Date.distantFuture
+            return nextOccurrence1 < nextOccurrence2
+        }
+    }
+    
+    // Get the next upcoming routine
+    func getNextUpcomingRoutine() -> Routine? {
+        let now = Date()
+        let sortedRoutines = getSortedRoutines()
+        
+        for routine in sortedRoutines {
+            if let nextOccurrence = routine.nextOccurrence(after: now), nextOccurrence > now {
+                return routine
+            }
+        }
+        return nil
+    }
+    
     func saveRoutine(_ routine: Routine) {
         var currentRoutines = routines
-        currentRoutines.append(routine) // Add new routine
-        routines = currentRoutines // Save updated list
+        currentRoutines.append(routine)
+        routines = currentRoutines
     }
     
     func removeRoutine(at index: Int) {
@@ -37,30 +60,7 @@ class RoutineStore {
         routines = currentRoutines
     }
     
-    // Get the next upcoming routine
-    func getNextUpcomingRoutine() -> Routine? {
-        let now = Date()
-        let calendar = Calendar.current
-        
-        // Sort routines by time
-        let sortedRoutines = routines.sorted { $0.time < $1.time }
-        
-        for routine in sortedRoutines {
-            for weekday in routine.weekdays {
-                // Get the next occurrence of this weekday
-                if let nextOccurrence = getNextOccurrence(of: weekday, at: routine.time, after: now) {
-                    // Check if the next occurrence is in the future
-                    if nextOccurrence > now {
-                        return routine
-                    }
-                }
-            }
-        }
-        
-        return nil
-    }
-    
-    // Helper method to get the next occurrence of a weekday and time
+    // Helper method to get the next occurrence of a routine after a given date
     private func getNextOccurrence(of weekday: WeekdayCode, at time: Date, after date: Date) -> Date? {
         let calendar = Calendar.current
         let targetWeekday = weekday.rawValue

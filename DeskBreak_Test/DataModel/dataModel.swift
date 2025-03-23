@@ -7,16 +7,19 @@
 
 import Foundation
 import FirebaseFirestore
+import FirebaseAuth
 
 struct UserRegistrationData {
     var username: String = ""
     var dateOfBirth: Date? = nil
-    var email: String = ""
+    var email: String? // Make email optional
     var contactNumber: String = ""
-    var password: String = ""
+    var password: String? // Make password optional
     var dailyTarget: Int16 = 0
     var profilePictureURL: String?
-    var profilePicture: UIImage? 
+    var profilePicture: UIImage?
+    var googleIDToken: String? // Add this property for Google Sign-In
+    var googleAccessToken: String? // Add this property for Google Sign-In
 }
 
 class ProfileImageCache {
@@ -260,13 +263,37 @@ enum StretchType {
 }
 
 struct Routine: Codable {
-    let exerciseName: String
-    let time: Date
-    let weekdays: Set<WeekdayCode>
-    let reminderEnabled: Bool
+    var exerciseName: String
+    var time: Date
+    var weekdays: Set<WeekdayCode>
+    var reminderEnabled: Bool
+    
+    func nextOccurrence(after date: Date) -> Date? {
+        let calendar = Calendar.current
+        let targetTime = calendar.dateComponents([.hour, .minute], from: time)
+        
+        var nextOccurrence = date
+        while true {
+            let weekday = calendar.component(.weekday, from: nextOccurrence)
+            let weekdayCode = WeekdayCode(rawValue: weekday)!
+            
+            if weekdays.contains(weekdayCode) {
+                var components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: nextOccurrence)
+                components.hour = targetTime.hour
+                components.minute = targetTime.minute
+                
+                let candidate = calendar.date(from: components)!
+                if candidate > date {
+                    return candidate
+                }
+            }
+            
+            nextOccurrence = calendar.date(byAdding: .day, value: 1, to: nextOccurrence)!
+        }
+    }
 }
 
-enum WeekdayCode: Int, CaseIterable, Codable {
+enum WeekdayCode: Int, Codable, CaseIterable {
     case sunday = 1
     case monday = 2
     case tuesday = 3

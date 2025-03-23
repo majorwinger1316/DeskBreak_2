@@ -84,12 +84,18 @@ class DetailsViewController: UIViewController, UITableViewDataSource, UITableVie
                         dateOfBirth = dateString
                     }
 
+                    // Initialize details array with mandatory fields
                     self.details = [
                         (.name, name),
                         (.dateOfBirth, dateOfBirth),
                         (.email, email),
-                        (.contactNumber, contactNumber),
                     ]
+
+                    // Add contact number only if it exists and is not empty
+                    if !contactNumber.isEmpty {
+                        self.details.append((.contactNumber, contactNumber))
+                    }
+
                     self.detailTableView.reloadData()
                 }
             }

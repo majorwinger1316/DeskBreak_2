@@ -21,6 +21,8 @@ class signUp3ViewController: UIViewController {
     
     var pickerView: UIPickerView!
     var pickerData: [Int] = Array(1...30)
+    var googleIDToken: String?
+    var googleAccessToken: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -81,40 +83,78 @@ class signUp3ViewController: UIViewController {
         }
 
         showLoadingIndicator()
-        Auth.auth().createUser(withEmail: registrationData.email, password: registrationData.password) { authResult, error in
-            if let error = error {
+
+        if let googleIDToken = googleIDToken, let googleAccessToken = googleAccessToken {
+            let credential = GoogleAuthProvider.credential(withIDToken: googleIDToken, accessToken: googleAccessToken)
+            
+            Auth.auth().signIn(with: credential) { authResult, error in
+                if let error = error {
+                    self.hideLoadingIndicator()
+                    self.showAlert(message: "Firebase authentication failed: \(error.localizedDescription)")
+                    return
+                }
+                
+                if let firebaseUser = Auth.auth().currentUser {
+                    // Upload profile picture if available
+                    if let profileImage = self.registrationData.profilePicture {
+                        self.uploadProfilePicture(profileImage, userId: firebaseUser.uid) { [weak self] imageURL in
+                            guard let self = self else { return }
+                            if let imageURL = imageURL {
+                                self.registrationData.profilePictureURL = imageURL
+                                self.saveUserData(userId: firebaseUser.uid, profileImageUrl: imageURL)
+                            } else {
+                                self.hideLoadingIndicator()
+                                self.showAlert(message: "Failed to upload profile picture.")
+                            }
+                        }
+                    } else {
+                        self.saveUserData(userId: firebaseUser.uid, profileImageUrl: nil)
+                    }
+                }
+            }
+        } else {
+            // Handle email/password registration
+            guard let email = registrationData.email, let password = registrationData.password else {
                 self.hideLoadingIndicator()
-                self.showAlert(message: "Registration failed: \(error.localizedDescription)")
+                self.showAlert(message: "Email and password are required.")
                 return
             }
 
-            if let user = authResult?.user {
-                if let profileImage = self.registrationData.profilePicture {
-                    self.uploadProfilePicture(profileImage, userId: user.uid) { [weak self] imageURL in
-                        guard let self = self else { return }
-                        if let imageURL = imageURL {
-                            self.registrationData.profilePictureURL = imageURL
-                            self.saveUserData(userId: user.uid, profileImageUrl: imageURL)
-                        } else {
-                            self.hideLoadingIndicator()
-                            self.showAlert(message: "Failed to upload profile picture.")
+            Auth.auth().createUser(withEmail: email, password: password) { authResult, error in
+                if let error = error {
+                    self.hideLoadingIndicator()
+                    self.showAlert(message: "Registration failed: \(error.localizedDescription)")
+                    return
+                }
+
+                if let user = authResult?.user {
+                    if let profileImage = self.registrationData.profilePicture {
+                        self.uploadProfilePicture(profileImage, userId: user.uid) { [weak self] imageURL in
+                            guard let self = self else { return }
+                            if let imageURL = imageURL {
+                                self.registrationData.profilePictureURL = imageURL
+                                self.saveUserData(userId: user.uid, profileImageUrl: imageURL)
+                            } else {
+                                self.hideLoadingIndicator()
+                                self.showAlert(message: "Failed to upload profile picture.")
+                            }
                         }
+                    } else {
+                        self.saveUserData(userId: user.uid, profileImageUrl: "")
                     }
-                } else {
-                    self.saveUserData(userId: user.uid, profileImageUrl: "")
                 }
             }
         }
     }
 
-    private func saveUserData(userId: String, profileImageUrl: String) {
+    private func registerGoogleUser(user: FirebaseAuth.User, profileImageUrl: String?) {
         let db = Firestore.firestore()
-        let userRef = db.collection("users").document(userId)
+        let userRef = db.collection("users").document(user.uid)
 
         let userData: [String: Any] = [
-            "userId": userId,
+            "userId": user.uid,
             "username": registrationData.username,
-            "email": registrationData.email,
+            "email": user.email ?? "", // Store Google user's email
             "dailyTarget": registrationData.dailyTarget,
             "totalMinutes": 0,
             "totalPoints": 0,
@@ -124,7 +164,7 @@ class signUp3ViewController: UIViewController {
             "contactNumber": registrationData.contactNumber,
             "createdAt": Timestamp(date: Date()),
             "lastActivityDate": Timestamp(date: Date()),
-            "profilePictureURL": profileImageUrl
+            "profilePictureURL": profileImageUrl ?? ""
         ]
 
         userRef.setData(userData) { error in
@@ -132,8 +172,40 @@ class signUp3ViewController: UIViewController {
                 self.hideLoadingIndicator()
                 self.showAlert(message: "Failed to save user data: \(error.localizedDescription)")
             } else {
-                // Automatically sign in the user after registration
-                self.signInUser(email: self.registrationData.email, password: self.registrationData.password)
+                // Save user session and navigate to the main screen
+                self.saveUserSession(userData: userData)
+                self.navigateToTabBarController()
+            }
+        }
+    }
+
+    private func saveUserData(userId: String, profileImageUrl: String?) {
+        let db = Firestore.firestore()
+        let userRef = db.collection("users").document(userId)
+
+        let userData: [String: Any] = [
+            "userId": userId,
+            "username": registrationData.username,
+            "email": registrationData.email ?? "",
+            "dailyTarget": registrationData.dailyTarget,
+            "totalMinutes": 0,
+            "totalPoints": 0,
+            "dailyMinutes": 0,
+            "dailyPoints": 0,
+            "dateOfBirth": registrationData.dateOfBirth ?? Date(),
+            "contactNumber": registrationData.contactNumber,
+            "createdAt": Timestamp(date: Date()),
+            "lastActivityDate": Timestamp(date: Date()),
+            "profilePictureURL": profileImageUrl ?? "" // Save the profile picture URL
+        ]
+
+        userRef.setData(userData) { error in
+            if let error = error {
+                self.hideLoadingIndicator()
+                self.showAlert(message: "Failed to save user data: \(error.localizedDescription)")
+            } else {
+                self.saveUserSession(userData: userData)
+                self.navigateToTabBarController()
             }
         }
     }
@@ -261,12 +333,6 @@ class signUp3ViewController: UIViewController {
     private func hideLoadingIndicator() {
         activityIndicator.stopAnimating()
         activityIndicator.isHidden = true
-    }
-    
-    private func isValidEmail(_ email: String) -> Bool {
-        let regex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-        let emailTest = NSPredicate(format:"SELF MATCHES %@", regex)
-        return emailTest.evaluate(with: email)
     }
     
     private func isValidURL(_ urlString: String) -> Bool {

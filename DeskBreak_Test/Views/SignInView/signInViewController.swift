@@ -10,6 +10,7 @@ import FirebaseAuth
 import FirebaseFirestore
 import Security
 import FirebaseStorage
+import GoogleSignIn
 
 class signInViewController: UIViewController {
     
@@ -21,6 +22,7 @@ class signInViewController: UIViewController {
     
     var eyeIconClick = false
     let imageIcon = UIImageView()
+    var googleUser: GIDGoogleUser?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -172,6 +174,114 @@ class signInViewController: UIViewController {
     }
     
     @IBAction func continueWithGoogleButtonPressed(_ sender: UIButton) {
+        // Start the activity indicator
+        activityIndicator.startAnimating()
+        
+        GIDSignIn.sharedInstance.signIn(withPresenting: self) { signInResult, error in
+            // Stop the activity indicator regardless of the outcome
+            defer {
+                self.activityIndicator.stopAnimating()
+            }
+            
+            if let error = error {
+                self.showAlert(message: "Google Sign-In failed: \(error.localizedDescription)")
+                return
+            }
+            
+            guard let user = signInResult?.user, let idToken = user.idToken?.tokenString else {
+                self.showAlert(message: "Failed to retrieve Google user information.")
+                return
+            }
+            
+            // Retrieve profile data from Google
+            let googleIDToken = idToken
+            let googleAccessToken = user.accessToken.tokenString
+            let email = user.profile?.email ?? ""
+            let fullName = user.profile?.name ?? ""
+            let profilePicURL = user.profile?.imageURL(withDimension: 200)?.absoluteString ?? "" // High-resolution profile picture
+            
+            print("Google User Data:")
+            print("Email: \(email)")
+            print("Name: \(fullName)")
+            print("Profile Picture URL: \(profilePicURL)")
+            
+            // Check if the user exists in Firestore
+            self.checkIfUserExistsInFirestore(email: email) { exists, userId in
+                if exists, let userId = userId {
+                    // User exists, fetch their data and log them in
+                    fetchUserData(userId: userId, viewController: self)
+                } else {
+                    // User does not exist, proceed to registration
+                    self.navigateToSignUp1ViewController(
+                        with: googleIDToken,
+                        googleAccessToken: googleAccessToken,
+                        googleUser: user
+                    )
+                }
+            }
+        }
+    }
+    
+    private func checkIfUserExistsInFirestore(email: String, completion: @escaping (Bool, String?) -> Void) {
+        let db = Firestore.firestore()
+        db.collection("users")
+            .whereField("email", isEqualTo: email)
+            .getDocuments { snapshot, error in
+                if let error = error {
+                    self.showAlert(message: "Failed to check user existence: \(error.localizedDescription)")
+                    completion(false, nil)
+                    return
+                }
+                
+                if let documents = snapshot?.documents, !documents.isEmpty {
+                    // User exists, return their ID
+                    let userId = documents[0].documentID
+                    completion(true, userId)
+                } else {
+                    // User does not exist
+                    completion(false, nil)
+                }
+            }
+    }
+    
+    private func navigateToSignUp1ViewController(with googleIDToken: String, googleAccessToken: String, googleUser: GIDGoogleUser) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        if let signUp1VC = storyboard.instantiateViewController(withIdentifier: "SignUpViewController1") as? signUp1ViewController {
+            // Initialize and populate registrationData
+            signUp1VC.registrationData = UserRegistrationData()
+            signUp1VC.registrationData.email = googleUser.profile?.email ?? ""
+            signUp1VC.registrationData.username = googleUser.profile?.name ?? ""
+            signUp1VC.registrationData.password = "defaultPassword" // Set a default password for Google users
+            signUp1VC.registrationData.contactNumber = "" // Leave phone number empty
+            signUp1VC.registrationData.googleIDToken = googleIDToken // Pass the Google ID token
+            signUp1VC.registrationData.googleAccessToken = googleAccessToken // Pass the Google access token
+            
+            // Pass the profile picture URL
+            if let profilePicURL = googleUser.profile?.imageURL(withDimension: 200)?.absoluteString {
+                signUp1VC.registrationData.profilePictureURL = profilePicURL
+            }
+            
+            self.navigationController?.pushViewController(signUp1VC, animated: true)
+        }
+    }
+    
+    
+    @IBAction func continueWithAppleButton(_ sender: Any) {
+    }
+    
+    private func saveUserSession(userData: [String: Any]?) {
+        let defaults = UserDefaults.standard
+
+        defaults.set(userData?["userId"] as? String, forKey: "userId")
+        defaults.set(userData?["username"] as? String, forKey: "userName")
+        defaults.set(userData?["email"] as? String, forKey: "userEmail")
+        defaults.set(userData?["dailyTarget"] as? Int, forKey: "dailyTarget")
+        defaults.set(userData?["totalMinutes"] as? Int, forKey: "totalMinutes")
+        defaults.set(userData?["totalPoints"] as? Int, forKey: "totalPoints")
+        defaults.set(userData?["dateOfBirth"] as? Date, forKey: "dateOfBirth")
+        defaults.set(userData?["contactNumber"] as? String, forKey: "contactNumber")
+        defaults.set(userData?["profilePictureURL"] as? String, forKey: "profilePictureURL")
+        defaults.set(true, forKey: "isLoggedIn")
     }
     
     public func downloadProfileImage(from url: URL) {

@@ -973,21 +973,46 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OfP-8Y-za6">
-                                <rect key="frame" x="16" y="562" width="361" height="40"/>
+                                <rect key="frame" x="16" y="558" width="361" height="40"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="361" id="sMy-Sq-CId"/>
                                     <constraint firstAttribute="height" constant="40" id="zvS-YY-u5o"/>
                                 </constraints>
                                 <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Continue with Google"/>
+                                <buttonConfiguration key="configuration" style="filled" image="google.png" title="Continue with Google" imagePadding="4">
+                                    <color key="baseForegroundColor" name="bgColor"/>
+                                    <color key="baseBackgroundColor" name="textColor"/>
+                                </buttonConfiguration>
                                 <connections>
                                     <action selector="continueWithGoogleButtonPressed:" destination="5pb-Bq-3dP" eventType="touchUpInside" id="wO9-dC-z9i"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="---------or---------" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2l6-FL-Ynx">
+                                <rect key="frame" x="120" y="515" width="152" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="PAO-Vq-oBP">
+                                <rect key="frame" x="16" y="618" width="361" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="40" id="4vh-kr-IkX"/>
+                                    <constraint firstAttribute="width" constant="361" id="C6D-0c-Get"/>
+                                </constraints>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" image="applelogo" catalog="system" title="Continue with Apple" imagePadding="4">
+                                    <color key="baseForegroundColor" name="bgColor"/>
+                                    <color key="baseBackgroundColor" name="textColor"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="continueWithAppleButton:" destination="5pb-Bq-3dP" eventType="touchUpInside" id="kaZ-Vu-Jwg"/>
                                 </connections>
                             </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Pih-p8-g0x"/>
                         <color key="backgroundColor" name="bgColor"/>
                         <constraints>
+                            <constraint firstItem="Pih-p8-g0x" firstAttribute="trailing" secondItem="PAO-Vq-oBP" secondAttribute="trailing" constant="16" id="0gW-cK-aMs"/>
                             <constraint firstItem="Pih-p8-g0x" firstAttribute="trailing" secondItem="JuN-SS-CJh" secondAttribute="trailing" constant="16" id="1UD-rk-mqe"/>
                             <constraint firstItem="6pk-XU-kNL" firstAttribute="top" secondItem="2cT-rT-Qpq" secondAttribute="bottom" constant="8" id="37Z-nk-riG"/>
                             <constraint firstItem="xvW-Kd-qEx" firstAttribute="leading" secondItem="Pih-p8-g0x" secondAttribute="leading" id="3DX-Gd-jms"/>
@@ -1001,18 +1026,22 @@
                             <constraint firstItem="Ea0-zQ-HGd" firstAttribute="top" secondItem="6pk-XU-kNL" secondAttribute="bottom" constant="8" id="FYi-lq-hBr"/>
                             <constraint firstItem="xvW-Kd-qEx" firstAttribute="top" secondItem="Ea0-zQ-HGd" secondAttribute="bottom" id="FnA-Ty-Z8Y"/>
                             <constraint firstItem="9cW-yW-U4j" firstAttribute="top" secondItem="Fuc-4F-hB9" secondAttribute="bottom" constant="8" id="JEn-MB-CEl"/>
-                            <constraint firstItem="OfP-8Y-za6" firstAttribute="top" secondItem="Hmh-Pp-2oJ" secondAttribute="bottom" constant="67" id="QcI-Dd-Iml"/>
+                            <constraint firstItem="2l6-FL-Ynx" firstAttribute="top" secondItem="Hmh-Pp-2oJ" secondAttribute="bottom" constant="20" id="LbM-Zp-9c7"/>
                             <constraint firstItem="OfP-8Y-za6" firstAttribute="leading" secondItem="Pih-p8-g0x" secondAttribute="leading" constant="16" id="Qy9-vi-2Dt"/>
                             <constraint firstItem="Fuc-4F-hB9" firstAttribute="leading" secondItem="Pih-p8-g0x" secondAttribute="leading" constant="148" id="ScX-Go-GsG"/>
                             <constraint firstItem="6pk-XU-kNL" firstAttribute="leading" secondItem="Pih-p8-g0x" secondAttribute="leading" constant="16" id="Xiz-eW-zWZ"/>
                             <constraint firstItem="Ea0-zQ-HGd" firstAttribute="leading" secondItem="Pih-p8-g0x" secondAttribute="leading" constant="217" id="abM-qe-Ir0"/>
+                            <constraint firstItem="OfP-8Y-za6" firstAttribute="top" secondItem="2l6-FL-Ynx" secondAttribute="bottom" constant="22" id="ghf-42-HAC"/>
                             <constraint firstItem="Vjr-1B-xv2" firstAttribute="top" secondItem="JuN-SS-CJh" secondAttribute="bottom" constant="16" id="grR-VA-pxb"/>
                             <constraint firstItem="Pih-p8-g0x" firstAttribute="trailing" secondItem="2cT-rT-Qpq" secondAttribute="trailing" constant="16" id="iSh-Qs-0c6"/>
+                            <constraint firstItem="PAO-Vq-oBP" firstAttribute="top" secondItem="OfP-8Y-za6" secondAttribute="bottom" constant="20" id="jah-va-Rwn"/>
                             <constraint firstItem="Pih-p8-g0x" firstAttribute="trailing" secondItem="OfP-8Y-za6" secondAttribute="trailing" constant="16" id="jdG-Ru-87J"/>
+                            <constraint firstItem="PAO-Vq-oBP" firstAttribute="leading" secondItem="Pih-p8-g0x" secondAttribute="leading" constant="16" id="p1s-JB-SYj"/>
                             <constraint firstItem="Fuc-4F-hB9" firstAttribute="top" secondItem="Pih-p8-g0x" secondAttribute="top" constant="70" id="r4l-QP-Rfk"/>
                             <constraint firstItem="JuN-SS-CJh" firstAttribute="leading" secondItem="Pih-p8-g0x" secondAttribute="leading" constant="16" id="rBL-Gb-Fjm"/>
                             <constraint firstItem="2cT-rT-Qpq" firstAttribute="leading" secondItem="Pih-p8-g0x" secondAttribute="leading" constant="16" id="sOD-mZ-q1h"/>
                             <constraint firstItem="Pih-p8-g0x" firstAttribute="trailing" secondItem="6pk-XU-kNL" secondAttribute="trailing" constant="16" id="ujD-Xb-9B2"/>
+                            <constraint firstItem="2l6-FL-Ynx" firstAttribute="leading" secondItem="Pih-p8-g0x" secondAttribute="leading" constant="120" id="yO9-4S-c0E"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="RGu-M9-TYd">
@@ -3961,6 +3990,7 @@
     </inferredMetricsTieBreakers>
     <resources>
         <image name="DeskBreak 1" width="28" height="28"/>
+        <image name="applelogo" catalog="system" width="105" height="128"/>
         <image name="bolt" catalog="system" width="100" height="128"/>
         <image name="calendar.badge.plus" catalog="system" width="128" height="109"/>
         <image name="chart.bar.xaxis.ascending.badge.clock" catalog="system" width="128" height="109"/>
@@ -3972,6 +4002,7 @@
         <image name="figure.wave" catalog="system" width="80" height="128"/>
         <image name="flame" catalog="system" width="106" height="128"/>
         <image name="globe" catalog="system" width="128" height="123"/>
+        <image name="google.png" width="18" height="18"/>
         <image name="line.3.horizontal.decrease.circle" catalog="system" width="128" height="123"/>
         <image name="pencil" catalog="system" width="128" height="113"/>
         <image name="person.and.background.dotted" catalog="system" width="128" height="101"/>

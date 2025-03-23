@@ -8,7 +8,6 @@
 import UIKit
 
 class RoutineCardView: UIView {
-    
     // MARK: - Properties
     private let mainColor = UIColor(named: "main") ?? .main
     private let cardHeight: CGFloat = 170

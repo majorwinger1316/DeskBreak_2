@@ -81,34 +81,37 @@ class AddRoutineViewController: UIViewController {
     
     @IBAction func saveButtonTapped(_ sender: Any) {
         guard let selectedStretch = selectedStretch, !weekdaySelectView.selectedDays.isEmpty else {
-             // Show alert for invalid form
-             let alert = UIAlertController(
-                 title: "Invalid Form",
-                 message: "Please select a stretch and at least one day",
-                 preferredStyle: .alert
-             )
-             alert.addAction(UIAlertAction(title: "OK", style: .default))
-             present(alert, animated: true)
-             return
-         }
-         
-         let newRoutine = Routine(
-             exerciseName: selectedStretch.title,
-             time: timePicker.date,
-             weekdays: weekdaySelectView.selectedDays,
-             reminderEnabled: reminderSwitch.isOn
-         )
+            // Show alert for invalid form
+            let alert = UIAlertController(
+                title: "Invalid Form",
+                message: "Please select a stretch and at least one day",
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: "OK", style: .default))
+            present(alert, animated: true)
+            return
+        }
+        
+        let newRoutine = Routine(
+            exerciseName: selectedStretch.title,
+            time: timePicker.date,
+            weekdays: weekdaySelectView.selectedDays,
+            reminderEnabled: reminderSwitch.isOn
+        )
 
-         RoutineStore.shared.saveRoutine(newRoutine)
-         
-         if reminderSwitch.isOn {
-             scheduleStretchNotifications(for: newRoutine)
-         } else {
-             removeStretchNotifications(for: newRoutine)
-         }
-         
-         dismiss(animated: true)
-     }
+        RoutineStore.shared.saveRoutine(newRoutine)
+        
+        if reminderSwitch.isOn {
+            scheduleStretchNotifications(for: newRoutine)
+        } else {
+            removeStretchNotifications(for: newRoutine)
+        }
+        
+        // Post a notification to refresh the list and card view
+        NotificationCenter.default.post(name: NSNotification.Name("RoutinesUpdated"), object: nil)
+        
+        dismiss(animated: true)
+    }
 
     private func scheduleStretchNotifications(for routine: Routine) {
         let center = UNUserNotificationCenter.current()

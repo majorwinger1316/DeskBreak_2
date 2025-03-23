@@ -19,6 +19,9 @@ class signUp1ViewController: UIViewController, UIImagePickerControllerDelegate, 
     @IBOutlet weak var userDateOfBirth: UITextField!
     
     var registrationData = UserRegistrationData()
+    var googleUser: FirebaseAuth.User?
+    var googleIDToken: String?
+    var googleAccessToken: String?
 
     private var datePicker: UIDatePicker = {
         let picker = UIDatePicker()
@@ -33,8 +36,26 @@ class signUp1ViewController: UIViewController, UIImagePickerControllerDelegate, 
         super.viewDidLoad()
         setupDatePicker()
         setupProfileImageView()
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        view.addGestureRecognizer(tapGesture)
+        
+        // Pre-fill profile data if available
+        if let googleUser = googleUser {
+            DispatchQueue.main.async {
+                self.userNameText.text = googleUser.displayName ?? ""
+            }
+            registrationData.email = googleUser.email ?? ""
+            
+            // Load profile picture from URL
+            if let profilePicURL = registrationData.profilePictureURL, let url = URL(string: profilePicURL) {
+                URLSession.shared.dataTask(with: url) { data, response, error in
+                    if let data = data, let image = UIImage(data: data) {
+                        DispatchQueue.main.async {
+                            self.userProfileImageView.image = image
+                            self.registrationData.profilePicture = image
+                        }
+                    }
+                }.resume()
+            }
+        }
     }
     
     @objc func dismissKeyboard() {
@@ -89,7 +110,7 @@ class signUp1ViewController: UIViewController, UIImagePickerControllerDelegate, 
 
         // Check if a profile picture is selected
         if let profileImage = userProfileImageView.image {
-            registrationData.profilePicture = profileImage // Pass the UIImage object
+            registrationData.profilePicture = profileImage
         } else {
             showAlert(message: "Please select a profile picture.")
             return
@@ -98,6 +119,8 @@ class signUp1ViewController: UIViewController, UIImagePickerControllerDelegate, 
         // Proceed to the next screen
         if let nextVC = self.storyboard?.instantiateViewController(withIdentifier: "SignUpViewController3") as? signUp3ViewController {
             nextVC.registrationData = self.registrationData
+            nextVC.googleIDToken = self.googleIDToken
+            nextVC.googleAccessToken = self.googleAccessToken
             self.navigationController?.pushViewController(nextVC, animated: true)
         }
     }
