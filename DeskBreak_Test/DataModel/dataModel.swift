@@ -20,6 +20,8 @@ struct UserRegistrationData {
     var profilePicture: UIImage?
     var googleIDToken: String? // Add this property for Google Sign-In
     var googleAccessToken: String? // Add this property for Google Sign-In
+    var appleIDToken: String?
+    var appleUserIdentifier: String?
 }
 
 class ProfileImageCache {

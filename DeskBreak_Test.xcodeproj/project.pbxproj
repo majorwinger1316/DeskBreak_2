@@ -380,7 +380,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COREML_CODEGEN_LANGUAGE = Swift;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 79CXZ54DW8;
+				DEVELOPMENT_TEAM = K75YG36RDS;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DeskBreak_Test/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DeskBreak;
@@ -402,7 +402,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.srmist.DeskBreak1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.srmist.DeskBreak;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -419,7 +419,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COREML_CODEGEN_LANGUAGE = Swift;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 79CXZ54DW8;
+				DEVELOPMENT_TEAM = K75YG36RDS;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DeskBreak_Test/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = DeskBreak;
@@ -441,7 +441,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.srmist.DeskBreak1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.srmist.DeskBreak;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

@@ -84,6 +84,41 @@ class signUp3ViewController: UIViewController {
 
         showLoadingIndicator()
 
+        if let appleIDToken = registrationData.appleIDToken {
+            
+            let credential = OAuthProvider.credential(
+                withProviderID: "apple.com",
+                idToken: appleIDToken,
+                rawNonce: ""  // Now passing a valid String
+            )
+            
+            Auth.auth().signIn(with: credential) { [weak self] (authResult, error) in
+                guard let self = self else { return }
+                
+                if let error = error {
+                    self.hideLoadingIndicator()
+                    self.showAlert(message: "Apple Sign-In failed: \(error.localizedDescription)")
+                    return
+                }
+                
+                guard let firebaseUser = authResult?.user else {
+                    self.hideLoadingIndicator()
+                    self.showAlert(message: "Failed to get Firebase user.")
+                    return
+                }
+                
+                // Proceed with registration...
+                if let profileImage = self.registrationData.profilePicture {
+                    self.uploadProfilePicture(profileImage, userId: firebaseUser.uid) { imageURL in
+                        self.saveUserData(userId: firebaseUser.uid, profileImageUrl: imageURL)
+                    }
+                } else {
+                    self.saveUserData(userId: firebaseUser.uid, profileImageUrl: nil)
+                }
+            }
+        }
+        showLoadingIndicator()
+
         if let googleIDToken = googleIDToken, let googleAccessToken = googleAccessToken {
             let credential = GoogleAuthProvider.credential(withIDToken: googleIDToken, accessToken: googleAccessToken)
             

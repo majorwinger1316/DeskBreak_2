@@ -453,11 +453,11 @@
                                     <constraint firstAttribute="width" constant="123" id="qon-Cj-Nkq"/>
                                 </constraints>
                             </imageView>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="singleLineEtched" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Umh-n5-StS">
-                                <rect key="frame" x="16" y="332" width="361" height="290"/>
-                                <color key="backgroundColor" name="modalComponents"/>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" dataMode="prototypes" style="insetGrouped" separatorStyle="singleLineEtched" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="Umh-n5-StS">
+                                <rect key="frame" x="0.0" y="332" width="393" height="321"/>
+                                <color key="backgroundColor" name="modal"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="361" id="spB-wK-0ZR"/>
+                                    <constraint firstAttribute="width" constant="393" id="spB-wK-0ZR"/>
                                 </constraints>
                                 <color key="sectionIndexColor" name="textColor"/>
                                 <color key="sectionIndexBackgroundColor" name="modalComponents"/>
@@ -467,9 +467,9 @@
                         <color key="backgroundColor" name="modal"/>
                         <constraints>
                             <constraint firstItem="5zw-WJ-lea" firstAttribute="leading" secondItem="l3M-LS-LQj" secondAttribute="leading" constant="135" id="DuD-QE-iIy"/>
-                            <constraint firstItem="Umh-n5-StS" firstAttribute="leading" secondItem="l3M-LS-LQj" secondAttribute="leading" constant="16" id="JW2-3c-eJ8"/>
-                            <constraint firstItem="l3M-LS-LQj" firstAttribute="bottom" secondItem="Umh-n5-StS" secondAttribute="bottom" constant="196" id="Xxy-5V-2GT"/>
-                            <constraint firstItem="l3M-LS-LQj" firstAttribute="trailing" secondItem="Umh-n5-StS" secondAttribute="trailing" constant="16" id="baE-lb-D6r"/>
+                            <constraint firstItem="Umh-n5-StS" firstAttribute="leading" secondItem="l3M-LS-LQj" secondAttribute="leading" id="JW2-3c-eJ8"/>
+                            <constraint firstItem="l3M-LS-LQj" firstAttribute="bottom" secondItem="Umh-n5-StS" secondAttribute="bottom" constant="165" id="Xxy-5V-2GT"/>
+                            <constraint firstItem="l3M-LS-LQj" firstAttribute="trailing" secondItem="Umh-n5-StS" secondAttribute="trailing" id="baE-lb-D6r"/>
                             <constraint firstItem="5zw-WJ-lea" firstAttribute="top" secondItem="l3M-LS-LQj" secondAttribute="top" constant="100" id="jGu-S2-Fbn"/>
                             <constraint firstItem="l3M-LS-LQj" firstAttribute="trailing" secondItem="5zw-WJ-lea" secondAttribute="trailing" constant="135" id="rFe-oF-ztl"/>
                             <constraint firstItem="Umh-n5-StS" firstAttribute="top" secondItem="5zw-WJ-lea" secondAttribute="bottom" constant="50" id="woo-kv-F33"/>

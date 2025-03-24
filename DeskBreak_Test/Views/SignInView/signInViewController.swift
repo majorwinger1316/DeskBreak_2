@@ -11,6 +11,8 @@ import FirebaseFirestore
 import Security
 import FirebaseStorage
 import GoogleSignIn
+import AuthenticationServices
+import CryptoKit
 
 class signInViewController: UIViewController {
     
@@ -70,11 +72,10 @@ class signInViewController: UIViewController {
     
     private func saveUserSession(user: User) {
         let defaults = UserDefaults.standard
-
+        
         defaults.set(user.userId, forKey: "userId")
         defaults.set(user.username, forKey: "userName")
         defaults.set(user.email, forKey: "userEmail")
-        defaults.set(user.passwordHash, forKey: "passwordHash")
         defaults.set(user.profilePicture, forKey: "profilePicture")
         defaults.set(user.dailyTarget, forKey: "dailyTarget")
         defaults.set(user.totalMinutes, forKey: "totalMinutes")
@@ -82,7 +83,6 @@ class signInViewController: UIViewController {
         defaults.set(user.createdAt.timeIntervalSince1970, forKey: "createdAt")
         defaults.set(user.dateOfBirth.timeIntervalSince1970, forKey: "dateOfBirth")
         defaults.set(user.contactNumber, forKey: "contactNumber")
-        
         defaults.set(true, forKey: "isLoggedIn")
     }
     
@@ -244,6 +244,32 @@ class signInViewController: UIViewController {
             }
     }
     
+    private func navigateToSignUpWithApple(firebaseUser: FirebaseAuth.User, appleIDToken: String, fullName: PersonNameComponents?) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        guard let signUpVC = storyboard.instantiateViewController(withIdentifier: "SignUpViewController1") as? signUp1ViewController else {
+            return
+        }
+        
+        // Create registration data
+        var registrationData = UserRegistrationData()
+        registrationData.email = firebaseUser.email
+        registrationData.appleIDToken = appleIDToken
+        registrationData.appleUserIdentifier = firebaseUser.uid
+        
+        // Extract name components
+        if let givenName = fullName?.givenName {
+            registrationData.username = givenName
+            if let familyName = fullName?.familyName {
+                registrationData.username += " \(familyName)"
+            }
+        } else {
+            registrationData.username = "User"
+        }
+        
+        signUpVC.registrationData = registrationData
+        navigationController?.pushViewController(signUpVC, animated: true)
+    }
+    
     private func navigateToSignUp1ViewController(with googleIDToken: String, googleAccessToken: String, googleUser: GIDGoogleUser) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         if let signUp1VC = storyboard.instantiateViewController(withIdentifier: "SignUpViewController1") as? signUp1ViewController {
@@ -265,8 +291,61 @@ class signInViewController: UIViewController {
         }
     }
     
+    // Helper for Apple Sign-In
+    public func randomNonceString(length: Int = 32) -> String {
+        precondition(length > 0)
+        let charset: [Character] = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+        var result = ""
+        var remainingLength = length
+        
+        while remainingLength > 0 {
+            let randoms: [UInt8] = (0..<16).map { _ in
+                var random: UInt8 = 0
+                let errorCode = SecRandomCopyBytes(kSecRandomDefault, 1, &random)
+                if errorCode != errSecSuccess {
+                    fatalError("Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)")
+                }
+                return random
+            }
+            
+            randoms.forEach { random in
+                if remainingLength == 0 { return }
+                if random < charset.count {
+                    result.append(charset[Int(random)])
+                    remainingLength -= 1
+                }
+            }
+        }
+        return result
+    }
+
+    private var currentNonce: String?  // Store the nonce for verification
     
     @IBAction func continueWithAppleButton(_ sender: Any) {
+        activityIndicator.startAnimating()
+        
+        let nonce = randomNonceString()
+        currentNonce = nonce
+        
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.fullName, .email]
+        request.nonce = sha256(nonce)  // Securely hash the nonce
+        
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        authorizationController.performRequests()
+    }
+
+    // Helper to hash the nonce
+    private func sha256(_ input: String) -> String {
+        let inputData = Data(input.utf8)
+        let hashedData = SHA256.hash(data: inputData)
+        let hashString = hashedData.compactMap {
+            String(format: "%02x", $0)
+        }.joined()
+        return hashString
     }
     
     private func saveUserSession(userData: [String: Any]?) {
@@ -350,5 +429,69 @@ extension signInViewController: ProfileUpdateDelegate {
         if let imageData = image.jpegData(compressionQuality: 1.0) {
             UserDefaults.standard.set(imageData, forKey: "userProfilePic")
         }
+    }
+}
+
+extension signInViewController: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        return self.view.window!
+    }
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        activityIndicator.startAnimating()
+        
+        guard let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
+              let nonce = currentNonce,
+              let appleIDToken = appleIDCredential.identityToken,
+              let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+            activityIndicator.stopAnimating()
+            showAlert(message: "Invalid Apple Sign-In response.")
+            return
+        }
+        
+        // Create Firebase credential
+        let credential = OAuthProvider.credential(
+            withProviderID: "apple.com",
+            idToken: idTokenString,
+            rawNonce: nonce
+        )
+        
+        // Sign in with Firebase
+        Auth.auth().signIn(with: credential) { [weak self] (authResult, error) in
+            guard let self = self else { return }
+            
+            if let error = error {
+                self.activityIndicator.stopAnimating()
+                self.showAlert(message: "Firebase Apple Sign-In failed: \(error.localizedDescription)")
+                return
+            }
+            
+            // Get Firebase User
+            guard let firebaseUser = authResult?.user else {
+                self.activityIndicator.stopAnimating()
+                self.showAlert(message: "Failed to get Firebase user.")
+                return
+            }
+            
+            // Check if user exists in Firestore
+            self.checkIfUserExistsInFirestore(email: firebaseUser.email ?? "") { exists, userId in
+                if exists, let userId = userId {
+                    // Existing user - fetch data
+                    fetchUserData(userId: userId, viewController: self)
+                } else {
+                    // New user - proceed to registration
+                    self.navigateToSignUpWithApple(
+                        firebaseUser: firebaseUser,
+                        appleIDToken: idTokenString,
+                        fullName: appleIDCredential.fullName
+                    )
+                }
+            }
+        }
+    }
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        activityIndicator.stopAnimating()
+        showAlert(message: "Apple Sign-In failed: \(error.localizedDescription)")
     }
 }
